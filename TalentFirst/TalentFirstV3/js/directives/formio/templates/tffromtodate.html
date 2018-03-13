@@ -1,0 +1,54 @@
+﻿<!--<div>
+
+
+
+    <p class="input-group">
+
+        <input type="text" class="form-control" ng-value="defaultfromdate" uib-datepicker-popup="{{format}}" ng-model="selectedfromdate" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+        <span class="input-group-btn" style="padding-right:10px;"><button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button></span>
+
+        <input type="text" class="form-control" ng-value="defaulttodate" uib-datepicker-popup="{{format}}" ng-model="selectedtodate" is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+        <span class="input-group-btn" style="padding-right:10px;"><button type="button" class="btn btn-default" ng-click="open2()"><i class="glyphicon glyphicon-calendar"></i></button></span>
+
+        <span class="input-group-btn"><button type="button" class="btn btn-blue" ng-click="ExtendSubmissionData()">Go</button></span>
+    </p>
+
+</div>-->
+<div >
+    <style>
+        .learning_container_disabled{
+            background-color: transparent;
+            width: 100%;
+            height: 40px;
+            position: absolute;
+            top: 0;
+        }
+    </style>
+<div ng-if="submissiondata.isSubmitted" class="learning_container_disabled"></div>
+<div class="rbulider_cal" style="height:50px;margin-top="10px">
+    <div style="float:left; width:45%; position:relative;">
+        <div style="position:absolute;top:5px; left:0px; width:45px;">From:<span class="txt_red">*</span></div>
+        <div style="padding-left:100px;">
+            <p class="input-group">
+                <input type="text" id="tfCustomFromDate" readonly="readonly" show-button-bar="false" class="form-control" ng-value="defaultfromdate" uib-datepicker-popup="{{format}}" ng-disabled="readOnly || ComponentDisabledView" ng-model="selectedfromdate" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+                <span class="input-group-btn" style="padding-right:10px;"><button type="button" class="btn btn-default" ng-click="open1()" ng-disabled="readOnly || ComponentDisabledView" my-attr="{{readOnly}}"><i class="glyphicon glyphicon-calendar"></i></button></span>
+            </p>
+        </div>
+    </div>
+
+
+    <div style="float:left; width:45%; position:relative;">
+        <div style="position:absolute;top:5px; left:0px; width:45px;">To:<span class="txt_red">*</span></div>
+        <div style="padding-left:100px;">
+            <p class="input-group">
+                <input type="text" id="tfCustomToDate" readonly="readonly" show-button-bar="false" class="form-control" ng-value="defaulttodate" uib-datepicker-popup="{{format}}" ng-disabled="readOnly || ComponentDisabledView" ng-model="selectedtodate" is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+                <span class="input-group-btn" style="padding-right:10px;"><button type="button" class="btn btn-default" ng-click="open2()" ng-disabled="readOnly || ComponentDisabledView"><i class="glyphicon glyphicon-calendar"></i></button></span>
+
+            </p>
+        </div>
+    </div>
+
+    <div class="floatleft" style="width:5%" ng-hide="submissiondata.isSubmitted || ComponentDisabledView"><button type="button" class="refreshbutton" ng-click="ExtendSubmissionData()">&nbsp;</button></div>
+
+</div>
+</div>

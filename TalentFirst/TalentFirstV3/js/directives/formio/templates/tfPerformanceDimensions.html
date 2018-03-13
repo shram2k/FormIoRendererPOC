@@ -1,0 +1,43 @@
+﻿<div>
+    <label ng-if="component.label" for="{{ component.key }}" class="component-heading label_dynamic">{{ component.label }}</label>
+    <div ng-if="!isEditMode">
+        <div class="btn-group" role="group" id="{{ component.key }}">            
+            <img ng-src="{{$root.PATHS.SpecialComponentsImageUrl}}perfdimensions_big.png" class="img-responsive" alt="" />
+        </div>
+    </div>
+
+    <div ng-if="isEditMode" style="position: relative;">
+        <div ng-show="progress" class="loading_bg_absolute">
+            <div class="loading_container"><img ng-src="{{loadingImagePath}}" alt="" /></div>
+        </div>
+        <div id="dvKRA" class="data_grid tf-directives dvKRA_height"  ><!--style="min-height: 50px;"-->
+            <table class="table">
+                <tbody>
+                    <tr ng-hide="KRAs.length == 0" ng-repeat="kra in KRAs">
+                        <td>
+                            <div>
+                                <div class="txt_blue txt14">{{kra.Title}}</div>
+                                <div class="ovr_hidden performance_factors">
+                                    <div class="floatleft " ng-show="kra.Type == 'Default'" ng-style="{'cursor': !submissiondata.isSubmitted ?'pointer':'default'};">
+                                        <tf-star-rating ng-model="kra.Rating" ratingreadonly="submissiondata.isSubmitted"></tf-star-rating>
+                                    </div>
+                                    <div ng-show="kra.Type == 'Custom'" class="floatleft mrgleft10 mrgtop10" >
+                                        <div>
+                                            <ul><li ng-repeat="prof in kra.RatingProficiencies" ng-style="{'cursor': !submissiondata.isSubmitted ?'pointer':'default'};" ng-click="SelectProf(prof)" ng-class="GetClass(prof, $index)">{{prof.Title}}<span class="checkbox"></span></li></ul>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr ng-hide="KRAs.length>0">
+                        <td>{{TFMessages.Common_NoKRAsToDisplay }}</td>
+                    </tr>
+                </tbody>
+                
+            </table>
+            
+        </div>
+    </div>
+</div>

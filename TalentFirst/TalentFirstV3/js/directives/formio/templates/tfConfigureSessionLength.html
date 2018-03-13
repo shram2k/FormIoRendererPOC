@@ -1,0 +1,16 @@
+﻿<div>
+    <div form-builder-tooltip="Select the session length options to show on report.">Session Lengths: </div> 
+    
+    <div class="ng-scope checkbox customsessionlength_checkbox"><input type="checkbox" ng-click="selectAllClicked();" ng-model="isAllSelected" /><label>Select All</label></div>
+    
+    <div ng-class="renderinline ? 'checkbox-inline' : 'checkbox'" ng-repeat="session in SessionLengths track by $index"
+          class="ng-scope checkbox customsessionlength_checkbox">        
+        <input type="checkbox" name="{{session.SessionLengthId}}" tabindex="0" ng-disabled="readOnly || ComponentDisabledView"
+               ng-click="toggleCheckbox(session.value); OptionSelected();" ng-model="session.IsSelected" grid-row="gridRow"
+               grid-col="gridCol">
+        <label class="control-label ng-binding" for="{{session.SessionLengthId}}">              
+            {{session.Details}}
+        </label>
+    </div>
+</div>
+    

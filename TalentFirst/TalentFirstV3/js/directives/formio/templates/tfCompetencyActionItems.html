@@ -1,0 +1,112 @@
+﻿<div>
+    <style>
+        .delete-button-style {
+            float: left;
+            width: 16px;
+            height: 16px;
+        }
+    </style>
+    <div ng-if="!isEditMode">
+        <div class="btn-group" role="group" id="{{ component.key }}">
+            <img ng-src="{{$root.PATHS.SpecialComponentsImageUrl}}competency_action_item_big.png" class="img-responsive" alt="" />
+        </div>
+    </div>
+
+    <div ng-if="isEditMode" style="position: relative;">
+        <div class="report_sections ovr_hidden" style="overflow:visible;">
+            <div class="report_heading" style="overflow:visible;">
+                <label ng-if="component.label" for="{{ component.key }}" class="component-heading label_dynamic">{{ component.label }}</label>
+            </div>
+
+            <div class="gray-shadowbg" style="overflow:visible;">
+                <table width="100%" border="0">
+                    <tr>
+                        <td>
+                            {{TFMessages.Common_Competency}}:<span class="txt_red">*</span>
+                        </td>
+                        <td style="padding-left:10px;">
+                            <select ng-disabled="submissiondata.isSubmitted || ComponentDisabledView" class="form-control" style="max-width:278px;"
+                                    ng-model="Model.SelectedCompetency"
+                                    ng-options="item as item.Name for item in SelectedCompetencies | orderBy:'Name' track by item.Id">
+                                <option value="">--{{TFMessages.Coach_Competency}}--</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspna="2">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>{{TFMessages.Common_Title}}: <span class="txt_red">*</span></td>
+                        <td style="padding-left:10px;">
+                            <div class="floatleft"><input type="text" ng-model="Model.SelectedName" ng-disabled="submissiondata.isSubmitted || ComponentDisabledView" class="form-control" style="width:280px;" /></div>
+
+                            <div class="floatleft mrgtop7 mrgleft20">{{TFMessages.Common_DueDate}}:<span class="txt_red">*</span></div>
+
+
+                            <div class="floatleft mrgleft10 rbulider_cal">
+                                <p class="input-group" style="margin:0px; width:150px;">
+                                    <input type="text" id="tfSessionDate" readonly="readonly" class="form-control"
+                                           style="width:150px;" ng-disabled="submissiondata.isSubmitted || ComponentDisabledView"
+                                           uib-datepicker-popup="{{format}}" ng-model="Model.SelectedDate" show-button-bar="false"
+                                           is-open="popup1.opened" datepicker-options="dateOptions" close-text="Close"
+                                           alt-input-formats="altInputFormats" />
+                                    <span class="input-group-btn" style="padding-right:10px;">
+                                        <button type="button" class="btn btn-default" ng-click="open1()"
+                                                ng-disabled="submissiondata.isSubmitted || ComponentDisabledView">
+                                            <i class="glyphicon glyphicon-calendar"></i>
+                                        </button>
+                                    </span>
+                                </p>
+                            </div>
+                            <!--<div class="floatleft mrgleft5"><input type="text" class="form-control" style="width:110px;" /></div>
+                            <div class="floatleft mrgtop5 mrgleft5"><img src="images/icon_calander.png" alt="" /></div>-->
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspna="2">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td width="1%" valign="top">{{TFMessages.Common_Description}}:</td>
+                        <td width="99%" style="padding-left:10px;"><textarea ng-model="Model.Description" ng-disabled="submissiondata.isSubmitted || ComponentDisabledView" class="form-control"></textarea></td>
+                    </tr>
+                    <tr>
+                        <td colspna="2">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td style="padding-left:10px;">
+                            <input type="button" class="btn btn-blue" ng-hide="submissiondata.isSubmitted || ComponentDisabledView"
+                                   ng-click="AddCompetencyActionItem(Model.SelectedCompetency,Model.SelectedName,Model.SelectedDate,Model.Description);" value="{{TFMessages.Common_Add}}" />&nbsp;&nbsp;&nbsp;
+                            <input type="button" class="btn btn-orange" ng-hide="submissiondata.isSubmitted || ComponentDisabledView" ng-click="CancelClick();" value="{{TFMessages.Common_Cancel}}" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="divActionItem" class="dasboardreport_grid" style="height:250px; overflow:auto; padding:15px;">
+                <div class="ovr_hidden table-responsive mrgbottom15">
+                    <table class="table">
+                        <tr>
+                            <th style="width: 20%">{{TFMessages.Act_Type_ActionItem}}</th>
+                            <th style="width: 30%">{{TFMessages.Common_Competency}}</th>
+                            <th style="width: 15%">{{TFMessages.Common_DueDate}} </th>
+                            <th style="width: 15%">{{TFMessages.Common_Delete}}</th>
+                        </tr>
+                        <tr ng-repeat="item in AddedCompetencyActionItem">
+                            <td>{{item.ActionPlanDefinition}} </td>
+                            <td>
+                                {{item.CompetencyDimensionDesc}}
+                            </td>
+                            <td>{{item.DueDate}}</td>
+                            <td>
+                                <img ng-src="{{DeleteIcon}}"  ng-if="!ComponentDisabledView" ng-click="submissiondata.isSubmitted || RemoveCompetencyActionItem(item);" alt="" class="delete-button-style" ng-style="{'cursor': !submissiondata.isSubmitted && !ComponentDisabledView ?'pointer':'default'};" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

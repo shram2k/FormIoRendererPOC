@@ -1,0 +1,145 @@
+﻿<div>
+    <style>
+        .blue-color {
+            color: #3283bb;
+        }
+    </style>
+    <div ng-if="!isEditMode">
+
+        <div class="btn-group" role="group" id="{{ component.key }}">
+            <label ng-if="component.label" for="{{ component.key }}" class="component-heading">{{ component.label }}</label>
+            <img ng-src="{{$root.PATHS.SpecialComponentsImageUrl}}competencies_by_clusters_big.png" class="img-responsive" alt="" />
+        </div>
+    </div>
+    <div id="compcluster" ng-if="isEditMode" style="position: relative; overflow:auto;">
+
+        <div class="report_sections ovr_hidden" ng-repeat="cluster in Clusters" style="margin-top:10px;">
+            <div class="report_heading">
+                {{cluster.Name}}<span style="font-size:small;font-style:italic;">{{(component.CompetenciesAllowed == undefined ? '' : (' (Maximum ' +  component.CompetenciesAllowed + ' ' + TFMessages.Common_Competency_Message +' )'))}}</span>
+                <div class="floatright" ng-show="cluster.ShowPdf=== false" style="font-size:small;margin-top:10px;">
+                    <a href="#" ng-if="!isPDFExport" ng-click="ShowCompetencyModels(cluster.Id)">{{cluster.ViewModelTitle}}</a>
+                    <span ng-if="isPDFExport">{{cluster.ViewModelTitle}}</span>
+                </div>
+                <div class="floatright" ng-show="cluster.ShowPdf === true" style="font-size:small;margin-top:10px;">
+
+                    <a href="#" ng-if="!isPDFExport" ng-click="ShowCompetencyViewModels(cluster.PdfFileDynamicName)">{{cluster.ViewModelTitle}}</a>
+                    <span ng-if="isPDFExport">{{cluster.ViewModelTitle}}</span>
+                </div>
+            </div>
+            <div class="ovr_hidden report_sections_container">
+
+                <div class="report-subbox mrgbottom20 reportinner_box"
+                     ng-repeat="competency in SelectedCompetencies |filter:{ClusterId:cluster.Id} as filtered">
+
+                    <div class="report_boxheading">
+                        <div class="floatleft">
+                            {{competency.Name}}
+                        </div>
+                        <div class="floatright">
+                            <img ng-src="{{RemoveIcon}}" ng-hide="submissiondata.isSubmitted || ComponentDisabledView" style="cursor:pointer;"
+                                 ng-click="RemoveCompetency(competency)" title="{{TFMessages.Common_Delete}}" />
+                        </div>
+                    </div>
+                    <div class="report-subbox-container">
+                        <div class="ovr-hidden">
+                            <div class="floatleft" style="width:32%;"  ng-hide="{{!component.ProficiencyTarget}}">
+                                <!--{{TFMessages.Proficiency_Level}}<br>-->
+                                <label  for="{{ component.key }}" class="component-heading">{{ component.ProficiencyLevelTarget == undefined ? TFMessages.Proficiency_Level : component.ProficiencyLevelTarget}}</label><br>
+                                <input value="{{competency.CustomValue}}" readonly="readonly" ng-model="competency.CustomValue" ng-disabled="{{competency.CustomValue != ''}}" class="form-control" style="width: 98%; max-width:300px; margin-top:10px;" type="text">
+                            </div>
+                            <div class="floatleft" style="width:32%; margin-left:2%" ng-hide="{{!component.ShowSuccessFactor}}">
+                                <label for="{{ component.key }}" class="component-heading">{{ component.SuccessFactor == undefined ? TFMessages.Success_Factor : component.SuccessFactor }}</label>
+                                <!--{{TFMessages.Success_Factor}}-->
+                                <select class="form-control" style="width: 98%; max-width:300px; margin-top:10px;" ng-disabled="submissiondata.isSubmitted"
+                                        ng-model="competency.SelectedSuccessFactor" ng-options="item as item.Name for item in competency.SuccessFactors | orderBy:'SequenceId' track by item.Id" />
+                            </div>
+                            <div class="floatleft" style="width:32%; margin-left:2%">
+                                <label for="{{ component.key }}" class="component-heading">{{ component.ProficiencyLevelObserved == undefined ? TFMessages.Proficiency_Level_Observed : component.ProficiencyLevelObserved }}</label><br>
+                                <!--{{TFMessages.Proficiency_Level_Observed}}<br>-->
+                                <select class="form-control" style="width: 98%; max-width:300px; margin-top:10px;" ng-disabled="submissiondata.isSubmitted || ComponentDisabledView"
+                                        ng-model="competency.SelectedLevel" ng-options="item as item.Name for item in competency.Levels |orderBy:'Name' track by item.Id" />
+                            </div>
+                        </div>
+
+                        <div class="mrgtop20">
+                            <label for="{{ component.key }}" class="component-heading">{{ component.ObservetionsAndFeedback == undefined ? TFMessages.Observations_Feedback : component.ObservetionsAndFeedback }}</label>
+                            <!--{{TFMessages.Observations_Feedback}}-->
+                        </div>
+
+                        <div class="mrgtop10">
+                            <textarea ng-if="!isPDFExport" ng-model="competency.Comment" class="form-control" ng-attr-placeholder="{{component.FillerText == undefined ? TFMessages.Common_Placeholder : component.FillerText }}"  ng-disabled="submissiondata.isSubmitted || ComponentDisabledView"></textarea>
+
+                            <div ng-if="isPDFExport" class="border">
+                                <span ng-bind-html="competency.Comment"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="graybg_box ovr_hidden">
+                    <div class="floatleft mrgtop10">{{TFMessages.Common_Add}}:</div>
+                    <div class="floatleft mrgleft10">
+                        <select ng-disabled="submissiondata.isSubmitted || ComponentDisabledView" class="form-control" style="min-width:200px; width:300px; margin-top:6px; margin-bottom:10px;"
+                                ng-model="SelectedCompetency"
+                                ng-options="item as item.Name for item in cluster.Competencies |orderBy:'Name' track by item.Id" />
+
+                    </div>
+                    <div class="floatleft mrgleft10">
+                        <img ng-src="{{AddIcon}}" ng-if="!submissiondata.isSubmitted" ng-hide="ComponentDisabledView" style="cursor:pointer; margin-top:7px;" ng-click="AddCompetency(SelectedCompetency)" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div ng-show="progress" class="loading_bg_absolute">
+            <div class="loading_container"><img ng-src="{{loadingImagePath}}" alt="" /></div>
+        </div>
+
+        <div id="availableTrainings" style="margin-top:10px;" ng-hide="Trainings.length == 0">
+            <div class="report_sections ovr_hidden">
+                <div class="report_heading">{{TFMessages.Available_Resources}} ({{Trainings.length}})</div>
+                <div class="ovr_hidden report_sections_container">
+                    <div class="resource_box" style="width:350px;" ng-repeat="training in Trainings track by $index">
+                        <!--<div class="resource_box_title competencies_heading_blue">{{training.Title}}</div>-->
+                        
+                        <div ng-switch="{{($index + 1) % 6}}">
+                            <div id="divTitle" class="resource_box_title competencies_heading_blue" title="{{training.Title}}" ng-switch-when="0">{{((training.Title.length) > 35) ? (training.Title.substr(0,35) + '...') : training.Title}}</div>
+                            <div id="divTitle" class="resource_box_title competencies_heading_red" title="{{training.Title}}" ng-switch-when="1">{{((training.Title.length) > 35) ? (training.Title.substr(0,35) + '...') : training.Title}}</div>
+                            <div id="divTitle" class="resource_box_title competencies_heading_green" title="{{training.Title}}" ng-switch-when="2">{{((training.Title.length) > 35) ? (training.Title.substr(0,35) + '...') : training.Title}}</div>
+                            <div id="divTitle" class="resource_box_title competencies_heading_yellow" title="{{training.Title}}" ng-switch-when="3">{{((training.Title.length) > 35) ? (training.Title.substr(0,35) + '...') : training.Title}}</div>
+                            <div id="divTitle" class="resource_box_title competencies_heading_royalblue" title="{{training.Title}}" ng-switch-when="4">{{((training.Title.length) > 35) ? (training.Title.substr(0,35) + '...') : training.Title}}</div>
+                            <div id="divTitle" class="resource_box_title competencies_heading_bluishgreen" title="{{training.Title}}" ng-switch-when="5">{{((training.Title.length) > 35) ? (training.Title.substr(0,35) + '...') : training.Title}}</div>
+                        </div>
+
+                        <div class="ovr_hidden">
+                            <div class="resource_box_image">
+                                <img ng-src="{{training.TitleImageName ? training.TitleImageName : '../images/no_image.png'}}" alt="" style="width:100px; height:120px" />
+                                <div class="resource_box_preview">
+                                    <span id="spn1" ng-click="OpenLocationPopup(training)"><img ng-src="../images/preview.png" alt="" /></span>
+                                </div>
+                            </div>
+                            <div class="resource_box_text ovr_hidden">
+                                <div>{{TFMessages.Training_Location}}: &nbsp;{{training.LocationDetails}}</div>
+
+                                <div class="mrgtop10">{{TFMessages.Training_Category}}: &nbsp;{{training.CategoryDetails}}</div>
+
+                                <div class="mrgtop10">{{TFMessages.Act_Type}}: &nbsp;{{training.TypeDetails}}</div>
+
+                                <div ng-show="!ComponentDisabledView">
+                                    <div id="divAssignLink" ng-show="(!training.IsAssigned || training.IsMarkedComplete)" class="mrgtop10">
+                                        <span ng-if="!isPDFExport" ng-click="submissiondata.isSubmitted || OpenAssignToPopup(training)" id="hlAssign1" class="blue-color" ng-style="{'cursor': !submissiondata.isSubmitted?'pointer':'default'};">{{TFMessages.Common_Assign}}</span>
+                                        <span ng-if="isPDFExport" style="cursor:pointer;color:#3283bb;">{{TFMessages.Common_Assign}}</span>
+                                    </div>
+                                    <div id="divAssignLinkAssigned" ng-show="(training.IsAssigned &&  !training.IsMarkedComplete)" class="mrgtop10"><span id="hlAssign2" style="color:#3283bb;font-weight:bold;">{{TFMessages.Act_Bubble_Assigned}}</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

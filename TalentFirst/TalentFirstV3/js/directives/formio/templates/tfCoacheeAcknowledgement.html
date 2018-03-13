@@ -1,0 +1,26 @@
+﻿<div style="width:100%">
+    <div class="ovr_hidden">
+        <div class="floatleft"><label ng-if="component.label" for="{{ component.key }}" class="component-heading">{{ component.label }}</label></div>
+
+        <!--<div class="floatright mrgleft5">dkjfhjksdh fsdhkjfh sdjkhfksd hjkfgshdjk fhsjk</div>-->
+        <div class="floatright">
+            <input type="checkbox" ng-disabled="isDisabledView" ng-model="submissiondata.acknowledgeOption" 
+                   ng-show="component.acknowledgeOption == 'acknowCheck' || component.acknowledgeOption == 'acknowBoth'" />
+            {{TFMesages.Comman_AcknowledgeReport}}
+        </div>        
+    </div>
+    
+    
+    
+
+    <div ng-show="isEditMode" class="mrgtop10">
+        <textarea ng-if="!isPDFExport" class="form-control" ng-model="submissiondata[component.key]" ng-required="!isDisabledView && component.validate.required"
+                  name="{{ component.key }} " tabindex="{{ component.tabindex || 0 }} "
+                  ng-attr-placeholder="{{ component.placeholder | formioTranslate:null:builder }} "
+                  custom-validator="component.validate.custom " rows="3" ng-disabled="isDisabledView"
+                  ng-show="component.acknowledgeOption != 'acknowCheck'"></textarea>
+        <div ng-if="isPDFExport" class="border">
+            <span ng-bind-html="submissiondata[component.key]" ng-show="component.acknowledgeOption != 'acknowCheck'"></span>
+        </div>
+    </div>
+    </div>

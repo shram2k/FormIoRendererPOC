@@ -1,0 +1,8 @@
+﻿<div style="width:100%">
+    <label ng-if="component.label" for="{{ component.key }}" class="component-heading label_dynamic">{{ component.label }}</label>
+            <textarea class="form-control" ng-model="submissiondata[component.key]" ng-required="!isDisabledView && component.validate.required "
+                      name="{{ component.key }} " tabindex="{{ component.tabindex || 0 }} "
+                      ng-attr-placeholder="{{ component.placeholder | formioTranslate:null:builder }} "
+                      custom-validator="component.validate.custom " rows="3" ng-disabled="isDisabledView"></textarea>
+   
+</div>

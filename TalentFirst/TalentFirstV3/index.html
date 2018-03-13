@@ -1,0 +1,141 @@
+<html>
+        <head>
+                <link rel="stylesheet" href="js/bundle.css"/>
+             
+                
+                
+        </head>
+        <body>
+            <div style="padding:20px;">
+                    <div ng-app="TalentFirstApp" ng-controller="formRendererCtrl" ng-init="init()" ng-cloak>
+                            <input type="hidden" id="hdnReportInfo" value='[{"ReportId":1446,"ReportName":"Check On IPAD","CreatedDate":"2018-03-08 10:42:03","EffectiveDate":"Mar 08, 2018","IsDynamic":true,"CertifyType":"F","ReportSchema":"[{\"key\":\"undefinedPaneltfGUID2e403fb269694a2683ff5027585eeb01\",\"input\":false,\"title\":\"Select Five Strengths\",\"theme\":\"default\",\"tableView\":false,\"components\":[{\"input\":true,\"tableView\":true,\"label\":\"\",\"key\":\"undefinedPanelSelectFieldtfGUID5f2adf4dd20c4a139873140a9d75820a\",\"placeholder\":\"Select a strength\",\"data\":{\"values\":[{\"value\":\"leadership\",\"label\":\"Leadership\"},{\"value\":\"deliverables\",\"label\":\"Deliverables\"},{\"value\":\"communication\",\"label\":\"Communication\"},{\"value\":\"architecture\",\"label\":\"Architecture\"}],\"json\":\"\",\"url\":\"\",\"resource\":\"\",\"custom\":\"\"},\"dataSrc\":\"values\",\"valueProperty\":\"\",\"defaultValue\":\"\",\"refreshOn\":\"\",\"filter\":\"\",\"authenticate\":false,\"template\":\"<span>{{ item.label }}</span>\",\"multiple\":false,\"protected\":false,\"unique\":false,\"persistent\":true,\"hidden\":false,\"clearOnHide\":true,\"validate\":{\"required\":false},\"type\":\"select\",\"dataPersist\":true,\"Sequence\":1}],\"type\":\"panel\",\"breadcrumb\":\"default\",\"conditional\":{\"show\":\"\",\"when\":null,\"eq\":\"\"},\"CompliancePanel\":false,\"panelcolor\":\"#790c0c\",\"Sequence\":0},{\"key\":\"undefinedPaneltfGUID1d4635f46726496e914befe48c2aee18\",\"input\":false,\"title\":\"Coaching Session Objectives\",\"theme\":\"default\",\"tableView\":false,\"components\":[{\"input\":false,\"tableView\":true,\"key\":\"undefinedPanelTfEditortfGUID2d81927c2e624dbe96b3bfa1a6266d11\",\"theme\":\"default\",\"size\":\"lg\",\"protected\":false,\"unique\":true,\"persistent\":true,\"controltype\":\"tfcustom\",\"allowDuplicateInstance\":false,\"type\":\"tfEditor\",\"Sequence\":3}],\"type\":\"panel\",\"breadcrumb\":\"default\",\"conditional\":{\"show\":\"\",\"when\":null,\"eq\":\"\"},\"Sequence\":2},{\"key\":\"undefinedPaneltfGUIDec369e802a49423e817b76d82a0f9f87\",\"input\":false,\"title\":\"Jx: Human, Relevant, Personalized – Level 3 Listening & Assertiveness\",\"theme\":\"default\",\"tableView\":false,\"components\":[{\"input\":true,\"tableView\":true,\"label\":\"Selection:\",\"key\":\"undefinedPanelSelectiontfGUID1ac574c5febe4c46992ae5ed6099dc27\",\"values\":[{\"value\":\"beingPresent\",\"label\":\"Being Present\"},{\"value\":\"demonstratingEmpathy\",\"label\":\"Demonstrating Empathy\"},{\"value\":\"askingThoughtfulQuestions\",\"label\":\"Asking Thoughtful Questions\"},{\"value\":\"eliminatingJudgment\",\"label\":\"Eliminating Judgment\"},{\"value\":\"readingTheSituation\",\"label\":\"Reading the Situation\"},{\"value\":\"assertiveness\",\"label\":\"Assertiveness\"}],\"inline\":false,\"protected\":false,\"persistent\":true,\"hidden\":false,\"clearOnHide\":true,\"validate\":{\"required\":false},\"type\":\"selectboxes\",\"Sequence\":5}],\"type\":\"panel\",\"breadcrumb\":\"default\",\"conditional\":{\"show\":\"\",\"when\":null,\"eq\":\"\"},\"Sequence\":4}]","EmpReportId":1002016517,"ReportDataJson":"{\"isEditMode\":true,\"isSubmitted\":false,\"isAcknowledged\":false,\"isAckButtonRequired\":false,\"isRepInitiated\":false,\"ckEditorsData\":[],\"AllowTopHeader\":false,\"ReportConfiguration\":null,\"isPDFExport\":false,\"undefinedPanelSelectiontfGUID1ac574c5febe4c46992ae5ed6099dc27\":{\"beingPresent\":false,\"demonstratingEmpathy\":true,\"askingThoughtfulQuestions\":true,\"eliminatingJudgment\":false,\"readingTheSituation\":false,\"assertiveness\":false},\"undefinedPanelSelectFieldtfGUID5f2adf4dd20c4a139873140a9d75820a\":\"communication\",\"selectedSessionDate\":\"\"}","IsSubmitted":false,"IsAcknowledged":false,"IsAckButtonRequired":false,"CreatedBy":1002005712,"EmpId":5663,"AllowBreadcrumbView":false,"AllowTopHeader":false,"IsRepInitiated":false,"ManagerId":1002005712,"ManagerName":"Ram Sharma","ManagerDesignation":"Assessment Designation 1","ManagerEmpId":1002007401}]' />
+                            <input type="hidden" id="hdnCKEditorsData" value='[{"CKEditorId":"undefinedPanelTfEditortfGUID2d81927c2e624dbe96b3bfa1a6266d11","CKEditorContent":"<p>Azure is Microsoft&#39;s public cloud platform. Azure offers a large collection of services including platform as a service (PaaS), infrastructure as a service (IaaS), database as a service (DBaaS), and many others. But what exactly is Azure, and how does it work?</p>\n\n<p>Azure, like other cloud platforms, relies on a technology known as&nbsp;<strong>virtualization</strong>. Most computer hardware can be emulated in software, because most computer hardware is simply a set of instructions permanently or semi-permanently encoded in silicon. Using an emulation layer that maps software instructions to hardware instructions, virtualized hardware can execute in software as if it were the actual hardware itself.</p>\n\n<p>Essentially, the cloud is a set of physical servers in one or more datacenters that execute virtualized hardware on behalf of customers. So how does the cloud create, start, stop, and delete millions of instances of virtualized hardware for millions of customers simultaneously?+</p>\n\n<p>To understand this, let&#39;s look at the architecture of the hardware in the datacenter. Within each datacenter is a collection of servers sitting in server racks. Each server rack contains many server&nbsp;<strong>blades</strong>&nbsp;as well as a network switch providing network connectivity and a power distribution unit (PDU) providing power. Racks are sometimes grouped together in larger units known as&nbsp;<strong>clusters</strong>.</p>\n"}]'  />
+                            <input type="hidden" id="hdnKeyValuePersistingData"  />
+                            <formio form="form" submission="submission" read-only="FormReadOnly"></formio>
+
+                            <div class="report_rightpane_footer">
+                                <input type="button" ng-if="FormIoAppConfig.IsManagerView || (!FormIoAppConfig.IsManagerView && ReportInfo.IsRepInitiated)" ng-disabled="ReportInfo.IsSubmitted" ng-click="Save('save');" class="btn btn-blue" value="{{TFMessages.Common_Save}}" />
+                                <input type="button" ng-if="ReportInfo.IsRepInitiated" ng-disabled="ReportInfo.IsSubmitted" ng-click="Save('saveNotify');" class="btn btn-blue" value="{{TFMessages.Grow_SaveAndNotify}}" />
+                                <input type="button" ng-if="!FormIoAppConfig.IsManagerView && ReportInfo.IsSubmitted && ReportInfo.IsAckButtonRequired" ng-disabled="ReportInfo.IsAcknowledged" ng-click="Acknowledge();" class="btn btn-blue" value="{{TFMessages.Act_Bubble_Acknowledge}}" />
+                                <input type="button" ng-if="FormIoAppConfig.IsManagerView" ng-disabled="ReportInfo.IsSubmitted" ng-click="Save('submit');" class="btn btn-orange" value="{{TFMessages.Common_Submit}}" />
+                                <input type="button" ng-if="!FormIoAppConfig.IsRequestFromNativeIPad && !IsRequestFromOutlook" ng-click="RedirectBack();" class="btn btn-orange" value="{{TFMessages.Common_Cancel}}" />
+                            </div>
+                     </div>
+            </div>
+            <script>
+               //  window.CKEDITOR_BASEPATH="http://localhost//ipadpoc/js/Scripts/";
+            </script>
+            <!-- <script src="node_modules/jquery/dist/jquery.min.js"></script>
+            <script src="js/Scripts/ngFormBuilder-full.js"></script>
+            <script src="js/Scripts/angular-json-explorer.min.js"></script>
+            <script src="js/Scripts/angular-animate.js"></script>
+            <script src="js/Scripts/setslimscroll.js"></script>
+            <script src="js/Scripts/constants.js"></script>
+            <script src="js/Scripts/talentpopup.js"></script>
+            <script src="js/minified/MasterV4Js.js"></script>
+            <script src="ckeditor/CKEditor.js"></script> -->
+          
+            
+          
+        
+
+           
+
+
+<!-- <script src="js/modules/talentFirstApp.js"></script>
+<script src="js/modules/formioApp.js"></script>
+<script src="js/services/sharedDataService.js"></script>            
+<script src="js/directives/formio/miscDirectives.js"></script>  
+<script src="js/directives/formio/tfAcknowledgeOption.js"></script>  
+<script src="js/directives/formio/tfActionItemWithoutCompetency.js"></script>  
+<script src="js/directives/formio/tfAvailableTo.js"></script>  
+<script src="js/directives/formio/tfCDPTasks.js"></script>  
+<script src="js/directives/formio/tfCoacheeAcknowledgement.js"></script>  
+<script src="js/directives/formio/tfComments.js"></script>  
+<script src="js/directives/formio/tfCompetencies.js"></script>  
+<script src="js/directives/formio/tfCompetenciesByClusters.js"></script>  
+<script src="js/directives/formio/tfCompetencyActionItems.js"></script>  
+<script src="js/directives/formio/tfCompliance.js"></script>  
+<script src="js/directives/formio/tfConfigureSessionLength.js"></script>  
+<script src="js/directives/formio/tfEditor.js"></script>  
+<script src="js/directives/formio/tfEngagements.js"></script>  
+<script src="js/directives/formio/tfFromDate.js"></script>  
+<script src="js/directives/formio/tfPerformanceDimensions.js"></script>  
+<script src="js/directives/formio/tfPerformanceReviewJournal.js"></script>  
+<script src="js/directives/formio/tfPreviousSessionSummary.js"></script>  
+<script src="js/directives/formio/tfProductMetrics.js"></script>  
+<script src="js/directives/formio/tfReportFeedbacks.js"></script>  
+<script src="js/directives/formio/tfSessionDate.js"></script>  
+<script src="js/directives/formio/tfSessionEndDate.js"></script>  
+<script src="js/directives/formio/tfSessionLength.js"></script>  
+<script src="js/directives/formio/tfSessionSummary.js"></script>  
+<script src="js/directives/formio/tfTasks.js"></script>  
+<script src="js/directives/formio/tfTasksTrainings.js"></script>     
+<script src="js/controllers/formRendererCtrl.js"></script>
+<script src="js/factory/formioFactory.js"></script>
+<script src="js/minified/myTeamJs.js"></script>               -->
+<!-- <script src="https://cdn.ckeditor.com/4.5.11/full/ckeditor.js"></script> -->
+<script src="js/Scripts/jquery-2.1.4.min.js"></script>
+<script src="js/Scripts/modernizr-2.8.3.js"></script>
+<script src="js/Scripts/bootstrap.min.js"></script>
+<script src="js/Scripts/bootstrap-select.js"></script>
+<script src="js/Scripts/jquery.toastmessageMoreTime-min.js"></script>
+<script src="js/Scripts/lodash.js"></script>
+<script src="js/Scripts/bootbox.min.js"></script>
+<script src="js/Scripts/moment.js"></script>
+<script src="js/Scripts/owl.carousel.min.js"></script>
+<script src="js/Scripts/HighChart/highstock.js"></script>
+<script src="js/Scripts/HighChart/exporting.js"></script>
+<script src="js/Scripts/HighChart/offline-exporting.js"></script>
+<script src="js/Scripts/HighChart/export-csv.js"></script>
+<script src="js/Scripts/HighChart/accessibility.js"></script>
+
+<script src="js/Scripts/constants.js"></script>
+<script src="ckeditor/CKEditor.js"></script>
+<script src="js/bundle.min.js"></script>  
+<script src="js/Scripts/angular-animate.min.js"></script>
+<script src="js/Scripts/angular-json-explorer.min.js"></script>
+
+<!-- <script type="text/javascript" src="https://code.angularjs.org/1.6.5/i18n/angular-locale_en.js"></script> -->
+<script type="text/javascript">
+            
+
+    // function RenderFormIo(json)
+    // {
+    //     if(!angular.isUndefined(json) && json != '' ){
+    //         angular.element("#hdnReportSchema").val(json);     
+    //     }
+        
+    // }
+    function InitializeFormIo(args){
+       
+
+            if(!angular.isUndefined(args)){
+                if(!angular.isUndefined(args.ReportInfo)){
+                    var x = args.ReportInfo;
+                    angular.element("#hdnReportInfo").val(x);     
+                }
+                
+                if(!angular.isUndefined(args.CKEditorsData)){
+                    angular.element("#hdnCKEditorsData").val(args.CKEditorsData);     
+                }
+                if(!angular.isUndefined(args.KeyValuePersistingData)){
+                    angular.element("#hdnKeyValuePersistingData").val(args.KeyValuePersistingData);     
+                }
+
+              
+            }
+    }
+
+$(function()
+{
+    // InitializeFormIo(CONST_DATA);
+});
+</script>
+
+        </body>
+</html>
+
+
+
+

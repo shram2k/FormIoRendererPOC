@@ -1,0 +1,58 @@
+﻿<div>
+    <label ng-if="component.label" for="{{ component.key }}" class="component-heading label_dynamic">{{ component.label }}</label>
+    <div ng-if="!isEditMode">
+        <div class="btn-group" role="group" id="{{ component.key }}">            
+            <img ng-src="{{$root.PATHS.SpecialComponentsImageUrl}}whatsnext_big.png" class="img-responsive" alt="" />
+        </div>
+    </div>
+    <div ng-if="isEditMode" style="position: relative;">
+        <div ng-show="progress" class="loading_bg_absolute">
+            <div class="loading_container"><img ng-src="{{loadingImagePath}}" alt="" /></div>
+        </div>
+        <div class="ovr-hidden report_whatnext" ng-if="!submissiondata.isSubmitted && !ComponentDisabledView" style="position: relative;">
+            <div style="position: absolute; top: 0; left: 0; width: 300px; height: 80px; display: none;"></div>
+            <ul>
+                <li onclick="javascript:ShowTakLeftDialog4Rep();">
+                    <span class="assign_task"></span>
+                    <br />
+                    {{TFMessages.LeftPanel_MyTeam_AssignTask}}
+                </li>
+                <li onclick="javascript:AssignTrainig4Report();">
+                    <span class="assign_training"></span>
+                    <br />
+                    {{TFMessages.LeftPanel_MyTeam_AssignTraining}}
+                </li>
+            </ul>
+        </div>
+
+        <div class="floatleft reportbox" style="width: 49%">
+            <div class="reportbox_heading">{{TFMessages.AssignReport_AssociatedTasks }}</div>
+            <div id="tfTaskTraining_Task" class="reportbox_container reportlist tfTaskTraining_Task_height" > <!--style="height: 150px; overflow: auto"-->
+                <ul>
+                    <li ng-repeat="task in Tasks">
+                        {{task.Title}}<br>
+                        <span class="txt_blue txt11">{{TFMessages.Common_Due }}: <i>{{task.DueDate}}</i></span>
+                    </li>
+                    <li ng-show="Tasks.length==0">
+                        {{TFMessages.Common_NoRecordText}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="floatleft reportbox" style="width: 49%">
+            <div class="reportbox_heading">{{TFMessages.AssignReport_AssociatedTrainings }}</div>
+            <div id="tfTaskTraining_Training" class="reportbox_container reportlist tfTaskTraining_Training_height" > <!--style="height: 150px; overflow: auto"-->
+                <ul>
+                    <li ng-repeat="training in Trainings">
+                        {{training.Title}}<br>
+                        <span class="txt_blue txt11">{{TFMessages.Common_Due }}: <i>{{training.DueDate}}</i></span>
+                    </li>
+                    <li ng-show="Trainings.length==0">
+                        {{TFMessages.Common_NoRecordText}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+

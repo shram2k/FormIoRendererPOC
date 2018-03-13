@@ -1,0 +1,109 @@
+﻿<div>
+    <style>
+        .edit-button-style {
+            float: left;
+            width: 16px;
+            height: 16px;
+        }
+    </style>
+    <label ng-if="component.label" for="{{ component.key }}" class="component-heading label_dynamic">{{ component.label }}</label>
+    <div ng-if="!isEditMode">
+        <div class="btn-group" role="group" id="{{ component.key }}">
+            <img ng-src="{{$root.PATHS.SpecialComponentsImageUrl}}cdp_task_big.png" class="img-responsive" alt="" />
+        </div>
+    </div>
+
+    <div ng-if="isEditMode" style="position: relative;">
+        <div ng-show="progress" class="loading_bg_absolute">
+            <div class="loading_container"><img ng-src="{{loadingImagePath}}" alt="" /></div>
+        </div>
+        <div id="CPDTasks" ng-show="CDPTasks.length > 0" class="dasboardreport_grid CPDTasks_height">
+            <!--style="height: 200px; overflow: auto;"-->
+            <table id="table" class="table">
+                <tr>
+                    <th style="width: 40%">{{TFMessages.Common_Task}}</th>
+                    <th style="width: 20%">{{TFMessages.Common_AssignedBy}}</th>
+                    <th style="width: 15%">{{TFMessages.Common_DueDate}} </th>
+                    <th class="mod_checkbox"><input type="checkbox" ng-model="ShowCompleted" style="cursor:pointer;" /><label><b>{{TFMessages.Act_ShowCompleted}}</b></label></th>
+                </tr>
+                <tr ng-repeat="cdp in CDPTasks| filter:{'IsComplete': ShowCompleted}">
+                    <td>{{cdp.Title}} </td>
+                    <td>
+                        {{cdp.AssignedBy}}
+                    </td>
+                    <td>{{cdp.DueDate}}</td>
+                    <td>
+                        <img ng-src="{{EditIcon}}" ng-show="!ComponentDisabledView" ng-click="submissiondata.isSubmitted || OpenCDPTaskPopup(cdp)" alt="" class="edit-button-style" ng-style="{'cursor': !submissiondata.isSubmitted ?'pointer':'default'};" />
+                        <img ng-src="{{CompletedIcon}}" style="float:left; margin-left:10px; width:16px; height:16px;" class="img-responsive" ng-show="cdp.IsComplete" alt="" />
+                    </td>
+                </tr>
+            </table>
+
+            <div class="modal fade" id="bootActionItemUpdate">
+                <div class="modal-dialog modal-md">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <img ng-src="{{CancelIcon}}" data-dismiss="modal" class="close" />
+                            <h4 class="modal-title">{{TFMessages.ActionItem_Update}}</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="popup_container">
+                                <table class="table">
+                                    <tr>
+                                        <td valign="top">
+                                            {{TFMessages.Common_Name }}:
+                                        </td>
+                                        <td valign="top">
+                                            <div style="max-height: 150px; overflow: auto;">
+                                                {{SelectedActionItem.Title}}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td valign="top">
+                                            {{TFMessages.Common_Status}}:
+                                        </td>
+                                        <td valign="top">
+                                            <select class="form-control" style="width:90%;"
+                                                    ng-options="status as  status.StatusTitle for status in SelectedActionItem.StatusList" 
+                                                    ng-model="SelectedActionItem.SelectedStatus"
+                                                    ng-disabled="submissiondata.isSubmitted || ComponentDisabledView"></select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td valign="top">
+                                            {{TFMessages.Act_Source}}:
+                                        </td>
+                                        <td valign="top">
+                                            {{SelectedActionItem.Source}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td valign="top">
+                                            {{TFMessages.Act_Type}}:
+                                        </td>
+                                        <td valign="top">
+                                            {{SelectedActionItem.TaskType}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td valign="top">
+                                            {{TFMessages.Common_AssignedBy}}:
+                                        </td>
+                                        <td valign="top">
+                                            {{SelectedActionItem.AssignedBy}}
+                                        </td>
+                                    </tr>
+                                </table>
+                                <div class="mrgtop10 txt_center">
+                                    <input type="button" ng-disabled="ReportInfo.IsSubmitted" ng-click="SaveActionItem();" class="btn btn-blue" value="{{TFMessages.Common_Save}}" />
+                                    <input type="button" ng-click="CloseActionItemPopup()" class="btn btn-orange" value="{{TFMessages.Common_Cancel }}" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

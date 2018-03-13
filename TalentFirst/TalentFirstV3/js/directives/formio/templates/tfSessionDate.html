@@ -1,0 +1,25 @@
+﻿
+<div>
+    <style>
+        .learning_container_disabled {
+            background-color: transparent;
+            width: 100%;
+            height: 40px;
+            position: absolute;
+            top: 0;
+        }
+    </style>
+
+    <div class="rbulider_cal" style="height:50px;">
+        <div>
+            <label style="float:left; margin-top:5px;"  for="{{ component.key }}" class="component-heading">
+                {{ component.label}}:<span class="txt_red">*</span>
+            </label>
+            <p class="input-group" style="float:left; width:190px; padding-left:10px;">
+                <input type="text" id="tfSessionDate" show-button-bar="false" readonly="readonly" class="form-control" style="width:150px;" ng-disabled="readOnly || ComponentDisabledView" ng-value="defaultSessionDate" uib-datepicker-popup="{{format}}" ng-model="submissiondata.selectedSessionDate" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+                <span class="input-group-btn" style="padding-right:10px;"><button type="button" class="btn btn-default" ng-click="open1()" ng-disabled="readOnly || ComponentDisabledView"><i class="glyphicon glyphicon-calendar"></i></button></span>
+            </p>
+
+        </div>
+    </div>
+</div>

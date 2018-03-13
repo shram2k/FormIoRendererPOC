@@ -1,0 +1,60 @@
+﻿<div id="tfProductMetrics">
+    <label ng-if="component.label" for="{{ component.key }}" class="component-heading label_dynamic">{{ component.label }}</label>
+    <div ng-show="!isEditMode">
+        <div class="ovr-hidden">
+
+            <div class="floatleft">
+                <select class="form-control" style="min-width:200px; width:300px; margin-top:6px;">
+                    <option>
+                        Products List
+                    </option>
+                </select>
+
+            </div>
+        </div>
+    </div>
+    <div ng-show="isEditMode">
+        <div class="ovr-hidden" ng-hide="submissiondata.isSubmitted">
+
+            <div class="floatleft">
+                <select class="form-control" ng-disabled="submissiondata.isSubmitted || ComponentDisabledView" style="min-width:200px; width:300px; margin-top:6px; margin-bottom:10px;" ng-model="SelectedProduct"
+                        ng-options="item as item.Name for item in productsList | orderBy:'GroupNumber' track by item.Id" />
+
+            </div>
+            <div class="floatleft">
+                <img ng-src="{{AddIcon}}" style="cursor:pointer; margin-top:7px;" ng-hide="submissiondata.isSubmitted || ComponentDisabledView" ng-click="AddProductMetrics()" />
+            </div>
+        </div>
+        <div class="" ng-repeat="product in Metrics">
+            <div class="report-subbox mrgbottom10">
+                <div class="report-subbox-heading">
+                    <div class="floatleft">
+                        {{product.Name}}
+                    </div>
+                    <div class="floatright">
+                        <img ng-src="{{RemoveIcon}}" ng-hide="submissiondata.isSubmitted || ComponentDisabledView" style="cursor:pointer;" ng-click="RemoveProductMetric(product)" title="{{TFMessages.Common_Delete}}" />
+                    </div>
+                </div>
+                <div class="report-subbox-container">
+                    <table>
+                        <tr>
+                            <td>
+                                <div class="report-metrics" ng-repeat="metric in product.Metrics">
+                                    <div class="report-metrics-name">
+                                        {{metric.Name}}
+                                       
+                                    </div>
+                                        <input ng-if="!isPDFExport" type="text" ng-disabled="submissiondata.isSubmitted || ComponentDisabledView" ng-model="metric.SavedValue"  ng-value="metric.SavedValue == '' ? metric.CustomFieldValue:metric.SavedValue" class="metrics-textbox" />
+                                        <div ng-if="isPDFExport" class="border">
+                                            <span ng-bind-html="metric.SavedValue == '' ? metric.CustomFieldValue:metric.SavedValue"></span>
+                                        </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+</div>

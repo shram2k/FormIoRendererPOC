@@ -1,0 +1,12 @@
+﻿<div>
+    <div style="width:100%">
+        <label ng-if="component.label" for="{{ component.key }}" class="component-heading label_dynamic">{{ component.label }}</label>
+        <div ng-if="!isPDFExport" style="border:1px solid grey; height:100px; overflow:auto; margin-top:10px;">
+            {{PreviousComment}}
+        </div>
+        <div ng-if="isPDFExport" style="border:1px solid grey; margin-top:10px;">
+            {{PreviousComment}}
+        </div>
+    </div>
+
+</div>

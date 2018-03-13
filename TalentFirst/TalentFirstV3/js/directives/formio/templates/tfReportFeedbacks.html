@@ -1,0 +1,52 @@
+﻿<div>
+    <label ng-if="component.label" for="{{ component.key }}" class="component-heading label_dynamic">{{ component.label }}</label>
+    <div ng-if="!isEditMode">
+        <div class="btn-group" role="group" id="{{ component.key }}">            
+            <img ng-src="{{$root.PATHS.SpecialComponentsImageUrl}}feedbacks_big.png" class="img-responsive" alt="" />
+        </div>
+    </div>
+    <div ng-if="isEditMode" style="position: relative;">
+        <div ng-show="progress" class="loading_bg_absolute">
+            <div class="loading_container"><img ng-src="{{loadingImagePath}}" alt="" /></div>
+        </div>
+        <div class="mrgtop20 reportbox" style="padding: 0px;">
+            <div class="reviewcycle_search txt18" style="margin: 0px">{{TFMessages.Common_OngoingPeerFeedback }}</div>
+           
+            <div class="txt-right mrgright5 mrgtop5" style="height:25px;" >
+                <a ng-show="!query.IsSelected && TotalHighlighted>0" ng-click="query.IsSelected=true" href="#">
+                    <span >{{TFMessages.Common_ShowHighlighted}} ({{TotalHighlighted}})</span>
+                </a>
+                <a ng-show="query.IsSelected" ng-click="query={}"  href="#">
+                    <span>{{TFMessages.Common_ShowAll}} ({{Feedbacks.length}})</span>
+                </a>
+
+            </div>
+            <div id="dvFeedbackReportsBox" class="dvFeedbackReportsBox_height" > <!--style="min-height: 200px; overflow: auto;"-->
+                <div ng-repeat="feedback in Feedbacks|filter:{IsSelected:query.IsSelected} as filtered" >
+                    <div ng-show="Feedbacks.length > 0" class="PeerFeedback_box" ng-click="ToggleHighLight(feedback,$event);" ng-class="feedback.IsSelected?'PeerFeedback_box_selected':''">
+                        <div class="ovr_hidden mrgbottom5">
+                            <div class="floatleft">
+                                <img ng-src="{{feedback.ProfileImageName}}" alt="" class="user" />
+                            </div>
+                            <div class="floatleft mrgleft10 username">
+                                <a id="lnkReport" ng-click="OpenReportPopup(feedback)" style="cursor:pointer;">{{feedback.Name}}</a><br />
+                                <span class="txt_orange txt12"><i>{{feedback.CreatedOn}}</i></span>
+                            </div>
+                        </div>
+                        <div>
+
+                            {{feedback.Comment}}<img ng-src="{{ReportIcon}}" ng-hide="feedback.ReportCategory === 'QF'" class="feedback_reporticon" alt="" />
+                        </div>
+                    </div>
+                </div>
+
+                <div ng-show="Feedbacks.length === 0" class="PeerFeedback_box txt_center">
+                    {{TFMessage.Common_NoFeedbackAvailable}}
+                </div>
+            </div>
+            <div style="height: 5px;"></div>
+        </div>
+
+    </div>
+</div>
+

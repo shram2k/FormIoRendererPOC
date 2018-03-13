@@ -1,0 +1,52 @@
+﻿
+<div>
+    <div class="floatleft"><label ng-if="component.label" for="{{ component.key }}" class="component-heading label_dynamic">{{ component.label }}</label></div>
+
+    <div ng-if="!isEditMode">
+        <div class="btn-group" role="group" id="{{ component.key }}">
+            <img ng-src="{{$root.PATHS.SpecialComponentsImageUrl}}ckeditor.png" class="img-responsive" alt="" />
+        </div>
+    </div>
+
+    <div ng-if="IsManager">
+
+        <div class="ovr_hidden">
+            <div class="floatright">
+                <a href="#" ng-if="!isPDFExport" ng-click="ShowCommentsHistory()">{{TFMessages.Comments_History}}</a>
+                <span ng-if="isPDFExport">{{TFMessages.Comments_History}}</span>
+            </div>
+        </div>      
+
+
+        <div ng-if="isEditMode" class="mrgtop5">
+            <textarea ng-if="!isPDFExport" id="{{UNIQ_ID}}" ng-model="ckData" ng-disabled="ComponentDisabledView"></textarea>
+            <span ng-if="isPDFExport" ng-bind-html="trustAsHtml(ckData)"></span>
+        </div>
+
+
+        <div class="modal fade" id="bootCommentsHistory">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <img ng-src="{{CancelIcon}}" data-dismiss="modal" class="close" />
+                        <h4 class="modal-title">{{TFMessages.Comments_History}}</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            <tf-performance-review-journal-grid submission="submission" components="form.components" isviewreport="false"></tf-performance-review-journal-grid>
+                        </div>
+                        <div class="mrgtop10 mrgbottom10 txt_center">
+                            <input type="button" ng-click="CloseCommentsPopup()" class="btn btn-orange" value="{{TFMessages.Common_Cancel }}" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div ng-if="!IsManager" class="txt_center border" style="background-color:#d8dcdd; padding:10px;">
+        You are not entitled to view this section.
+    </div>
+
+</div>
+

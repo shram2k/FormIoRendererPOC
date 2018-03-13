@@ -1,0 +1,17 @@
+﻿<div>
+    <label ng-if="component.label" for="{{ component.key }}" class="component-heading label_dynamic">{{ component.label }}</label>
+    <div ng-show="isEditMode">
+        <textarea ng-if="!isPDFExport" class="form-control mrgtop10" ng-model="Model.SessionSummaryComment" ng-disabled="ComponentDisabledView || submissiondata.isSubmitted"></textarea>
+        <div ng-if="isPDFExport" class="border">
+            <span>{{Model.SessionSummaryComment}}</span>
+        </div>
+    </div>
+    <div ng-show="!isEditMode" style="width:100%">
+        <div ng-if="!isPDFExport" style="border:1px solid grey; height:100px; overflow:auto; margin-top:10px;">
+            {{SessionSummaryComment}}
+        </div>
+        <div ng-if="isPDFExport" class="border">
+            <span>{{SessionSummaryComment}}</span>
+        </div>
+    </div>
+</div>

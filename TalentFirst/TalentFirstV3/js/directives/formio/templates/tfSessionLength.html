@@ -1,0 +1,15 @@
+﻿<div>
+    <div>
+
+        <div class="btn-group" role="group" id="{{ component.key }}">
+            <label ng-if="component.label" style="float:left; margin-top:5px;" for="{{ component.key }}" class="component-heading">
+                {{ component.label }}:<span class="txt_red">*</span>
+            </label>
+
+        <select class="form-control" style="width:190px; float:left; margin-left:10px;" 
+            ng-options="session as session.Details for session in component.selectedSessionLengths track by session.SessionLengthId" ng-required="true"
+            ng-model="submissiondata.selectedSessionLength" ng-disabled="submissiondata.isSubmitted || ComponentDisabledView"></select>
+            <!--ng-show="myForm.session.$invalid"-->
+        </div>
+    </div>
+</div>

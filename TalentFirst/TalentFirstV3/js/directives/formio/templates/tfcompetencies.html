@@ -1,0 +1,72 @@
+﻿<div>
+
+    <style>
+        #tfcompSelfAssess .uib-datepicker-popup {
+            top: 122px !important;
+            left: 18px !important;
+            position: fixed;
+        }
+
+        .customLabel {
+            color:#3283bb;
+            text-decoration:none;
+        }
+    </style>
+    <label ng-if="component.label" for="{{ component.key }}" class="component-heading label_dynamic">{{ component.label }}</label>
+    <div ng-if="!isEditMode">
+
+        <div class="btn-group" role="group" id="{{ component.key }}">            
+            <img ng-src="{{$root.PATHS.SpecialComponentsImageUrl}}competencies_big.png" class="img-responsive" alt="" />
+        </div>
+    </div>
+    <div ng-if="isEditMode" style="position: relative;">
+        <div ng-show="progress" class="loading_bg_absolute">
+            <div class="loading_container"><img ng-src="{{loadingImagePath}}" alt="" /></div>
+        </div>
+        <div class="txt-right" ng-if="!submissiondata.isSubmitted">
+            <a href="#" ng-if="!isPDFExport || !ComponentDisabledView" ng-click="NewAssessment(); $event.stopPropagation();">{{TFMessages.ProfAssessmentReports_NewAssessment}} |</a>
+             <a href="#" ng-if="!isPDFExport || !ComponentDisabledView" ng-click="OpenSelfAssessmentModal()">{{TFMessages.ProfAssessmentReports_RequestSelfAssessment}}</a>
+            <label ng-if="isPDFExport || ComponentDisabledView" class="customLabel">{{TFMessages.ProfAssessmentReports_NewAssessment}} |</label>
+            <label ng-if="isPDFExport || ComponentDisabledView" class="customLabel">{{TFMessages.ProfAssessmentReports_RequestSelfAssessment}}</label>
+        </div>
+        <div id="dvCompetencyChart" class="dvCompetencyChart_height"></div> <!--style="width: 100%; height: 265px;"-->
+
+        <div class="modal fade " id="tfcompSelfAssess">
+            <div class="modal-dialog modal-lg" style="width: 400px!important">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <img ng-src="{{closeBtnUrl}}" data-dismiss="modal" class="close" />
+                        <h4 class="modal-title">{{TFMessages.ProfAssessmentReports_RequestSelfAssessment}}</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="popup_container table_spacing">
+                            <table border="0">
+                                <tr>
+                                    <td>{{TFMessages.Common_Due}} {{TFMessages.Common_Date}}:</td>
+                                    <td>
+                                        <div class="floatleft mrgleft5 mrgtop5">
+                                            <p class="input-group rbulider_cal">
+                                                <input type="text" id="txtSelfAssessmentRequestDueDate" class="form-control" ng-value="dt" readonly="readonly" uib-datepicker-popup="{{format}}" ng-model="SelfAssessmentRequestDueDate" show-button-bar="false" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="false" close-text="Close" alt-input-formats="altInputFormats" />
+                                                <span class="input-group-btn" style="padding-right:10px;"><button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button></span>
+                                            </p>
+                                        </div>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="txt_center">
+                                            <input type="button" value="{{TFMessages.Common_Save}}" class="btn btn-blue" ng-click="SelfAssessmentSave()" />
+                                        </div>
+
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    </div>
+</div>

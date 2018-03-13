@@ -1,0 +1,39 @@
+﻿<div>
+    <label ng-if="component.label" for="{{ component.key }}" class="component-heading label_dynamic">{{ component.label }}</label>
+    <div ng-if="!isEditMode">
+        <div class="btn-group" role="group" id="{{ component.key }}">
+            <img ng-src="{{$root.PATHS.SpecialComponentsImageUrl}}learning_big.png" class="img-responsive" alt="" />
+        </div>
+    </div>
+    <div ng-if="isEditMode" style="position: relative;">
+        <div ng-show="progress" class="loading_bg_absolute">
+            <div class="loading_container"><img ng-src="{{loadingImagePath}}" alt="" /></div>
+        </div>
+        <div class="display dasboardreport_grid" style="border: 1px solid #ebebeb;">
+            <div id="tflearning" ng-show="Learnings.Trainings.length > 0"  class="tflearning-data tflearning_height"> <!--style="height: 345px; overflow: auto;"-->
+                <table id="table" class="table" style="border: 0px;">
+                    <tr>
+                        <th style="width: 30%">{{TFMessages.Common_AssignedBy}}</th>
+                        <th style="width: 35%">{{TFMessages.Common_TrainingTitle}}</th>
+                        <th style="width: 15%">{{TFMessages.Common_DueDate}} </th>
+                        <th style="width: 20%">{{TFMessages.Common_CompletedDate}}</th>
+                    </tr>
+                    <tr ng-repeat="learning in Learnings.Trainings">
+                        <td>{{learning.AssignedBy}}</td>
+                        <td>
+                            {{learning.Title}}
+                        </td>
+                        <td>{{learning.DueDate}}</td>
+                        <td>{{learning.CompletionDate}}</td>
+                    </tr>
+                </table>
+            </div>
+            <div ng-show="Learnings.Trainings.length == 0">
+                {{TFMessages.Common_NoTrainingToDisplay}}
+            </div>
+        </div>
+       
+
+
+    </div>
+</div>
