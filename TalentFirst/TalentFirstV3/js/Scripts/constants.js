@@ -1,4 +1,4 @@
-var isIpad = "False";
+var isIpad = "True";
 var isIpadCheck= "False";
 
 var TalentFirstConst={
@@ -6,36 +6,36 @@ var TalentFirstConst={
     BaseFormIoDirectivesPath:'',
     BaseFormIoCKPath:GetCKEditorBasePath(),
     MaxPopupHeight: 670,
-    ServerCurrentDate:'3/6/2018 12:00:00 AM',
+    ServerCurrentDate:'3/6/2018 12:00:00 AM',//send
     IsRequestFromIPadBrowser : false,
-    SelRepId:5663,
-    MemberOrgId:2,
-    LoggedInEmpId:1002005712,
+    SelRepId:5663,//send
+    MemberOrgId:2,//send
+    LoggedInEmpId:1002005712, //send
     DashboardPopUpPageUrl:'/TalentFirst/TalentfirstV3/popups/DashboardPopUpPage.aspx',
     ConnectModulePopUpPage:'/TalentFirst/TalentfirstV3/popups/ConnectModulePopUpPage.aspx',
-    CurrentServerDate:'3/6/2018 12:00:00 AM',
+    CurrentServerDate:'3/6/2018 12:00:00 AM',//send
     CalendarFormatDate:'MM-dd-yyyy',
     TalentFirstApiUrl: '/TalentFirst/api/talentfirst/',
     PublishedEvents:{
         SelRepChange:'SelRepChange'
     },
-    IsAdmin:'False',
-    HasOutOfHierarchyAccess:''
+    IsAdmin:'False',//send
+    HasOutOfHierarchyAccess:''//send
 };
 var formioConstants={
     IsRequestFromIPadBrowser : false,
-    IsRequestFromNativeIPad:false,
-    IsManagerView:true,
-    SelRepId:5663,
-    MemberOrgId:2,
-    LoggedInEmpId:1002005712,
-    LoggedInEmail:'ram.sharma@rsystems.com',
-    ManagerEmailId:'amit.gupta4@rsystems.com',
+    IsRequestFromNativeIPad:true, //make it hardcoded true
+    IsManagerView:true,//send
+    SelRepId:5663,//send
+    MemberOrgId:2,//send
+    LoggedInEmpId:1002005712,//send
+    LoggedInEmail:'ram.sharma@rsystems.com',//send
+    ManagerEmailId:'amit.gupta4@rsystems.com',//send
     DashboardPopUpPageUrl:'/TalentFirst/TalentfirstV3/popups/DashboardPopUpPage.aspx',
     ConnectModulePopUpPage:'/TalentFirst/TalentfirstV3/popups/ConnectModulePopUpPage.aspx',
     FormioApiUrl:  '/TalentFirst/api/formio/',
-    DocumentUrl: '//dev5.talentfirst.com/TalentFirst/Documents/',
-    CurrentServerDate:'3/6/2018 12:00:00 AM',
+    DocumentUrl: '//dev5.talentfirst.com/TalentFirst/Documents/',//send
+    CurrentServerDate:'3/6/2018 12:00:00 AM',//send
     CalendarFormatDate:'MM-dd-yyyy',
     TalentFirstConst:TalentFirstConst,
     PublishedEvents:{
@@ -50,9 +50,9 @@ var formioConstants={
         AssignTrainingClosed:'AssignTrainingClosed',
         ConfigureSessionLengthRefresh:'ConfigureSessionLengthRefresh'
     },
-    LoggedInUserProfileImageName:'',
-    LoggedInUserEmpName:'Ram Sharma',
-    LoggedInUserDesignation:'Assessment Designation 1',
+    LoggedInUserProfileImageName:'',//send
+    LoggedInUserEmpName:'Ram Sharma',//send
+    LoggedInUserDesignation:'Assessment Designation 1',//send
     CKEditorConfig:{
         
         toolbar:'webToolbar',
@@ -1341,7 +1341,32 @@ var TFMessages = {
     "Common_DivLoadingText": "Loading",
     "GoalStats_MilestoneStatus": "Milestone Status",
     "Assess_ReportSection": "Please select any two assessments above and click on the button below. It is not necessary to select one from each list above. You may select two from the same list and analyze results of Manager or Self-Assessments at different times.",
-    "MyProfile_CurrentSkills": "Current Skills"
+    "MyProfile_CurrentSkills": "Current Skills",
+    "Common_Finalize_Report": "Finalize Report",
+    "Comments_History": "Performance Journal History",
+    "Common_SubmittedBy": "Reviewer",
+    "Common_View_Report": "View Report",
+    "Common_ReviewJournal": "Performance Journal",
+    "Common_Outlook": "Outlook",
+    "Common_Team_Panel": "Team Panel",
+    "Common_Association": "Association",
+    "Common_Performance_Journal_Required_Text": "Please enter performance feedback.",
+    "Common_Coaching_Report": "Click here",
+    "Common_Finalize_Message": "Once a Report is finalized no further changes will be allowed",
+    "Common_Cancel_And_Close": "Cancel and Close",
+    "Common_Finalize": "Finalize",
+    "Common_Save_And_Close": "Save and Close",
+    "Common_Save_Only": "Save Only",
+    "Common_Text": "Please choose an option below",
+    "Common_GoalWeight": "Goal Weight (%)",
+    "GoalStats_GoalDetailsTitle": "Goal Details",
+    "Performance_Journal_Dashboard": "Performance review given from Dashboard",
+    "Performance_Journal_Outlook": "Performance review given from Outlook",
+    "Common_Acknowledge": "Please confirm that you wish to  close this report without acknowledging.",
+    "Common_Confirm": "Confirm",
+    "Comman_AssociatedTasks": "Associated Tasks",
+    "Comman_MileStones": "Milestones"
+
   };
   
   var TFCurrentCulture = 'en-US'
@@ -1349,3 +1374,11 @@ var TFMessages = {
   function GetCKEditorBasePath(){
       return window.location.href.substr(0, window.location.href.lastIndexOf('/') + 1);
   }
+
+//   function ShowTakLeftDialog4Rep(){
+//     //window.webkit.messageHandlers.AssignTask.postMessage("AssignTask");
+//   }
+
+//   function AssignTrainig4Report(){
+//    // window.webkit.messageHandlers.AssignTraining.postMessage("AssignTraining");
+//   }

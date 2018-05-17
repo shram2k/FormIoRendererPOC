@@ -79721,13 +79721,15 @@ module.exports = function(app) {
   app.directive('formioHtmlElement', [
     '$sanitize',
     '$filter',
-    function($sanitize, $filter) {
+    '$sce',
+    function($sanitize, $filter, $sce) {
       return {
         restrict: 'E',
         scope: {
           component: '='
         },
         templateUrl: 'formio/components/htmlelement-directive.html',
+        
         link: function($scope) {
           if ($scope.builder) return;
           var displayError = function(msg) {
@@ -79752,8 +79754,11 @@ module.exports = function(app) {
               element.attr(attr.attr, attr.value);
             });
 
-            try {
-              $scope.html = $sanitize(element.prop('outerHTML'));
+              try {
+            
+                  //var sanitizedHtml = $sanitize(element.prop('outerHTML'));
+                  // $scope.html = $sanitize(element.prop('outerHTML'));
+              $scope.html = $sce.trustAsHtml(element.prop('outerHTML')); // Ram : to support styles in html
               $scope.parseError = null;
 
               // If the sanitized html is empty, it was invalid; Create a visible error so we still render something.
@@ -79986,7 +79991,7 @@ module.exports = function(app) {
     '$templateCache',
     function($templateCache) {
       $templateCache.put('formio/components/panel.html',
-        "<div ng-hide='component.HidePanel' class=\"panel panel-{{ component.theme }}\" id=\"{{ component.key }}\">\n  <div ng-if=\"component.title\" class=\"panel-heading\"  ng-attr-style=\"background-color:{{component.panelcolor}}!important\" >\n    <h3 class=\"panel-title\">{{ component.title | formioTranslate:null:builder }}</h3>\n  </div>\n  <div data-attr-isCompliancePanel={{component.CompliancePanel}} class=\"panel-body\">\n    <formio-component\n      ng-repeat=\"_component in component.components track by $index\"\n      component=\"_component\"\n      data=\"data\"\n      formio=\"formio\"\n      submission=\"submission\"\n      hide-components=\"hideComponents\"\n      ng-if=\"builder ? '::true' : isVisible(_component, data)\"\n      read-only=\"isDisabled(_component, data)\"\n      formio-form=\"formioForm\"\n      grid-row=\"gridRow\"\n      grid-col=\"gridCol\"\n      builder=\"builder\"\n      options=\"options\"\n    ></formio-component>\n  </div>\n</div>\n"
+        "<div ng-hide='component.HidePanel' class=\"panel panel-{{ component.theme }}\" id=\"{{ component.key }}\">\n  <div ng-if=\"component.title\" class=\"panel-heading\"  ng-attr-style=\"background-color:{{component.panelcolor}}!important\" >\n    <h3 class=\"panel-title\">{{ component.title | formioTranslate:null:builder }}</h3>\n  </div>\n  <div data-attr-isCompliancePanel={{component.CompliancePanel}} data-attr-isReviewJournalPanel={{component.ReviewJournalPanel}}  class=\"panel-body\">\n    <formio-component\n      ng-repeat=\"_component in component.components track by $index\"\n      component=\"_component\"\n      data=\"data\"\n      formio=\"formio\"\n      submission=\"submission\"\n      hide-components=\"hideComponents\"\n      ng-if=\"builder ? '::true' : isVisible(_component, data)\"\n      read-only=\"isDisabled(_component, data)\"\n      formio-form=\"formioForm\"\n      grid-row=\"gridRow\"\n      grid-col=\"gridCol\"\n      builder=\"builder\"\n      options=\"options\"\n    ></formio-component>\n  </div>\n</div>\n"
       );
 
       $templateCache.put('formio/componentsView/panel.html',
@@ -87697,10 +87702,10 @@ module.exports = function(app) {
             name: 'Layout',
             template: 'formio/components/common/layout.html'
           },
-          //{
-          //  name: 'Conditional',
-          //  template: 'formio/components/common/conditional.html'
-          //}
+          {
+            name: 'Conditional',
+            template: 'formio/components/common/conditional.html'
+          }
         ],
         documentation: 'http://help.form.io/userguide/#checkbox'
       });
@@ -87858,7 +87863,7 @@ module.exports = function(app) {
               '</uib-tabset>' +
             '</div>' +
             '<div class="col-xs-6">' +
-              '<div class="panel panel-default preview-panel" style="margin-top:44px;">' +
+              '<div class="panel panel-default preview-panel" style="margin-top:44px; max-height:500px; overflow:auto;">' +
                 '<div class="panel-heading">{{\'Preview\' | formioTranslate}}</div>' +
                 '<div class="panel-body">' +
                   '<div class="form-group" ng-if="component.wysiwyg && editorVisible">' +
@@ -88017,6 +88022,7 @@ module.exports = function(app) {
       $templateCache.put('formio/components/container/display.html',
         '<ng-form>' +
         '<form-builder-option property="label"></form-builder-option>' +
+        '<form-builder-option property="hideLabel"></form-builder-option>' +
         '<form-builder-option property="customClass"></form-builder-option>' +
         '<form-builder-option property="clearOnHide"></form-builder-option>' +
         '<form-builder-option property="protected"></form-builder-option>' +
@@ -88976,7 +88982,7 @@ module.exports = function(app) {
           '></value-builder>' +
           '<div class="form-group">' +
             '<label for="content" form-builder-tooltip="The content of this HTML element.">Content</label>' +
-            '<textarea class="form-control" id="content" name="content" ng-model="component.content" placeholder="HTML Content" rows="3">{{ component.content }}</textarea>' +
+            '<textarea class="form-control" id="content" name="content" ng-model="component.content" placeholder="HTML Content" rows="10">{{ component.content }}</textarea>' +
           '</div>' +
         '</ng-form>'
       );
@@ -89057,10 +89063,10 @@ module.exports = function(app) {
             name: 'Layout',
             template: 'formio/components/common/layout.html'
           },
-          //{
-          //  name: 'Conditional',
-          //  template: 'formio/components/common/conditional.html'
-          //}
+          {
+            name: 'Conditional',
+            template: 'formio/components/common/conditional.html'
+          }
         ],
         documentation: 'http://help.form.io/userguide/#number'
       });
@@ -89209,6 +89215,7 @@ module.exports = function(app) {
           '<form-builder-option property="customClass"></form-builder-option>' +
           '<form-builder-option property="tableView"></form-builder-option>' +
           '<form-builder-option property="CompliancePanel"></form-builder-option>' +
+          '<form-builder-option property="ReviewJournalPanel"></form-builder-option>' +
         '</ng-form>'
       );
 
@@ -89336,10 +89343,10 @@ module.exports = function(app) {
             name: 'Layout',
             template: 'formio/components/common/layout.html'
           },
-          //{
-          //  name: 'Conditional',
-          //  template: 'formio/components/common/conditional.html'
-          //}
+          {
+            name: 'Conditional',
+            template: 'formio/components/common/conditional.html'
+          }
         ],
         documentation: 'http://help.form.io/userguide/#phonenumber'
       });
@@ -89410,10 +89417,10 @@ module.exports = function(app) {
             name: 'Layout',
             template: 'formio/components/common/layout.html'
           },
-          //{
-          //  name: 'Conditional',
-          //  template: 'formio/components/common/conditional.html'
-          //}
+          {
+            name: 'Conditional',
+            template: 'formio/components/common/conditional.html'
+          }
         ],
         documentation: 'http://help.form.io/userguide/#radio'
       });
@@ -89571,10 +89578,10 @@ module.exports = function(app) {
             name: 'Layout',
             template: 'formio/components/common/layout.html'
           },
-          //{
-          //  name: 'Conditional',
-          //  template: 'formio/components/common/conditional.html'
-          //}
+          {
+            name: 'Conditional',
+            template: 'formio/components/common/conditional.html'
+          }
         ],
         onEdit: ['$scope', 'FormioUtils', function($scope, FormioUtils) {
           $scope.dataSources = {
@@ -89815,10 +89822,10 @@ module.exports = function(app) {
             name: 'Layout',
             template: 'formio/components/common/layout.html'
           },
-          //{
-          //  name: 'Conditional',
-          //  template: 'formio/components/common/conditional.html'
-          //}
+          {
+            name: 'Conditional',
+            template: 'formio/components/common/conditional.html'
+          }
         ],
         documentation: 'http://help.form.io/userguide/#selectboxes'
       });
@@ -89951,10 +89958,10 @@ module.exports = function(app) {
             name: 'Layout',
             template: 'formio/components/common/layout.html'
           },
-          //{
-          //  name: 'Conditional',
-          //  template: 'formio/components/common/conditional.html'
-          //}
+          {
+            name: 'Conditional',
+            template: 'formio/components/common/conditional.html'
+          }
         ],
         documentation: 'http://help.form.io/userguide/#survey'
       });
@@ -90094,10 +90101,10 @@ module.exports = function(app) {
             name: 'Layout',
             template: 'formio/components/common/layout.html'
           },
-          //{
-          //  name: 'Conditional',
-          //  template: 'formio/components/common/conditional.html'
-          //}
+          {
+            name: 'Conditional',
+            template: 'formio/components/common/conditional.html'
+          }
         ],
         documentation: 'http://help.form.io/userguide/#textarea'
       });
@@ -90199,10 +90206,10 @@ module.exports = function(app) {
             name: 'Layout',
             template: 'formio/components/common/layout.html'
           },
-          //{
-          //  name: 'Conditional',
-          //  template: 'formio/components/common/conditional.html'
-          //}
+          {
+            name: 'Conditional',
+            template: 'formio/components/common/conditional.html'
+          }
         ],
         documentation: 'http://help.form.io/userguide/#textfield'
       });
@@ -90439,6 +90446,12 @@ module.exports = {
       type: 'checkbox',
       tooltip: 'Check if this panel contains compliance control.'
   },
+  ReviewJournalPanel:
+{
+    label: 'Review Journal container ?',
+        type: 'checkbox',
+        tooltip: 'Check if this panel contains Review Journal control.'
+},
   unique: {
     label: 'Unique',
     type: 'checkbox',
@@ -90601,7 +90614,12 @@ module.exports = {
     label: 'Add Resource Text',
     placeholder: 'Add Resource',
     tooltip: 'Set the text of the Add Resource button.'
-  }
+  },
+  'hideLabel': {
+      label: 'Hide Label',
+      type: 'checkbox',
+      tooltip: 'Hide the label of this control'
+  },
 };
 
 },{}],371:[function(_dereq_,module,exports){
@@ -90937,13 +90955,15 @@ module.exports = ['debounce', function(debounce) {
                 datetime:null,
                 email:null,
                 //file:null,
-                panel:null,
+                panel: null,
+                //container:null,
                 phoneNumber:null,
                 radio:null,
                 select:null,
                 selectboxes:null,
                 table:null,
                 survey:null,
+                htmlelement:null,
                 tfcompetencies:null,
                 tfgoals:null,
                 //tfselfassessment:null,
@@ -90970,9 +90990,13 @@ module.exports = ['debounce', function(debounce) {
                 tfSessionSummary: null,
                 tfCompetencyActionItems: null,
                 tfActionItemWithoutCompetency: null,
-                tflinktopdf: null                
-              }; 
-              
+                tflinktopdf: null,
+                tfshowcoachcoacheeinfo: null,
+                tfselfassessment:null,
+                tfCustomFields:null
+              };
+
+          
               $scope.formComponents = Object.keys(allowedControls).reduce(function(obj, key) {
                 obj[key] = componentList[key];
                 // move all default 'special components' category controls to 'basic controls' category except talentfirst custom controls
@@ -90981,6 +91005,9 @@ module.exports = ['debounce', function(debounce) {
                 }
                 return obj;
               }, {});
+
+              //Ram:sort by title for easy read on Report Builder page
+              $scope.formComponents = _.orderBy($scope.formComponents, ['title'],['asc']);
                 
         }
 
@@ -91189,8 +91216,8 @@ module.exports = [
           $scope._components = utils.flattenComponents($scope._components);
           // Remove non-input/button fields because they don't make sense.
           // FA-890 - Dont allow the current component to be a conditional trigger.
-          $scope._components = _reject($scope._components, function(c) {
-            return !c.input || (c.type === 'button') || (c.key === $scope.component.key) || (!c.label && !c.key);
+          $scope._components = _reject($scope._components, function (c) {
+                return !c.input || (c.type === 'button') || (c.key === $scope.component.key) || (!c.label && !c.key);
           });
 
           // Add default item to the components list.
@@ -92409,7 +92436,7 @@ app.run([
     
     //Ram: left panel template
     $templateCache.put('formio/formbuilder/builder.html',
-      "<div class=\"row formbuilder\">\n  <div class=\"col-xs-4 col-sm-3 col-md-2 formcomponents\" ng-if=\"form && form.display\">\n    <uib-accordion close-others=\"true\" ng-if=\"form.display !== 'pdf'\">\n      <div uib-accordion-group ng-repeat=\"(groupName, group) in formComponentGroups\" heading=\"{{ group.title }}\" is-open=\"$first\" class=\"panel panel-default form-builder-panel {{ group.panelClass }}\">\n        <uib-accordion close-others=\"true\" ng-if=\"group.subgroups\">\n          <div uib-accordion-group ng-repeat=\"(subgroupName, subgroup) in group.subgroups\" heading=\"{{ subgroup.title }}\" is-open=\"$first\" class=\"panel panel-default form-builder-panel subgroup-accordion\">\n            <div ng-repeat=\"component in formComponentsByGroup[groupName][subgroupName]\" ng-if=\"component.title\"\n                dnd-draggable=\"component.settings\"\n                dnd-dragstart=\"dndDragIframeWorkaround.isDragging = true\"\n                dnd-dragend=\"dndDragIframeWorkaround.isDragging = false\"\n                dnd-effect-allowed=\"copy\"\n                class=\"formcomponentcontainer\">\n              <span class=\"btn btn-primary btn-xs btn-block formcomponent\" title=\"{{component.title}}\" style=\"overflow: hidden; text-overflow: ellipsis;\">\n                <i ng-if=\"component.icon\" class=\"{{ component.icon }}\"></i> {{ component.title }}\n              </span>\n            </div>\n          </div>\n        </uib-accordion>\n        <div ng-repeat=\"component in formComponentsByGroup[groupName]\" ng-if=\"!group.subgroup && component.title\"\n            dnd-draggable=\"component.settings\"\n            dnd-dragstart=\"dndDragIframeWorkaround.isDragging = true\"\n            dnd-dragend=\"dndDragIframeWorkaround.isDragging = false\"\n            dnd-effect-allowed=\"copy\"\n            class=\"formcomponentcontainer\">\n          <span class=\"btn btn-primary btn-xs btn-block formcomponent\" title=\"{{component.title}}\" style=\"overflow: hidden; text-overflow: ellipsis;\">\n            <i ng-if=\"component.icon\" class=\"{{ component.icon }}\"></i> {{ component.title }}\n          </span>\n        </div>\n      </div>\n    </uib-accordion>\n    <uib-accordion close-others=\"true\" ng-if=\"form.display === 'pdf'\">\n      <div uib-accordion-group heading=\"PDF Fields\" is-open=\"true\" class=\"panel panel-default form-builder-panel\">\n        <div class=\"formcomponentcontainer\" ng-repeat=\"pdftype in pdftypes\">\n          <span class=\"btn btn-primary btn-xs btn-block formcomponent\" title=\"{{ pdftype.title }}\" style=\"overflow: hidden; text-overflow: ellipsis;\" form-builder-draggable=\"pdftype\">\n            <i ng-if=\"pdftype.icon\" class=\"{{ pdftype.icon }}\"></i> {{ pdftype.title }}\n          </span>\n        </div>\n      </div>\n    </uib-accordion>\n  </div>\n  <div class=\"col-xs-8 col-sm-9 col-md-10 formarea\" ng-if=\"form && form.display\">\n    <ol class=\"breadcrumb\" ng-if=\"form.display === 'wizard'\">\n      <li ng-repeat=\"title in pages() track by $index\"><a class=\"label\" style=\"font-size:1em;\" ng-class=\"{'label-info': ($index === getPage()), 'label-primary': ($index !== getPage())}\" ng-click=\"showPage($index)\">{{ title }}</a></li>\n      <li><a class=\"label label-success\" style=\"font-size:1em;\" ng-click=\"newPage()\" data-toggle=\"tooltip\" title=\"Create Page\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span> page</a></li>\n    </ol>\n    <div class=\"dropzone\">\n      <div ng-if=\"form.display === 'pdf'\" ng-controller=\"formBuilderDnd\">\n        <div form-builder-droppable style=\"width:100%;height:2000px;position:absolute;\" id=\"fb-drop-zone\"></div>\n        <formio form=\"form\" ng-init=\"form.builder = true;\"></formio>\n      </div>\n      <form-builder-list ng-if=\"form.display !== 'pdf'\" component=\"form\" form=\"form\" formio=\"::formio\" hide-dnd-box-count=\"hideCount\" root-list=\"true\" class=\"rootlist\" options=\"options\"></form-builder-list>\n    </div>\n  </div>\n</div>\n"
+      "<div class=\"row formbuilder\">\n  <div class=\"col-xs-4 col-sm-3 col-md-2 formcomponents\" ng-if=\"form && form.display\">\n    <uib-accordion close-others=\"true\" ng-if=\"form.display !== 'pdf'\">\n      <div uib-accordion-group ng-repeat=\"(groupName, group) in formComponentGroups\" heading=\"{{ group.title }}\" is-open=\"$first\" class=\"panel panel-default form-builder-panel {{ group.panelClass }}\">\n        <uib-accordion close-others=\"true\" ng-if=\"group.subgroups\">\n          <div uib-accordion-group ng-repeat=\"(subgroupName, subgroup) in group.subgroups\" heading=\"{{ subgroup.title }}\" is-open=\"$first\" class=\"panel panel-default form-builder-panel subgroup-accordion\">\n            <div ng-repeat=\"component in formComponentsByGroup[groupName][subgroupName]\" ng-if=\"component.title\"\n                dnd-draggable=\"component.settings\"\n                dnd-dragstart=\"dndDragIframeWorkaround.isDragging = true\"\n                dnd-dragend=\"dndDragIframeWorkaround.isDragging = false\"\n                dnd-effect-allowed=\"copy\"\n                class=\"formcomponentcontainer\">\n              <span class=\"btn btn-primary btn-xs btn-block formcomponent\" title=\"{{component.title}}\" style=\"overflow: hidden; text-overflow: ellipsis;\">\n                <i ng-if=\"component.icon\" class=\"{{ component.icon }}\"></i> {{ component.title }}\n              </span>\n            </div>\n          </div>\n        </uib-accordion>\n        <div ng-repeat=\"component in formComponentsByGroup[groupName]\" ng-if=\"!group.subgroup && component.title\"\n            dnd-draggable=\"component.settings\"\n            dnd-dragstart=\"dndDragIframeWorkaround.isDragging = true\"\n            dnd-dragend=\"dndDragIframeWorkaround.isDragging = false\"\n            dnd-effect-allowed=\"copy\"\n            class=\"formcomponentcontainer\">\n          <span class=\"btn btn-primary btn-xs btn-block formcomponent\" title=\"{{component.title}}\" style=\"overflow: hidden; text-overflow: ellipsis;\">\n            <i  ng-if=\"component.icon\" class=\"{{ component.icon }}\"></i> {{ component.title }} <span class=\"ipadicon\" ng-if=\"component.settings.ipadcompatible\"   title=\"IPad Compatible\"> </span>\n          </span>\n        </div>\n      </div>\n    </uib-accordion>\n    <uib-accordion close-others=\"true\" ng-if=\"form.display === 'pdf'\">\n      <div uib-accordion-group heading=\"PDF Fields\" is-open=\"true\" class=\"panel panel-default form-builder-panel\">\n        <div class=\"formcomponentcontainer\" ng-repeat=\"pdftype in pdftypes\">\n          <span class=\"btn btn-primary btn-xs btn-block formcomponent\" title=\"{{ pdftype.title }}\" style=\"overflow: hidden; text-overflow: ellipsis;\" form-builder-draggable=\"pdftype\">\n            <i ng-if=\"pdftype.icon\" class=\"{{ pdftype.icon }}\"></i> {{ pdftype.title }}\n          </span>\n        </div>\n      </div>\n    </uib-accordion>\n  </div>\n  <div class=\"col-xs-8 col-sm-9 col-md-10 formarea\" ng-if=\"form && form.display\">\n    <ol class=\"breadcrumb\" ng-if=\"form.display === 'wizard'\">\n      <li ng-repeat=\"title in pages() track by $index\"><a class=\"label\" style=\"font-size:1em;\" ng-class=\"{'label-info': ($index === getPage()), 'label-primary': ($index !== getPage())}\" ng-click=\"showPage($index)\">{{ title }}</a></li>\n      <li><a class=\"label label-success\" style=\"font-size:1em;\" ng-click=\"newPage()\" data-toggle=\"tooltip\" title=\"Create Page\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span> page</a></li>\n    </ol>\n    <div class=\"dropzone\">\n      <div ng-if=\"form.display === 'pdf'\" ng-controller=\"formBuilderDnd\">\n        <div form-builder-droppable style=\"width:100%;height:2000px;position:absolute;\" id=\"fb-drop-zone\"></div>\n        <formio form=\"form\" ng-init=\"form.builder = true;\"></formio>\n      </div>\n      <form-builder-list ng-if=\"form.display !== 'pdf'\" component=\"form\" form=\"form\" formio=\"::formio\" hide-dnd-box-count=\"hideCount\" root-list=\"true\" class=\"rootlist\" options=\"options\"></form-builder-list>\n    </div>\n  </div>\n</div>\n"
     );
 
     $templateCache.put('formio/formbuilder/datagrid.html',
@@ -92867,7 +92894,7 @@ function SetSlimScrollBar(container) {
         if (isPDF != null) {
             container.removeClass($(container.attr('id')).selector + '_height').addClass("compbyclusterPDF");
         }
-        else if (typeof attr == typeof undefined || attr == false || attr == 0) {
+        else if (!isIPad && (typeof attr == typeof undefined || attr == false || attr == 0)) {
             var defaults = {
                 position: 'right',
                 alwaysVisible: false,
@@ -92885,7 +92912,7 @@ function SetSlimScrollBar(container) {
 
             // set focus to bottom if required
             var scrollToBottom = container.attr("data-scroll-to-bottom");
-
+          
             if (typeof scrollToBottom !== typeof undefined && scrollToBottom !== false) {
                 var config = $.extend(defaults, { start: 'bottom' });
                 container.slimScroll(config);
@@ -93198,7 +93225,9 @@ $(function () {
         // on postbacks as well (coach page)
         var prm = Sys.WebForms.PageRequestManager.getInstance();
         prm.add_endRequest(function () {
-            $.talentcarousel();
+            if (typeof $.talentcarousel != "undefined") {
+                $.talentcarousel();
+            }
         });
     }
     
@@ -93723,10 +93752,9 @@ function OpenCoachReportPopup(pageURL, tfv3URL) {
         }
     }
 
-    pageURL = tfv3URL + pageURL;
     var isIpad = navigator.userAgent.match(/iPad/i) != null;
     if (isIpad && isSafari == '0') {
-        pageURL = window.location.protocol + "//" + window.location.host + pageURL;
+        pageURL = window.location.protocol + "//" + window.location.host + "/TalentFirst/" + pageURL;
         var ipadUrl = 'iCoachFirst://?OPENURLINMODALWIINDOWONIPAD=' + pageURL;
         var iframe = document.createElement("IFRAME");
         iframe.setAttribute("src", ipadUrl);
@@ -93735,6 +93763,7 @@ function OpenCoachReportPopup(pageURL, tfv3URL) {
         iframe = null;
     }
     else {
+        pageURL = tfv3URL + pageURL;
         if (typeof (popupWin) != "object") {
             popupWin = window.open(pageURL, 'QuestionWindow1', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no,width=' + width + ',height=' + height + ',top=' + top + ',left=' + left);
         } else {
@@ -93747,7 +93776,7 @@ function OpenCoachReportPopup(pageURL, tfv3URL) {
     }
 }
 
-function vwCoachCDRReport(RepId, EmpReportId, MemberOrgId, ReportName, urlAddMember, urlAddTFV3, PagePath) {
+function vwCoachCDRReport(RepId, EmpReportId, MemberOrgId, ReportName, urlAddMember, urlAddTFV3, PagePath, ManagerId) {
     if (window.screen.height == '768') {
         var height = 600;
     }
@@ -93758,15 +93787,24 @@ function vwCoachCDRReport(RepId, EmpReportId, MemberOrgId, ReportName, urlAddMem
     var left = (screen.width / 2) - (width / 2);
     var top = 15;
     var urlAdd = '<%=Page.ResolveClientUrl("~/MemberPages/") %>';
-
+    var isIpad = navigator.userAgent.match(/iPad/i) != null;
+    
     //  (screen.height / 2) - (height / 2);
     //window.showModalDialog("ViewCoachingActivity.aspx?EmpReportId=" + EmpReportId + "&MemberOrgID=" + MemberOrgId + "&ReportName=" + ReportName, "CDRReport", "dialogWidth:735px;dialogHeight:915px");
-
+    
     if (ReportName == 'Distance Coaching') {
         window.open(urlAddMember + 'CDRDistanceCoachingReport.aspx?RepId=' + RepId + '&cdrReportId=' + EmpReportId + '&IsMgr=T&ReportName=' + ReportName, 'CDRReport', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no,width=' + width + ',height=' + height + ',top=' + top + ',left=' + left);
     }
     else if (PagePath != null) {
-        var pageCompleteUrl = urlAddTFV3 + PagePath + '?RepId=' + RepId + '&cdrReportId=' + EmpReportId + '&IsMgr=T&ReportName=' + ReportName
+
+        var pageCompleteUrl = urlAddTFV3 +PagePath + '?RepId=' + RepId + '&cdrReportId=' + EmpReportId + '&IsMgr=T&ReportName=' + ReportName + "&MemberOrgID=" + MemberOrgId;
+
+        if(ManagerId != null)
+            pageCompleteUrl = pageCompleteUrl + "&EmpId=" + ManagerId;
+        
+        if (isIpad)
+            pageCompleteUrl = pageCompleteUrl + 'tf_source=dashboardreports';
+
         if (PagePath.indexOf("SummaryReviewReport.aspx") > -1 || PagePath.indexOf("iCoachFieldCoachingReport.aspx") > -1)
             pageCompleteUrl = pageCompleteUrl + '&openedinpopup=y';
         else if (PagePath.indexOf("ReviewReportViewer.aspx") > -1) // incase of dynamic report do not open in popup, redirect it
@@ -93994,6 +94032,26 @@ function vwCoachCDRReport(RepId, EmpReportId, MemberOrgId, ReportName, urlAddMem
  }
 
 
+var callbacksTrack=[]; // Required for IPad offline
+var isIPad = isIPad || navigator.userAgent.match(/iPad/i) != null;
+
+function iPadCallback(args) {
+    // This function is invoked by ipad native code to callback angular component functions. Ipad provides key value where key is the method to invoke and value is the json data (response) required for the method.
+    if (!angular.isUndefined(args)) {
+        var response = angular.fromJson(args);
+        var filtered = _.find(callbacksTrack, { Key: response.key });
+        if (!angular.isUndefined(filtered)) {
+            // filtered.Value(response);
+            // // get the angular scope since plain javascript method is not sufficient to reflect the scope level changes.
+            var scope = angular.element(document.getElementById('divformrenderer')).scope();
+            scope.$apply(function () {
+                filtered.Value(response);
+            });
+        }
+    }
+    //   var x = callbacksTrack[0];
+    //  x.Value(angular.fromJson(args));
+}
 /*https://github.com/buberdds/angular-bootstrap-colorpicker*/
 
 angular.module('colorpicker.module', [])
@@ -94593,7 +94651,7 @@ angular.module('colorpicker.module', [])
             Edit: 'edit',
             Clone: 'clone'
         },
-        ProgressImageUrl: formioConstants.TalentFirstConst.BaseAppPath + '/TalentFirstV3/images/loading.gif',
+        ProgressImageUrl: formioConstants.TalentFirstConst.BaseAppPath + '/TalentFirstV3/images/formio/loading.gif',
         ParseQueryString: function (url) {
             return _.chain(url)
             .replace('?', '&') // a=b454&c=dhjjh&f=g6hksdfjlksd
@@ -94605,8 +94663,15 @@ angular.module('colorpicker.module', [])
 
     }))
     .config([
-        'formioComponentsProvider',
-        function (formioComponentsProvider) {
+        'formioComponentsProvider','$filterProvider',
+        function (formioComponentsProvider, filterProvider) {
+
+            filterProvider.register('to_trusted',['$sce', function($sce){
+                return function(text) {
+                    return $('<div/>').html(text).text();
+                }
+            }]);
+          
             var formComponent = formioComponentsProvider.$get().components.form;
             //formComponent.documentation = null;
 
@@ -94619,7 +94684,11 @@ angular.module('colorpicker.module', [])
                            {
                                name: 'Display',
                                template: 'formio/components/common/display.html'
-                           }
+                           },
+                            {
+                                name: 'Conditional',
+                                template: 'formio/components/common/conditional.html'
+                            }
                 ],
                 settings: {
                     input: false,
@@ -94651,7 +94720,11 @@ angular.module('colorpicker.module', [])
                            {
                                name: 'Display',
                                template: 'formio/components/common/display.html'
-                           }
+                           },
+                             {
+                                 name: 'Conditional',
+                                 template: 'formio/components/common/conditional.html'
+                             }
                 ],
                 settings: {
                     input: false,
@@ -94681,10 +94754,14 @@ angular.module('colorpicker.module', [])
                 group: 'advanced',
                 views: [
                            {
-                                name: 'Display',
-                                template: 'formio/components/common/display.html'
-                           }
-                       ],
+                               name: 'Display',
+                               template: 'formio/components/common/display.html'
+                           },
+                             {
+                                 name: 'Conditional',
+                                 template: 'formio/components/common/conditional.html'
+                             }
+                ],
                 settings: {
                     input: false,
                     tableView: false,
@@ -94703,8 +94780,10 @@ angular.module('colorpicker.module', [])
                     persistent: true,
                     controltype: 'tfcustom',
                     allowDuplicateInstance: false,
-                    RepInitiated: false
+                    RepInitiated: false,
+                    ipadcompatible: false
                 }
+               
             });
             formioComponentsProvider.register('tfselfassessment', {
                 title: 'Self Assessment',
@@ -94713,9 +94792,13 @@ angular.module('colorpicker.module', [])
                 group: 'advanced',
                 views: [
                             {
-                              name: 'Display',
-                              template: 'formio/components/common/display.html'
-                            }
+                                name: 'Display',
+                                template: 'formio/components/common/display.html'
+                            },
+                              {
+                                  name: 'Conditional',
+                                  template: 'formio/components/common/conditional.html'
+                              }
                 ],
                 settings: {
                     input: false,
@@ -94734,7 +94817,7 @@ angular.module('colorpicker.module', [])
                     unique: true,
                     persistent: true,
                     controltype: 'tfcustom',
-                    allowDuplicateInstance: false,
+                    allowDuplicateInstance: true,
                     RepInitiated: false
                 }
             });
@@ -94771,7 +94854,11 @@ angular.module('colorpicker.module', [])
                     {
                         name: 'Display',
                         template: 'formio/components/tffromtodate/display.html'
-                    }
+                    },
+                      {
+                          name: 'Conditional',
+                          template: 'formio/components/common/conditional.html'
+                      }
                 ],
                 settings: {
                     input: false,
@@ -94785,8 +94872,10 @@ angular.module('colorpicker.module', [])
                     persistent: true,
                     controltype: 'tfcustom',
                     allowDuplicateInstance: false,
-                    RepInitiated: false
+                    RepInitiated: false,
+                    ipadcompatible: false
                 }
+               
             });
 
             formioComponentsProvider.register('tfSessionDate', {
@@ -94799,7 +94888,11 @@ angular.module('colorpicker.module', [])
                            {
                                name: 'Display',
                                template: 'formio/components/tfSessionDate/display.html'
-                           }
+                           },
+                             {
+                                 name: 'Conditional',
+                                 template: 'formio/components/common/conditional.html'
+                             }
                 ],
                 settings: {
                     input: false,
@@ -94812,8 +94905,10 @@ angular.module('colorpicker.module', [])
                     unique: true,
                     persistent: true,
                     controltype: 'tfcustom',
-                    allowDuplicateInstance: false
+                    allowDuplicateInstance: false,
+                    ipadcompatible: true
                 }
+                
             });
 
             formioComponentsProvider.register('tfengagements', {
@@ -94823,10 +94918,14 @@ angular.module('colorpicker.module', [])
                 group: 'advanced',
                 views: [
                             {
-                               name: 'Display',
-                               template: 'formio/components/common/display.html'
-                            }
-                       ],
+                                name: 'Display',
+                                template: 'formio/components/common/display.html'
+                            },
+                              {
+                                  name: 'Conditional',
+                                  template: 'formio/components/common/conditional.html'
+                              }
+                ],
                 settings: {
                     input: false,
                     tableView: false,
@@ -94857,8 +94956,12 @@ angular.module('colorpicker.module', [])
                             {
                                 name: 'Display',
                                 template: 'formio/components/common/display.html'
-                            }
-                       ],
+                            },
+                              {
+                                  name: 'Conditional',
+                                  template: 'formio/components/common/conditional.html'
+                              }
+                ],
                 settings: {
                     input: false,
                     tableView: false,
@@ -94890,7 +94993,11 @@ angular.module('colorpicker.module', [])
                              {
                                  name: 'Display',
                                  template: 'formio/components/tfcoacheeacknowledgement/display.html'
-                             }
+                             },
+                               {
+                                   name: 'Conditional',
+                                   template: 'formio/components/common/conditional.html'
+                               }
                 ],
                 settings: {
                     input: false,
@@ -94911,8 +95018,10 @@ angular.module('colorpicker.module', [])
                     controltype: 'tfcustom',
                     allowDuplicateInstance: true,
                     //rows: 3,
-                    RepInitiated: false
+                    RepInitiated: false,
+                    ipadcompatible: true
                 }
+               
             });
 
             formioComponentsProvider.register('tfcomments', {
@@ -94924,7 +95033,11 @@ angular.module('colorpicker.module', [])
                              {
                                  name: 'Display',
                                  template: 'formio/components/tfcomments/display.html'
-                             }
+                             },
+                               {
+                                   name: 'Conditional',
+                                   template: 'formio/components/common/conditional.html'
+                               }
                 ],
                 settings: {
                     input: false,
@@ -94959,8 +95072,12 @@ angular.module('colorpicker.module', [])
                         {
                             name: 'Display',
                             template: 'formio/components/common/display.html'
-                        }
-                    ],
+                        },
+                          {
+                              name: 'Conditional',
+                              template: 'formio/components/common/conditional.html'
+                          }
+                ],
                 settings: {
                     input: false,
                     tableView: true,
@@ -94986,7 +95103,11 @@ angular.module('colorpicker.module', [])
                             {
                                 name: 'Display',
                                 template: 'formio/components/common/display.html'
-                            }
+                            },
+                              {
+                                  name: 'Conditional',
+                                  template: 'formio/components/common/conditional.html'
+                              }
                 ],
                 settings: {
                     input: false,
@@ -95013,7 +95134,11 @@ angular.module('colorpicker.module', [])
                              {
                                  name: 'Display',
                                  template: 'formio/components/tfSessionLength/display.html'
-                             }
+                             },
+                               {
+                                   name: 'Conditional',
+                                   template: 'formio/components/common/conditional.html'
+                               }
                 ],
                 settings: {
                     input: false,
@@ -95027,8 +95152,42 @@ angular.module('colorpicker.module', [])
                     persistent: true,
                     controltype: 'tfcustom',
                     allowDuplicateInstance: true,
-                    RepInitiated: false
+                    RepInitiated: false,
+                    ipadcompatible: true
                 }
+            });
+
+            formioComponentsProvider.register('tfCustomFields', {
+                title: 'Custom Field',
+                icon: 'glyphicon icon_InitiateReviewReport icon_custom_field',
+                template: 'formio/components/tfCustomFields.html',
+                group: 'advanced',
+                views: [
+                             {
+                                 name: 'Display',
+                                 template: 'formio/components/tfCustomFields/display.html'
+                             },
+                               {
+                                   name: 'Conditional',
+                                   template: 'formio/components/common/conditional.html'
+                               }
+                ],
+                settings: {
+                    input: false,
+                    tableView: true,
+                    label: 'Custom Field',
+                    key: 'tfCustomFields',
+                    theme: 'default',
+                    size: 'lg',
+                    protected: false,
+                    unique: true,
+                    persistent: true,
+                    controltype: 'tfcustom',
+                    allowDuplicateInstance: true,
+                    RepInitiated: false,
+                    ipadcompatible: false
+                }
+               
             });
 
             formioComponentsProvider.register('tfProductMetrics', {
@@ -95039,9 +95198,13 @@ angular.module('colorpicker.module', [])
                 views: [
                             {
                                 name: 'Display',
-                                template: 'formio/components/common/display.html'
-                            }
-                       ],
+                                template: 'formio/components/tfProductMetrics/display.html'
+                            },
+                              {
+                                  name: 'Conditional',
+                                  template: 'formio/components/common/conditional.html'
+                              }
+                ],
                 settings: {
                     input: false,
                     tableView: true,
@@ -95054,8 +95217,10 @@ angular.module('colorpicker.module', [])
                     persistent: true,
                     controltype: 'tfcustom',
                     allowDuplicateInstance: true,
-                    RepInitiated: false
+                    RepInitiated: false,
+                    ipadcompatible: true
                 }
+               
             });
 
             formioComponentsProvider.register('tfCDPTasks', {
@@ -95067,7 +95232,11 @@ angular.module('colorpicker.module', [])
                             {
                                 name: 'Display',
                                 template: 'formio/components/common/display.html'
-                            }
+                            },
+                              {
+                                  name: 'Conditional',
+                                  template: 'formio/components/common/conditional.html'
+                              }
                 ],
                 settings: {
                     input: false,
@@ -95079,8 +95248,10 @@ angular.module('colorpicker.module', [])
                     persistent: true,
                     controltype: 'tfcustom',
                     allowDuplicateInstance: true,
-                    RepInitiated: false
+                    RepInitiated: false,
+                    ipadcompatible: true
                 }
+                
             });
             formioComponentsProvider.register('tfTasksTrainings', {
                 title: 'Whats Next?',
@@ -95091,8 +95262,12 @@ angular.module('colorpicker.module', [])
                             {
                                 name: 'Display',
                                 template: 'formio/components/common/display.html'
-                            }
-                       ],
+                            },
+                              {
+                                  name: 'Conditional',
+                                  template: 'formio/components/common/conditional.html'
+                              }
+                ],
                 settings: {
                     input: false,
                     tableView: false,
@@ -95103,7 +95278,8 @@ angular.module('colorpicker.module', [])
                     persistent: true,
                     controltype: 'tfcustom',
                     allowDuplicateInstance: false,
-                    RepInitiated: false
+                    RepInitiated: false,
+                    ipadcompatible: true
                 }
             });
 
@@ -95116,7 +95292,11 @@ angular.module('colorpicker.module', [])
                     {
                         name: 'Display',
                         template: 'formio/components/tfCompetenciesByClusters/display.html'
-                    }
+                    },
+                      {
+                          name: 'Conditional',
+                          template: 'formio/components/common/conditional.html'
+                      }
                 ],
                 settings: {
                     input: false,
@@ -95128,7 +95308,8 @@ angular.module('colorpicker.module', [])
                     persistent: true,
                     controltype: 'tfcustom',
                     allowDuplicateInstance: false,
-                    RepInitiated: false
+                    RepInitiated: false,
+                    ipadcompatible: true
                 }
             });
 
@@ -95141,7 +95322,11 @@ angular.module('colorpicker.module', [])
                           {
                               name: 'Display',
                               template: 'formio/components/tfCompliance/display.html'
-                          }
+                          },
+                            {
+                                name: 'Conditional',
+                                template: 'formio/components/common/conditional.html'
+                            }
                 ],
                 settings: {
                     input: false,
@@ -95153,8 +95338,10 @@ angular.module('colorpicker.module', [])
                     persistent: true,
                     controltype: 'tfcustom',
                     allowDuplicateInstance: false,
-                    RepInitiated: false
+                    RepInitiated: false,
+                    ipadcompatible: true
                 }
+                
             });
 
             formioComponentsProvider.register('tfPreviousSessionSummary', {
@@ -95166,8 +95353,12 @@ angular.module('colorpicker.module', [])
                             {
                                 name: 'Display',
                                 template: 'formio/components/common/display.html'
-                            }
-                       ],
+                            },
+                              {
+                                  name: 'Conditional',
+                                  template: 'formio/components/common/conditional.html'
+                              }
+                ],
                 settings: {
                     input: false,
                     tableView: false,
@@ -95178,8 +95369,10 @@ angular.module('colorpicker.module', [])
                     persistent: true,
                     controltype: 'tfcustom',
                     allowDuplicateInstance: false,
-                    RepInitiated: false
+                    RepInitiated: false,
+                    ipadcompatible: true
                 }
+                
             });
 
             formioComponentsProvider.register('tfSessionSummary', {
@@ -95190,7 +95383,11 @@ angular.module('colorpicker.module', [])
                            {
                                name: 'Display',
                                template: 'formio/components/RepInitiated/display.html'
-                           }
+                           },
+                             {
+                                 name: 'Conditional',
+                                 template: 'formio/components/common/conditional.html'
+                             }
                 ],
                 group: 'advanced',
                 settings: {
@@ -95202,8 +95399,10 @@ angular.module('colorpicker.module', [])
                     unique: true,
                     persistent: true,
                     controltype: 'tfcustom',
-                    allowDuplicateInstance: false
+                    allowDuplicateInstance: false,
+                    ipadcompatible: true
                 }
+                
             });
 
 
@@ -95216,7 +95415,11 @@ angular.module('colorpicker.module', [])
                              {
                                  name: 'Display',
                                  template: 'formio/components/tfEditor/display.html'
-                             }
+                             },
+                               {
+                                   name: 'Conditional',
+                                   template: 'formio/components/common/conditional.html'
+                               }
                 ],
                 settings: {
                     input: false,
@@ -95229,20 +95432,25 @@ angular.module('colorpicker.module', [])
                     unique: true,
                     persistent: true,
                     controltype: 'tfcustom',
-                    allowDuplicateInstance: false
+                    allowDuplicateInstance: false,
+                    ipadcompatible: true
                 }
             });
 
             formioComponentsProvider.register('tfPerformanceReviewJournal', {
-                title: 'Review Journal',
-                icon: 'glyphicon icon_InitiateReviewReport icon_date',
+                title: 'Performance Journal',
+                icon: 'glyphicon icon_InitiateReviewReport icon_review_journal',
                 template: 'formio/components/tfPerformanceReviewJournal.html',
                 group: 'advanced',
                 views: [
                              {
                                  name: 'Display',
-                                 template: 'formio/components/common/display.html'
-                             }
+                                 template: 'formio/components/tfReviewJournal/display.html'
+                             },
+                               {
+                                   name: 'Conditional',
+                                   template: 'formio/components/common/conditional.html'
+                               }
                 ],
                 settings: {
                     input: false,
@@ -95255,20 +95463,26 @@ angular.module('colorpicker.module', [])
                     unique: true,
                     persistent: true,
                     controltype: 'tfcustom',
-                    allowDuplicateInstance: false
+                    allowDuplicateInstance: false,
+                    ipadcompatible: false
                 }
+                
             });
 
             formioComponentsProvider.register('tfViewPerformanceReviewJournal', {
-                title: 'View Review Journal',
-                icon: 'glyphicon icon_InitiateReviewReport icon_date',
+                title: 'View Performance Journal',
+                icon: 'glyphicon icon_InitiateReviewReport icon_view_review_journal',
                 template: 'formio/components/tfViewPerformanceReviewJournal.html',
                 group: 'advanced',
                 views: [
                              {
                                  name: 'Display',
                                  template: 'formio/components/common/display.html'
-                             }
+                             },
+                               {
+                                   name: 'Conditional',
+                                   template: 'formio/components/common/conditional.html'
+                               }
                 ],
                 settings: {
                     input: false,
@@ -95281,7 +95495,8 @@ angular.module('colorpicker.module', [])
                     unique: true,
                     persistent: true,
                     controltype: 'tfcustom',
-                    allowDuplicateInstance: false
+                    allowDuplicateInstance: false,
+                    ipadcompatible: false
                 }
             });
 
@@ -95294,8 +95509,12 @@ angular.module('colorpicker.module', [])
                            {
                                name: 'Display',
                                template: 'formio/components/common/display.html'
-                           }
-                       ],
+                           },
+                             {
+                                 name: 'Conditional',
+                                 template: 'formio/components/common/conditional.html'
+                             }
+                ],
                 settings: {
                     input: false,
                     tableView: false,
@@ -95314,7 +95533,8 @@ angular.module('colorpicker.module', [])
                     persistent: true,
                     controltype: 'tfcustom',
                     allowDuplicateInstance: false,
-                    RepInitiated: false
+                    RepInitiated: false,
+                    ipadcompatible: true
                 }
             });
 
@@ -95325,9 +95545,13 @@ angular.module('colorpicker.module', [])
                 group: 'advanced',
                 views: [
                           {
-                             name: 'Display',
-                             template: 'formio/components/tfActionItemWithoutCompetency/display.html'
-                          }
+                              name: 'Display',
+                              template: 'formio/components/tfActionItemWithoutCompetency/display.html'
+                          },
+                            {
+                                name: 'Conditional',
+                                template: 'formio/components/common/conditional.html'
+                            }
                 ],
                 settings: {
                     input: false,
@@ -95358,9 +95582,13 @@ angular.module('colorpicker.module', [])
                 group: 'advanced',
                 views: [
                           {
-                             name: 'Display',
-                             template: 'formio/components/tflinktopdf/display.html'
-                          }
+                              name: 'Display',
+                              template: 'formio/components/tflinktopdf/display.html'
+                          },
+                            {
+                                name: 'Conditional',
+                                template: 'formio/components/common/conditional.html'
+                            }
                 ],
                 settings: {
                     input: false,
@@ -95381,10 +95609,48 @@ angular.module('colorpicker.module', [])
                     controltype: 'tfcustom',
                     allowDuplicateInstance: true,
                     //rows: 3,
-                    RepInitiated: false
+                    RepInitiated: false,
+                    ipadcompatible: false
                 }
             });
 
+            formioComponentsProvider.register('tfshowcoachcoacheeinfo', {
+                title: 'Show Coach Coachee Info',
+                icon: 'glyphicon icon_InitiateReviewReport icon_competencies',
+                template: 'formio/components/tfshowcoachcoacheeinfo.html',
+                group: 'advanced',
+                views: [
+                             {
+                                 name: 'Display',
+                                 template: 'formio/components/tfshowcoachcoacheeinfo/display.html'
+                             },
+                               {
+                                   name: 'Conditional',
+                                   template: 'formio/components/common/conditional.html'
+                               }
+                ],
+                settings: {
+                    input: false,
+                    tableView: true,
+                    label: 'Show Coach Coachee Info',
+                    key: 'tfshowcoachcoacheeinfo',
+                    theme: 'default',
+                    size: 'lg',
+                    values: [
+                        {
+                            value: 'Show Coach Coachee Info',
+                            label: 'Show Coach Coachee Info'
+                        }
+                    ],
+                    protected: false,
+                    unique: true,
+                    persistent: true,
+                    controltype: 'tfcustom',
+                    allowDuplicateInstance: true,
+                    ipadcompatible: false
+                    //rows: 3,
+                }
+            });
         }
     ])
     .run([
@@ -95412,8 +95678,8 @@ angular.module('colorpicker.module', [])
           $rootScope.PATHS = {
               BaseAppPath: TalentFirstConst.BaseAppPath,
               SpecialComponentsImageUrl: TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/",
-              BlankImageUrl: TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/blank_image.png",
-              LoadingImage: TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/left_loading.gif"
+              BlankImageUrl: TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/blank_image.png",
+              LoadingImage: TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/left_loading.gif"
           }
 
 
@@ -95447,6 +95713,9 @@ angular.module('colorpicker.module', [])
           $templateCache.put('formio/components/tflinktopdf.html',
                  "<tf-link-to-pdf submissiondata='submission.data' component='component' ></tf-link-to-pdf>");
 
+          $templateCache.put('formio/components/tfshowcoachcoacheeinfo.html',
+                 "<tf-show-coach-coachee-info submissiondata='submission.data' component='component' ></tf-show-coach-coachee-info>");
+
           $templateCache.put('formio/components/tfcomments/display.html',
              '<ng-form>' +
             '<form-builder-option property="label"></form-builder-option>' +
@@ -95469,17 +95738,60 @@ angular.module('colorpicker.module', [])
             '<ng-form>' +
            '<form-builder-option property="label"></form-builder-option>' +
            '<div>' +
-           '<span style="style="padding-right:10px!important;margin-top:10px;float:left;">PDF File Name:</span>' +
-           '<input type="textbox" ng-model="component.PdfFileName" name="PdfFileName" />' +
+           '<tf-file-uploader component="component" submissiondata="submissiondata"></tf-file-uploader>' +
+           //'<span style="style="padding-right:10px!important;margin-top:10px;float:left;">PDF File Name:</span>' +
+           //'<input type="textbox" ng-model="component.PdfFileName" name="PdfFileName" />' +
            '</div>' +
          '</ng-form>');
 
-          $templateCache.put('formio/components/tfselfassessment.html',
-          '<label ng-if="component.label" for="{{ component.key }}">{{ component.label }}</label>' +
-          '<div class="btn-group" role="group" id="{{ component.key }}">' +
-              '<img class="img-responsive" ng-src="{{$root.PATHS.SpecialComponentsImageUrl}}selfassessment_big.png" alt=""/>' +
-          '</div>'
-        );
+          $templateCache.put('formio/components/tfshowcoachcoacheeinfo/display.html',
+            '<ng-form>' +
+           '<div>' +
+
+           '<div class="ovr_hidden mrgbottom10">' +
+           '<div class="floatleft"><input type="checkbox" ng-model="component.CoachDepartment" name="CoachDepartment" /> Coach Department</div>' +
+           '<div class="floatright">Label: <input type="textbox" ng-model="component.CoachDepartmentLabel" name="CoachDepartmentLabel" /></div>' +
+           '</div>' +
+
+           '<div class="ovr_hidden mrgbottom10">' +
+           '<div class="floatleft"><input type="checkbox" ng-model="component.CoachRegion" name="CoachRegion" /> Coach Region</div>' +
+           '<div class="floatright">Label: <input type="textbox" ng-model="component.CoachRegionLabel" name="CoachRegionLabel" /></div>' +
+           '</div>' +
+
+           '<div class="ovr_hidden mrgbottom10">' +
+           '<div class="floatleft"><input type="checkbox" ng-model="component.CoachDistrict" name="CoachDistrict" /> Coach District</div>' +
+           '<div class="floatright">Label: <input type="textbox" ng-model="component.CoachDistrictLabel" name="CoachDistrictLabel" /></div>' +
+           '</div>' +
+
+           '<div class="ovr_hidden mrgbottom10">' +
+           '<div class="floatleft"><input type="checkbox" ng-model="component.CoachTerritory" name="CoachTerritory" /> Coach Territory</div>' +
+           '<div class="floatright">Label: <input type="textbox" ng-model="component.CoachTerritoryLabel" name="CoachTerritoryLabel" /></div>' +
+           '</div>' +
+
+           '<div class="ovr_hidden mrgbottom10">' +
+           '<div class="floatleft"><input type="checkbox" ng-model="component.CoacheeDepartment" name="CoacheeDepartment" /> Coachee Department</div>' +
+           '<div class="floatright">Label: <input type="textbox" ng-model="component.CoacheeDepartmentLabel" name="CoacheeDepartmentLabel" /></div>' +
+           '</div>' +
+
+           '<div class="ovr_hidden mrgbottom10">' +
+           '<div class="floatleft"><input type="checkbox" ng-model="component.CoacheeRegion" name="CoacheeRegion" /> Coachee Region</div>' +
+           '<div class="floatright">Label: <input type="textbox" ng-model="component.CoacheeRegionLabel" name="CoacheeRegionLabel" /></div>' +
+           '</div>' +
+
+           '<div class="ovr_hidden mrgbottom10">' +
+           '<div class="floatleft"><input type="checkbox" ng-model="component.CoacheeDistrict" name="CoacheeDistrict" /> Coachee District</div>' +
+           '<div class="floatright">Label: <input type="textbox" ng-model="component.CoacheeDistrictLabel" name="CoacheeDistrictLabel" /></div>' +
+           '</div>' +
+
+           '<div class="ovr_hidden mrgbottom10">' +
+           '<div class="floatleft"><input type="checkbox" ng-model="component.CoacheeTerritory" name="CoacheeTerritory" /> Coachee Territory</div>' +
+           '<div class="floatright">Label: <input type="textbox" ng-model="component.CoacheeTerritoryLabel" name="CoacheeTerritoryLabel" /></div>' +
+           '</div>' +
+
+           '</div>' +
+         '</ng-form>');
+
+       
 
           $templateCache.put('formio/components/tfreportfeedbacks.html',
          "<tf-report-feedbacks submissiondata='submission.data' component='component'></tf-report-feedbacks>");
@@ -95500,6 +95812,12 @@ angular.module('colorpicker.module', [])
 
           $templateCache.put('formio/components/tfProductMetrics.html',
                 "<tf-product-metrics submissiondata='submission.data' component='component'></tf-product-metrics>");
+          
+          $templateCache.put('formio/components/tfProductMetrics/display.html',
+             '<ng-form>' +
+            '<form-builder-option property="label"></form-builder-option>' +
+            '<form-builder-option property="RepInitiated"></form-builder-option>' +
+          '</ng-form>');
 
           $templateCache.put('formio/components/tfCDPTasks.html',
          "<tf-cdp-tasks submissiondata='submission.data' component='component'></tf-cdp-tasks>");
@@ -95612,6 +95930,31 @@ angular.module('colorpicker.module', [])
             '</div>' +
            '</ng-form>');
 
+          $templateCache.put('formio/components/tfReviewJournal/display.html',
+          '<ng-form>' +
+          '<div class="form-group">' +
+          '<form-builder-option property="label"></form-builder-option>' +
+          '<form-builder-option property="IsCommentHistoryVisible" type="checkbox" style="color:red;font:bold;" label="Show Performance Journal History." title="Enables link which open performance journal history in popup."></form-builder-option>' +
+          //'<label>Panels:</label>' +
+          // '<select class="form-control" style="width:190px; float:left; margin-left:10px;"' +
+          // ' ng-options="panel for panel in $root.getAllPanels()' +
+          //  ' ng-model="component.panelToHide"></select>' +
+           '</div>' +
+          '</ng-form>');
+
+          $templateCache.put('formio/components/tfselfassessment.html',
+           "<tf-self-assessment submissiondata='submission.data' component='component'></tf-self-assessment>");
+
+          $templateCache.put('formio/components/tfCustomFields.html',
+                 "<tf-custom-fields submissiondata='submission.data' component='component'></tf-custom-fields>");
+
+          $templateCache.put('formio/components/tfCustomFields/display.html',
+             '<ng-form>' +
+            '<form-builder-option property="label"></form-builder-option>' +            
+            '<tf-configure-custom-fields component="component" submissiondata="submission.data" ></tf-configure-custom-fields>' +
+            '<div class="form-group ovr_hidden" ><label>Editable</label><select class="form-control" ng-model="component.editableCustomFields">' +
+          '<option value="1">Coach only</option><option value="2">Coachee only</option><option value="3">Both</option> <option value="4">Neither</option></select></div>' +
+          '</ng-form>');
       }
     ]);
 }());
@@ -95758,9 +96101,12 @@ angular.module('TalentFirstApp').service('sharedDataService', ['$http', '$q', fu
     this.TeamMembers = [];
     this.CoachMembers = [];
     this.ReportSessions = []; // required by formio
+    this.ReportCustomFields = []; //Custom data fields
 
     this.SaveReportCallbacks = []; // FormIoAppConfig.PublishedEvents.ReportDataSaved callbacks
     this.SubmitReportCallbacks = []; //FormIoAppConfig.PublishedEvents.ReportSubmitted callbacks    
+
+    this.SaveReportRequestsForIpad = []; // Required for offline IPad support. Holds ipad offline requests
 
     this.GetComponentDisabledView = function (scope) {
         // This function will return whether a component should render disable by considering RepInitiated scenarios
@@ -95874,156 +96220,192 @@ angular.module('TalentFirstApp').factory('connectFactory', ['$http', '$q', funct
         };
     }]);
 
-angular.module('formioApp').factory('formioFactory', ['$http', '$q','FormIoAppConfig', function ($http, $q, FormIoAppConfig) {
-       function DecorateRequest(rawRequest){
-            return angular.extend(rawRequest,
-            {
-                MemberOrgId :FormIoAppConfig.MemberOrgId,
-                LoggedInEmpId:FormIoAppConfig.LoggedInEmpId,
-                RepId: angular.isUndefined(FormIoAppConfig.ParseQueryString(window.location.href).SelRepId) ? FormIoAppConfig.SelRepId : FormIoAppConfig.ParseQueryString(window.location.href).SelRepId.replace('#',''),
-                CreatedBy: FormIoAppConfig.LoggedInEmpId
-            });
-        }
-        return {
-            getCompetencies: function (request,successcallback, errorcallback) {
-               
-                $http({
-                    method: 'POST',
-                    data: DecorateRequest(request),
-                    url: FormIoAppConfig.FormioApiUrl + 'competencies'
-                }).then(
-                    function (data) {
-                         successcallback(data);
-                    },
-                    function (data, status) {
-                        errorcallback(data);
-                    });
-            },
-            getGoals: function (request,successcallback, errorcallback) {
-               
-                $http({
-                    method: 'POST',
-                    data: DecorateRequest(request),
-                    url: FormIoAppConfig.FormioApiUrl + 'goalsbydate'
-                }).then(
-                    function (data) {
-                        successcallback(data);
-                    },
-                    function (data, status) {
-                        errorcallback(data);
-                    })
-            },
-             getTasks: function (request,successcallback, errorcallback) {
-               
-                $http({
-                    method: 'POST',
-                    data: DecorateRequest(request),
-                    url: FormIoAppConfig.FormioApiUrl + 'tasks'
-                }).then(
-                    function (data) {
-                        successcallback(data);
-                    },
-                    function (data, status) {
-                        errorcallback(data);
-                    });
-            },
-            getEngagements: function (request,successcallback, errorcallback) {
-               
-                $http({
-                    method: 'POST',
-                    data: DecorateRequest(request),
-                    url: FormIoAppConfig.FormioApiUrl + 'engagements'
-                }).then(
-                    function (data) {
-                        successcallback(data);
-                    },
-                    function (data, status) {
-                        errorcallback(data);
-                    });
-            },
-            getLearning: function (request,successcallback, errorcallback) {
-               
-                $http({
-                    method: 'POST',
-                    data: DecorateRequest(request),
-                    url: FormIoAppConfig.FormioApiUrl + 'learning'
-                }).then(
-                    function (data) {
-                        successcallback(data);
-                    },
-                    function (data, status) {
-                        errorcallback(data);
-                    });
-            },
-            getFeedbacks: function (request,successcallback, errorcallback) {
-               
-                $http({
-                    method: 'POST',
-                    data: DecorateRequest(request),
-                    url: FormIoAppConfig.FormioApiUrl + 'feedbacks'
-                }).then(
-                    function (data) {
-                        successcallback(data);
-                    },
-                    function (data, status) {
-                        errorcallback(data);
-                    });
-            },
-            saveFeedbacksReportMapping: function (request,successcallback, errorcallback) {
-               
-                $http({
-                    method: 'POST',
-                    data: DecorateRequest(request),
-                    url: FormIoAppConfig.FormioApiUrl + 'saveselectedfeedbacks'
-                }).then(
-                    function (data) {
-                        successcallback(data);
-                    },
-                    function (data, status) {
-                        errorcallback(data);
-                    });
-            },
-            getPerformanceDimensions: function (request, successcallback, errorcallback) {
-               
-                $http({
-                    method: 'POST',
-                    data: DecorateRequest(request),
-                    url: FormIoAppConfig.FormioApiUrl + 'performancedimensions'
-                }).then(
-                    function (data) {
-                        successcallback(data);
-                    },
-                    function (data, status) {
-                        errorcallback(data);
-                    });
-            },
-            savePerformanceRatings: function (request,successcallback, errorcallback) {
-               
-                $http({
-                    method: 'POST',
-                    data: DecorateRequest(request),
-                    url: FormIoAppConfig.FormioApiUrl + 'saveperformanceratings'
-                }).then(
-                    function (data) {
-                        successcallback(data);
-                    },
-                    function (data, status) {
-                        errorcallback(data);
-                    });
-            },
-            getSessionLengths:function(successcallback, errorcallback){
-                $http({
-                        method:'GET',
-                        url:FormIoAppConfig.FormioApiUrl + 'sessionlengths'
-                }).then(
-                function(data){
+angular.module('formioApp').factory('formioFactory', ['$http', '$q', 'FormIoAppConfig', function ($http, $q, FormIoAppConfig) {
+    function DecorateRequest(rawRequest) {
+        return angular.extend(rawRequest,
+        {
+            MemberOrgId: FormIoAppConfig.MemberOrgId,
+            LoggedInEmpId: FormIoAppConfig.LoggedInEmpId,
+            RepId: angular.isUndefined(FormIoAppConfig.ParseQueryString(window.location.href).SelRepId) ? FormIoAppConfig.SelRepId : FormIoAppConfig.ParseQueryString(window.location.href).SelRepId.replace('#', ''),
+            CreatedBy: FormIoAppConfig.LoggedInEmpId
+        });
+    }
+    return {
+        getCompetencies: function (request, successcallback, errorcallback) {
+
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'competencies'
+            }).then(
+                function (data) {
                     successcallback(data);
                 },
-                function(data,status){
+                function (data, status) {
                     errorcallback(data);
                 });
+        },
+        getGoals: function (request, successcallback, errorcallback) {
+
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'goalsbydate'
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                })
+        },
+        getTasks: function (request, successcallback, errorcallback) {
+
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'tasks'
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                });
+        },
+        getEngagements: function (request, successcallback, errorcallback) {
+
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'engagements'
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                });
+        },
+        getLearning: function (request, successcallback, errorcallback) {
+
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'learning'
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                });
+        },
+        getFeedbacks: function (request, successcallback, errorcallback) {
+
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'feedbacks'
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                });
+        },
+        saveFeedbacksReportMapping: function (request, successcallback, errorcallback) {
+
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'saveselectedfeedbacks'
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                });
+        },
+        getPerformanceDimensions: function (request, successcallback, errorcallback) {
+
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'performancedimensions'
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                });
+        },
+        savePerformanceRatings: function (request, successcallback, errorcallback) {
+
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'saveperformanceratings'
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                });
+        },
+        getSessionLengths: function (successcallback, errorcallback) {
+            $http({
+                method: 'GET',
+                url: FormIoAppConfig.FormioApiUrl + 'sessionlengths'
+            }).then(
+            function (data) {
+                successcallback(data);
             },
-            getProductMetrics: function (request, successcallback, errorcallback) {
+            function (data, status) {
+                errorcallback(data);
+            });
+        },
+        getCustomFields: function (request, successcallback, errorcallback) {
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'getCustomFields'
+            }).then(
+            function (data) {
+                successcallback(data);
+            },
+            function (data, status) {
+                errorcallback(data);
+            });
+        },
+        getCustomFieldValue: function (request, successcallback, errorcallback) {
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'getCustomFieldValue'
+            }).then(
+            function (data) {
+                successcallback(data);
+            },
+            function (data, status) {
+                errorcallback(data);
+            });
+        },
+        getProductMetrics: function (request, successcallback, errorcallback) {
+
+            if (formioConstants.IsRequestFromNativeIPad) {
+                callbacksTrack.push({
+                    Key: "getProductMetrics",
+                    Value: successcallback
+                });
+
+                window.webkit.messageHandlers.requestDataFromiPad.postMessage('getProductMetrics');
+
+            } else {
                 $http({
                     method: 'POST',
                     data: DecorateRequest(request),
@@ -96035,23 +96417,35 @@ angular.module('formioApp').factory('formioFactory', ['$http', '$q','FormIoAppCo
                 function (data, status) {
                     errorcallback(data);
                 });
-            },
-            saveProductMetricsMapping: function (request,successcallback, errorcallback) {
-               
-                $http({
-                    method: 'POST',
-                    data: DecorateRequest(request),
-                    url: FormIoAppConfig.FormioApiUrl + 'saveproductmetricsmapping'
-                }).then(
-                    function (data) {
-                        successcallback(data);
-                    },
-                    function (data, status) {
-                        errorcallback(data);
-                    });
-            },
-            getCDPTasks: function (request,successcallback, errorcallback) {
-               
+            }
+        },
+        saveProductMetricsMapping: function (request, successcallback, errorcallback) {
+
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'saveproductmetricsmapping'
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                });
+        },
+        getCDPTasks: function (request, successcallback, errorcallback) {
+
+            if (formioConstants.IsRequestFromNativeIPad) {
+                callbacksTrack.push({
+                    Key: "getCDPTasks",
+                    Value: successcallback
+                });
+
+                window.webkit.messageHandlers.requestDataFromiPad.postMessage('getCDPTasks');
+
+            }
+            else {
+
                 $http({
                     method: 'POST',
                     data: DecorateRequest(request),
@@ -96063,107 +96457,141 @@ angular.module('formioApp').factory('formioFactory', ['$http', '$q','FormIoAppCo
                     function (data, status) {
                         errorcallback(data);
                     });
-            },
-            getTrainings: function (request, successcallback, errorcallback) {
+            }
+        },
+        getTrainings: function (request, successcallback, errorcallback) {
 
-                $http({
-                    method: 'POST',
-                    data: DecorateRequest(request),
-                    url: FormIoAppConfig.FormioApiUrl + 'cdp/training'
-                }).then(
-                    function (data) {
-                        successcallback(data);
-                    },
-                    function (data, status) {
-                        errorcallback(data);
-                    });
-            },
-            saveTaskTrainingMappingWithReport: function (request,successcallback, errorcallback) {
-               
-                $http({
-                    method: 'POST',
-                    data: DecorateRequest(request),
-                    url: FormIoAppConfig.FormioApiUrl + 'savemappingwithreport'
-                }).then(
-                    function (data) {
-                        successcallback(data);
-                    },
-                    function (data, status) {
-                        errorcallback(data);
-                    });
-            },
-            getCompetenciesByClusters: function (request,successcallback, errorcallback) {
-               
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'cdp/training'
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                });
+        },
+        saveTaskTrainingMappingWithReport: function (request, successcallback, errorcallback) {
+
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'savemappingwithreport'
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                });
+        },
+        getCompetenciesByClusters2: function (request, successcallback, errorcallback) {
+
+            if (formioConstants.IsRequestFromNativeIPad) {
+                callbacksTrack.push({
+                    Key: "getCompetenciesByClusters2",
+                    Value: successcallback
+                });
+
+                window.webkit.messageHandlers.requestDataFromiPad.postMessage('getCompetenciesByClusters2');
+
+            }
+        },
+        getCompetenciesByClusters: function (request, successcallback, errorcallback) {
+            if (formioConstants.IsRequestFromNativeIPad) {
+                callbacksTrack.push({
+                    Key: "getCompetenciesByClusters",
+                    Value: successcallback
+                });
+
+                window.webkit.messageHandlers.requestDataFromiPad.postMessage('getCompetenciesByClusters');
+
+            }
+            else {
                 $http({
                     method: 'POST',
                     data: DecorateRequest(request),
                     url: FormIoAppConfig.FormioApiUrl + 'getcompetenciesbyclusters'
                 }).then(
                     function (data) {
-                         successcallback(data);
+                        successcallback(data);
                     },
                     function (data, status) {
                         errorcallback(data);
                     });
-            },
-            saveCompetenciesByClusters: function (request, successcallback, errorcallback) {
+            }
+        },
+        saveCompetenciesByClusters: function (request, successcallback, errorcallback) {
 
-                $http({
-                    method: 'POST',
-                    data: DecorateRequest(request),
-                    url: FormIoAppConfig.FormioApiUrl + 'savecompetenciesbyclusters'
-                }).then(
-                    function (data) {
-                        successcallback(data);
-                    },
-                    function (data, status) {
-                        errorcallback(data);
-                    });
-            },
-            sendComplianceEmail: function (request, successcallback, errorcallback) {
-               
-                $http({
-                    method: 'POST',
-                    data: DecorateRequest(request),
-                    url: FormIoAppConfig.FormioApiUrl + 'sendcomplianceemail'
-                }).then(
-                    function (data) {
-                        successcallback(data);
-                    },
-                    function (data, status) {
-                        errorcallback(data);
-                    });
-            },
-            createDynamicReport: function (request, successcallback, errorcallback) {
-               
-                $http({
-                    method: 'POST',
-                    data: DecorateRequest(request),
-                    url: FormIoAppConfig.FormioApiUrl + 'createdynamicreport'
-                }).then(
-                    function (data) {
-                        successcallback(data);
-                    },
-                    function (data, status) {
-                        errorcallback(data);
-                    });
-            },
-            deleteDynamicReport: function (reportId, successcallback, errorcallback) {
-               
-                $http({
-                    method: 'POST',
-                    data: DecorateRequest({ ReportId: reportId }),
-                    url: FormIoAppConfig.FormioApiUrl + 'deletedynamicreport'
-                }).then(
-                    function (data) {
-                        successcallback(data);
-                    },
-                    function (data, status) {
-                        errorcallback(data);
-                    });
-            },
-            getTrainingsByCompetencies: function (request, successcallback, errorcallback) {
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'savecompetenciesbyclusters'
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                });
+        },
+        sendComplianceEmail: function (request, successcallback, errorcallback) {
 
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'sendcomplianceemail'
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                });
+        },
+        createDynamicReport: function (request, successcallback, errorcallback) {
+
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'createdynamicreport'
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                });
+        },
+        deleteDynamicReport: function (reportId, successcallback, errorcallback) {
+
+            $http({
+                method: 'POST',
+                data: DecorateRequest({ ReportId: reportId }),
+                url: FormIoAppConfig.FormioApiUrl + 'deletedynamicreport'
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                });
+        },
+        getTrainingsByCompetencies: function (request, successcallback, errorcallback) {
+            if (formioConstants.IsRequestFromNativeIPad) {
+                callbacksTrack.push({
+                    Key: "getTrainingsByCompetencies",
+                    Value: successcallback
+                });
+
+                window.webkit.messageHandlers.requestDataFromiPad.postMessage(angular.toJson({
+                    Key: "getTrainingsByCompetencies",
+                    Value: request.CompetencyIds
+                }));
+
+            } else {
                 $http({
                     method: 'POST',
                     data: DecorateRequest(request),
@@ -96175,23 +96603,33 @@ angular.module('formioApp').factory('formioFactory', ['$http', '$q','FormIoAppCo
                     function (data, status) {
                         errorcallback(data);
                     });
-            },
-            saveEditor: function (request, successcallback, errorcallback) {
+            }
+        },
+        saveEditor: function (request, successcallback, errorcallback) {
 
-                $http({
-                    method: 'POST',
-                    data: DecorateRequest(request),
-                    url: FormIoAppConfig.FormioApiUrl + 'saveEditor'
-                }).then(
-                    function (data) {
-                        successcallback(data);
-                    },
-                    function (data, status) {
-                        errorcallback(data);
-                    });
-            },
-            previousSessionSummary: function (request, successcallback, errorcallback) {
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'saveEditor'
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                });
+        },
+        previousSessionSummary: function (request, successcallback, errorcallback) {
+            if (formioConstants.IsRequestFromNativeIPad) {
+                callbacksTrack.push({
+                    Key: "previousSessionSummary",
+                    Value: successcallback
+                });
 
+                window.webkit.messageHandlers.requestDataFromiPad.postMessage('previousSessionSummary');
+
+            }
+            else {
                 $http({
                     method: 'POST',
                     data: DecorateRequest(request),
@@ -96203,26 +96641,14 @@ angular.module('formioApp').factory('formioFactory', ['$http', '$q','FormIoAppCo
                     function (data, status) {
                         errorcallback(data);
                     });
-            },
-            getReviewCycleStartAndEndDate: function (request, successcallback, errorcallback) {
+            }
+        },
+        getReviewCycleStartAndEndDate: function (request, successcallback, errorcallback) {
 
-                $http({
-                    method: 'POST',
-                    data: DecorateRequest(request),
-                    url: FormIoAppConfig.FormioApiUrl + 'reviewcyclestartandenddate'
-                }).then(
-                    function (data) {
-                        successcallback(data);
-                    },
-                    function (data, status) {
-                        errorcallback(data);
-                    });
-            },
-            sessionSummaryComments: function (request, successcallback, errorcallback) {
             $http({
                 method: 'POST',
                 data: DecorateRequest(request),
-                url: FormIoAppConfig.FormioApiUrl + 'sessionSummaryComments'
+                url: FormIoAppConfig.FormioApiUrl + 'reviewcyclestartandenddate'
             }).then(
                 function (data) {
                     successcallback(data);
@@ -96230,13 +96656,22 @@ angular.module('formioApp').factory('formioFactory', ['$http', '$q','FormIoAppCo
                 function (data, status) {
                     errorcallback(data);
                 });
-          },
-           saveSessionSummaryComments: function (request, successcallback, errorcallback) {
+        },
+        sessionSummaryComments: function (request, successcallback, errorcallback) {
+            if (formioConstants.IsRequestFromNativeIPad) {
+                callbacksTrack.push({
+                    Key: "sessionSummaryComments",
+                    Value: successcallback
+                });
+
+                window.webkit.messageHandlers.requestDataFromiPad.postMessage('sessionSummaryComments');
+
+            } else {
 
                 $http({
                     method: 'POST',
                     data: DecorateRequest(request),
-                    url: FormIoAppConfig.FormioApiUrl + 'saveSessionSummaryComments'
+                    url: FormIoAppConfig.FormioApiUrl + 'sessionSummaryComments'
                 }).then(
                     function (data) {
                         successcallback(data);
@@ -96244,56 +96679,86 @@ angular.module('formioApp').factory('formioFactory', ['$http', '$q','FormIoAppCo
                     function (data, status) {
                         errorcallback(data);
                     });
-           },
+            }
+        },
+        saveSessionSummaryComments: function (request, successcallback, errorcallback) {
 
-           saveCompetencyActionItems: function (request, successcallback, errorcallback) {
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'saveSessionSummaryComments'
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                });
+        },
 
-               $http({
-                   method: 'POST',
-                   data: DecorateRequest(request),
-                   url: FormIoAppConfig.FormioApiUrl + 'saveCompetencyActionItems'
-               }).then(
-                   function (data) {
-                       successcallback(data);
-                   },
-                   function (data, status) {
-                       errorcallback(data);
-                   });
-           },
+        saveCompetencyActionItems: function (request, successcallback, errorcallback) {
+
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'saveCompetencyActionItems'
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                });
+        },
 
 
-           getCompetencyActionItems: function (request, successcallback, errorcallback) {
-               
+        getCompetencyActionItems: function (request, successcallback, errorcallback) {
+            if (formioConstants.IsRequestFromNativeIPad) {
+                callbacksTrack.push({
+                    Key: "getCompetencyActionItems",
+                    Value: successcallback
+                });
+
+                window.webkit.messageHandlers.requestDataFromiPad.postMessage('getCompetencyActionItems');
+
+            }
+            else {
                 $http({
                     method: 'POST',
                     data: DecorateRequest(request),
                     url: FormIoAppConfig.FormioApiUrl + 'getCompetencyActionItems'
                 }).then(
                     function (data) {
-                         successcallback(data);
-                    },
-                    function (data, status) {
-                        errorcallback(data);
-                    });
-            },
-
-            saveDynamicRequest: function (request, successcallback, errorcallback) {
-
-                $http({
-                    method: 'POST',
-                    data: DecorateRequest(request),
-                    url: FormIoAppConfig.FormioApiUrl + 'saveDynamicReport'
-                }).then(
-                    function (data) {
                         successcallback(data);
                     },
                     function (data, status) {
                         errorcallback(data);
                     });
-            },
+            }
+        },
 
-            acknowledgeDynamicReport: function (request, successcallback, errorcallback) {
+        saveDynamicRequest: function (request, successcallback, errorcallback) {
 
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'saveDynamicReport'
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                });
+        },
+
+        acknowledgeDynamicReport: function (request, successcallback, errorcallback) {
+
+            if (formioConstants.IsRequestFromNativeIPad) {
+
+                window.webkit.messageHandlers.acknowledgeReport.postMessage(request);
+
+            } else {
                 $http({
                     method: 'POST',
                     data: DecorateRequest(request),
@@ -96305,64 +96770,174 @@ angular.module('formioApp').factory('formioFactory', ['$http', '$q','FormIoAppCo
                     function (data, status) {
                         errorcallback(data);
                     });
+            }
+        },
+        getActionItemStatusList: function (actionItemCode, successcallback, errorcallback) {
+            $http({
+                method: 'GET',
+                url: FormIoAppConfig.FormioApiUrl + 'actionItemStatusList/' + actionItemCode
+            }).then(
+            function (data) {
+                successcallback(data);
             },
-            getActionItemStatusList:function(actionItemCode, successcallback, errorcallback){
-                $http({
-                        method:'GET',
-                        url: FormIoAppConfig.FormioApiUrl + 'actionItemStatusList/' + actionItemCode
-                }).then(
-                function(data){
-                    successcallback(data);
-                },
-                function(data,status){
-                    errorcallback(data);
-                });
-            },
-            updateActionItemStatus: function (request,successcallback, errorcallback) {
-               
-                $http({
-                    method: 'POST',
-                    data: DecorateRequest(request),
-                    url: FormIoAppConfig.FormioApiUrl + 'updateActionItemStatus'
-                }).then(
-                    function (data) {
-                        successcallback(data);
-                    },
-                    function (data, status) {
-                        errorcallback(data);
-                    });
-            },
+            function (data, status) {
+                errorcallback(data);
+            });
+        },
+        updateActionItemStatus: function (request, successcallback, errorcallback) {
 
-            getSavedCommentsData: function (EmpReportId,successcallback, errorcallback) {
-                $http({
-                    method: 'GET',
-                    url: FormIoAppConfig.FormioApiUrl + 'getSavedCommentsData/' + EmpReportId
-                }).then(
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'updateActionItemStatus'
+            }).then(
                 function (data) {
                     successcallback(data);
                 },
                 function (data, status) {
                     errorcallback(data);
                 });
+        },
+
+        getSavedCommentsData: function (EmpReportId, successcallback, errorcallback) {
+            if(formioConstants.IsRequestFromNativeIPad){
+                callbacksTrack.push({
+                    Key:"getSavedCommentsData",
+                    Value: successcallback
+                });
+
+                window.webkit.messageHandlers.requestDataFromiPad.postMessage('getSavedCommentsData');
+
+            } else {
+            $http({
+                method: 'GET',
+                url: FormIoAppConfig.FormioApiUrl + 'getSavedCommentsData/' + EmpReportId
+            }).then(
+            function (data) {
+                successcallback(data);
             },
+            function (data, status) {
+                errorcallback(data);
+            });
+            }
+        },
 
-            deletePerformanceReview: function (request, successcallback, errorcallback) {
+        deletePerformanceReview: function (request, successcallback, errorcallback) {
 
-                $http({
-                    method: 'POST',
-                    data: DecorateRequest(request),
-                    url: FormIoAppConfig.FormioApiUrl + 'deletePerformanceReview'
-                }).then(
-                    function (data) {
-                        successcallback(data);
-                    },
-                    function (data, status) {
-                        errorcallback(data);
-                    });
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'deletePerformanceReview'
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                });
+        },
+
+        viewPerformanceReviewReport: function (request, successcallback, errorcallback) {
+
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'viewPerformanceReviewReport'
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                });
+        },
+
+        getAssessmentData: function (cycleId, successcallback, errorcallback) {
+            $http({
+                method: 'GET',
+                url: FormIoAppConfig.FormioApiUrl + 'getassessmentdata/' + assessmentId + '/' + DecorateRequest({}).RepId
+            }).then(
+            function (data) {
+                successcallback(data);
             },
+            function (data, status) {
+                errorcallback(data);
+            });
+        },
 
+        updateGoalDetails: function (request, successcallback, errorcallback) {
+
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'updateGoalDetails'
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                });
+        },
+
+        getCompetencyGuidanceData: function (request, successcallback, errorcallback) {
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'getCompetencyGuidanceData'
+            }).then(
+            function (data) {
+                successcallback(data);
+            },
+            function (data, status) {
+                errorcallback(data);
+            });
+        },
+
+        updateCompetencyGuidanceDetails: function (request, successcallback, errorcallback) {
+
+            $http({
+                method: 'POST',
+                data: DecorateRequest(request),
+                url: FormIoAppConfig.FormioApiUrl + 'updateCompetencyGuidanceDetails'
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                });
+        },
+
+        getFile: function (key, successcallback, errorcallback) {
+            //used by link to pdf
+            $http({
+                method: 'GET',
+                url: FormIoAppConfig.FormioApiUrl + 'file/' + key
+            }).then(
+                function (data) {
+                    successcallback(data);
+                },
+                function (data, status) {
+                    errorcallback(data);
+                });
+        },
+
+        deleteFile: function (key, successcallback, errorcallback) {
+            $http({
+                method: 'DELETE',
+                url: FormIoAppConfig.FormioApiUrl + 'file/' + key
+            }).then(
+                   function (data) {
+                       successcallback(data);
+                   },
+                   function (data, status) {
+                       errorcallback(data);
+                   });
         }
-    }]);
+
+    }
+}]);
 
 angular.module('TalentFirstApp').factory('peopleSearchFactory', ['$http', '$q', function ($http, $q) {
         return {
@@ -96433,7 +97008,50 @@ angular.module('TalentFirstApp').factory('talentFirstFactory', ['$http', '$q', '
                     function (data, status) {
                         errorcallback(data);
                     });
+            },
+
+            createScheduleForCoachingConversation: function (request, successcallback, errorcallback) {
+               
+                $http({
+                    method: 'POST',
+                    data: DecorateRequest(request),
+                    url: TalentFirstAppConfig.TalentFirstApiUrl + 'createScheduleForCoachingConversation'
+                }).then(
+                    function (data) {
+                        successcallback(data);
+                    },
+                    function (data, status) {
+                        errorcallback(data);
+                    });
+            },
+            saveRemindMeLaterForCoachingConversation: function (request, successcallback, errorcallback) {
+
+                $http({
+                        method: 'POST',
+                        data: DecorateRequest(request),
+                        url: TalentFirstAppConfig.TalentFirstApiUrl + 'saveRMLCoachingConversation'
+                }).then(
+                    function(data) {
+                        successcallback(data);
+                    },
+                    function (data, status) {
+                        errorcallback(data);
+                    });
+            },
+            getEmployeeCoachingConversationScheduleInformation:function (request, successcallback, errorcallback) {
+               $http({
+                    method: 'POST',
+                    data: DecorateRequest(request),
+                    url: TalentFirstAppConfig.TalentFirstApiUrl + 'getEmployeeCoachingConversationScheduleInformation'
+                }).then(
+                    function (data) {
+                        successcallback(data);
+                    },
+                    function (data, status) {
+                        errorcallback(data);
+                    });
             }
+
         }
     }]);
 
@@ -96489,7 +97107,7 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
             restrict: 'E',
             template: '<div ng-show="progress" class="loading_progress"><div class="progressbar_image"><img ng-src="{{loadingImagePath}}" alt="" class="mrgbottom10" /></div></div>',
             link: function ($scope, $elem, $attr) {
-                $scope.loadingImagePath = TalentFirstConst.BaseAppPath + '/TalentFirstV3/images/loading.gif';
+                $scope.loadingImagePath = TalentFirstConst.BaseAppPath + '/TalentFirstV3/images/formio/loading.gif';
             }
         }
     });
@@ -96589,8 +97207,8 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                 $scope.isEditMode = false;
                 $scope.Clusters = [];
                 $scope.progress = false;
-                $scope.DeleteIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/Delete.png";
-                $scope.closeBtnUrl = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/popup_close_new.png";
+                $scope.DeleteIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/Delete.png";
+                $scope.closeBtnUrl = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/popup_close_new.png";
                 $scope.DomainName = location.hostname;
                 $scope.TFMessages = TFMessages;
                 $scope.loadingImagePath = FormIoAppConfig.ProgressImageUrl;
@@ -96895,7 +97513,10 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
 
             link: function ($scope, $elem, $attr) {
                 setTimeout(function () {
-                    $("#divActionItem").setSlimScrollBar();
+                    if (!isIPad) {
+                        $("#divActionItem").setSlimScrollBar();
+                    }
+                    
                 }, 100);
             }
         }
@@ -96937,9 +97558,9 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                 $scope.TFMessages = TFMessages;
                 $scope.CDPTasks = [];
                 $scope.ShowCompleted = false;
-                $scope.EditIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/Images/orange_edit.png";
-                $scope.CancelIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/Images/popup_close_new.png";
-                $scope.CompletedIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/completed.png";
+                $scope.EditIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/orange_edit.png";
+                $scope.CancelIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/popup_close_new.png";
+                $scope.CompletedIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/completed.png";
 
                 $scope.loadingImagePath = FormIoAppConfig.ProgressImageUrl;
 
@@ -96976,38 +97597,42 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
 
                 $scope.OpenCDPTaskPopup = function (task) {
 
-                    if (task.TaskType == "Task") {
-                        var url = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/popups/DashboardPopUpPage.aspx?Value=learningPathCDPTask&learningid=" + task.Id
-                        + '&Tab=TaskItem' + '&label=' + encodeURIComponent(task.Title) + '&status=' + task.Status
-                        + '&assignedBy=' + task.AssignedBy + '&Source=' + task.Source + '&Type=Task&module=taskCDP';
-
-                        var title = task.Title;
-                        var height = '422px';
-                        return ShowLargeBootPopup({ url: url, title: title, height: height });
+                    if (formioConstants.IsRequestFromNativeIPad) {
+                        window.webkit.messageHandlers.OpenTask.postMessage(task);
                     }
-                    else if (task.TaskType == "Action Item") {
-                        $scope.progress = true;
+                    else {
+                        if (task.TaskType == "Task") {
+                            var url = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/popups/DashboardPopUpPage.aspx?Value=learningPathCDPTask&learningid=" + task.Id
+                            + '&Tab=TaskItem' + '&label=' + encodeURIComponent(task.Title) + '&status=' + task.Status
+                            + '&assignedBy=' + task.AssignedBy + '&Source=' + task.Source + '&Type=Task&module=taskCDP';
 
-                        formioFactory.getActionItemStatusList(task.ActionItemCode,
-                            function (response) {
-                                $scope.SelectedActionItem = task;
-                                $scope.SelectedActionItem.StatusList = response.data;
-                                $scope.SelectedActionItem.SelectedStatus = _.find($scope.SelectedActionItem.StatusList, { StatusTitle: task.Status == "100" ? "Complete" : task.Status });
+                            var title = task.Title;
+                            var height = '422px';
+                            return ShowLargeBootPopup({ url: url, title: title, height: height });
+                        }
+                        else if (task.TaskType == "Action Item") {
+                            $scope.progress = true;
 
-                                angular.element("#bootActionItemUpdate").modal(
-                                 {
-                                     backdrop: 'static',
-                                     keyboard: false
-                                 });
-                                $scope.progress = false;
-                            }, function (error) {
-                                console.log(error);
-                                $scope.progress = false;
-                            });
+                            formioFactory.getActionItemStatusList(task.ActionItemCode,
+                                function (response) {
+                                    $scope.SelectedActionItem = task;
+                                    $scope.SelectedActionItem.StatusList = response.data;
+                                    $scope.SelectedActionItem.SelectedStatus = _.find($scope.SelectedActionItem.StatusList, { StatusTitle: task.Status == "100" ? "Complete" : task.Status });
+
+                                    angular.element("#bootActionItemUpdate").modal(
+                                     {
+                                         backdrop: 'static',
+                                         keyboard: false
+                                     });
+                                    $scope.progress = false;
+                                }, function (error) {
+                                    console.log(error);
+                                    $scope.progress = false;
+                                });
 
 
+                        }
                     }
-
 
                     // if (typeof (OpenTaskPopupCDP) === 'function') {
                     //return OpenTaskPopupCDP(task.Id, task.Status, task.Title, task.AssignedBy, task.Source, 'Task');
@@ -97222,7 +97847,7 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
 })();
 (function(){
 
-    angular.module("formioApp").directive('tfCompetencies', ['$timeout', '$http', 'FormIoAppConfig', 'formioFactory', 'sharedDataService', function ($timeout, $http, FormIoAppConfig, formioFactory, sharedDataService) {
+    angular.module("formioApp").directive('tfCompetencies', ['$timeout', '$http', 'FormIoAppConfig', 'formioFactory', 'sharedDataService', '$q', function ($timeout, $http, FormIoAppConfig, formioFactory, sharedDataService, $q) {
 
     return {
        restrict:'E',
@@ -97237,10 +97862,13 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
         controller: ['$scope','$rootScope', function ($scope,$rootScope) {
             $scope.isEditMode = false;
             $scope.progress = false;
-            $scope.closeBtnUrl = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/popup_close_new.png";
+            $scope.closeBtnUrl = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/popup_close_new.png";
             $scope.TFMessages = TFMessages;
             $scope.loadingImagePath = FormIoAppConfig.ProgressImageUrl;
             $scope.SelfAssessmentRequestDueDate = '';
+            $scope.ListOfCompetencyGuidance = null;
+            $scope.AddedCompetencyGuidanceDetails = [];
+
             if (!angular.isUndefined($scope.submissiondata)){
                 $scope.isEditMode = $scope.submissiondata.isEditMode ? true : false;
 
@@ -97289,7 +97917,7 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                          "StartDate": startDate,
                          "EndDate": endDate
                      },function (response) {
-                         $scope.progress=false;
+                         $scope.progress = false;
                          $scope.Competencies = response.data;
                      },function(error){
                         $scope.progress=false;
@@ -97382,28 +98010,146 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                 return '';
             }
             // ================= calendar options  =========================
+
+            $scope.ShowCompetencyGuidance = function (value)
+            {
+                var findCompetency = false;
+                if ($scope.AddedCompetencyGuidanceDetails.length != 0) {
+                    var competency = value.category.name;
+                    $scope.AddedCompetencyGuidanceDetails.forEach(function (v) {
+                        if (v.CompetencyDimension == competency) {
+                            findCompetency = true;
+                            $scope.ListOfCompetencyGuidance = v;
+                        }
+                    });
+                }
+
+                if (!findCompetency) {
+                    formioFactory.getCompetencyGuidanceData(
+                        {
+                            "CompetencyId": angular.fromJson($scope.Competencies.CompetenciesHighChartJson).xAxis.Ids[value.index],
+                            "EmpReportId": FormIoAppConfig.ParseQueryString(window.location.href).cdrReportId
+                        }, function (response) {
+                            $scope.progress = false;
+                            $scope.ListOfCompetencyGuidance = response.data;
+                        }, function (error) {
+                            $scope.progress = false;
+                            console.log(error);
+                        });
+                }
+            }
+
+            $scope.UpdateCompetencyGuidanceDetails = function (ListOfCompetencyGuidance) {
+                if (ListOfCompetencyGuidance.Comments != null) {
+                    var isUpdate = false;
+                    $scope.AddedCompetencyGuidanceDetails.forEach(function (v) {
+                        if (v.CompetencyId == ListOfCompetencyGuidance.CompetencyId) {
+                            isUpdate = true;
+                            v.Comments = ListOfCompetencyGuidance.Comments;
+                        }
+                    });
+
+                    if (!isUpdate) {
+                        $scope.AddedCompetencyGuidanceDetails.push(
+                        {
+                            GuidanceMappingId: ListOfCompetencyGuidance.GuidanceMappingId,
+                            CompetencyId: ListOfCompetencyGuidance.CompetencyId,
+                            CompetencyDimension: ListOfCompetencyGuidance.CompetencyDimension,
+                            //EmpReportId: ListOfCompetencyGuidance.EmpReportId,
+                            Comments: ListOfCompetencyGuidance.Comments
+                        });
+                    }
+                    $scope.CancelClick();
+                }
+                else {
+                    showErrorToast(TFMessages.DynamicReport_Validation_RequiredFields);
+                }
+            }
+
+            $scope.CancelClick = function () {
+                $scope.ListOfCompetencyGuidance = null;
+            }
+
+
+            //============== events subscriptions =========================
+
+            $scope.FormRequest = function (addedCompetencyGuidanceDetails) {
+                // generates request for save
+                var requestCompetencyGuidanceDetails = [];
+                if (!angular.isUndefined(addedCompetencyGuidanceDetails) && addedCompetencyGuidanceDetails != null) {
+                    var com = angular.copy(addedCompetencyGuidanceDetails);
+                    _.each(com, function (c) {
+                        requestCompetencyGuidanceDetails.push({
+                            GuidanceMappingId: c.GuidanceMappingId,
+                            CompetencyId: c.CompetencyId,
+                            CompetencyDimension: c.CompetencyDimension,
+                            //EmpReportId: c.EmpReportId,
+                            Comments: c.Comments
+                        });
+
+                    });
+
+                    return requestCompetencyGuidanceDetails;
+                }
+                return null;
+            }
+
+            // when data is saved from ReviewReportViewer page, it raises an event, which will be captured here as we need to save product metrics mapping for report
+            $scope.$on(FormIoAppConfig.PublishedEvents.ReportDataSaved, function (event, args) {
+                if (args.EmpReportId != undefined && $scope.AddedCompetencyGuidanceDetails != null) {
+                    sharedDataService.SaveReportCallbacks.push(function () {
+                        var deferred = $q.defer();
+                        
+                        formioFactory.updateCompetencyGuidanceDetails(
+                        {
+                            EmpReportId: args.EmpReportId,
+                            CompetencyGuidanceResponse: $scope.FormRequest($scope.AddedCompetencyGuidanceDetails)
+                        }, function (response) {
+                            deferred.resolve(response);
+                        }, function (error) {
+                            deferred.resolve(error);
+                        });
+                        return deferred.promise;
+                    });
+                }
+
+                $scope.TmpReportId = args.EmpReportId;
+                $scope.CancelClick();
+            });
+
+
+            //============== events subscriptions =========================
+
+            $scope.CompetencyChart = function ($scope, $elem) {
+                if (!angular.isUndefined($scope.Competencies)) {
+                        $elem.find("div[id='dvCompetencyChart']").tfHighChart({
+                            ChartOptions: angular.fromJson($scope.Competencies.CompetenciesHighChartJson),
+                            YAxisTickInterval: 1,
+                            YAxisAllowDecimals: false,
+                            fnYAxisLabelFormatter: function (value) {
+                                value = value.toFixed();
+                                if($scope.Competencies.CompetenciesHighChartYAxisJson != ''){
+                                    var yLabelsArray = angular.fromJson($scope.Competencies.CompetenciesHighChartYAxisJson);
+                                    var arryValue = yLabelsArray[value];
+                                }
+                                return arryValue !== 'undefined' ? arryValue : value;
+                            },
+                            fnBarClick: function (value) {
+                                $scope.$apply(function () {
+                                    $scope.ShowCompetencyGuidance(value);
+                                });
+                            }
+                    });
+                }
+            }
+
         }],
         link:function ($scope, $elem, $attr) {
             
             $scope.$watch("Competencies", function (newValue, oldValue) {
                 $timeout(function () { // timeout is required else it does not work
                     $scope.$apply(function () {
-                        if (!angular.isUndefined($scope.Competencies)) {
-                                $elem.find("div[id='dvCompetencyChart']").tfHighChart({
-                                            ChartOptions: angular.fromJson($scope.Competencies.CompetenciesHighChartJson),
-                                            YAxisTickInterval: 1,
-                                            YAxisAllowDecimals: false,
-                                            fnYAxisLabelFormatter: function (value) {
-                                                value = value.toFixed();
-                                                if($scope.Competencies.CompetenciesHighChartYAxisJson != ''){
-                                                    var yLabelsArray = angular.fromJson($scope.Competencies.CompetenciesHighChartYAxisJson);
-                                                    var arryValue = yLabelsArray[value];
-                                                }
-                                                return arryValue !== 'undefined' ? arryValue : value;
-                                            }
-                                    });
-                        }
-                      
+                        $scope.CompetencyChart($scope, $elem);
                     });
                     $.talentcarousel();
                 }, 50);
@@ -97417,27 +98163,27 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
 })();
 
 
-(function(){
+(function () {
 
     angular.module("formioApp").directive('tfCompetenciesByClusters', ['$timeout', '$http', 'FormIoAppConfig', 'formioFactory', 'sharedDataService', '$q', function ($timeout, $http, FormIoAppConfig, formioFactory, sharedDataService, $q) {
 
         return {
-            restrict:'E',
+            restrict: 'E',
             scope: {
                 callback: '&',
                 submissiondata: '=',
-                component:'='
+                component: '='
             },
             transclude: true,
             replace: true,
             templateUrl: FormIoAppConfig.TalentFirstConst.BaseFormIoDirectivesPath + 'js/directives/formio/templates/tfCompetenciesByClusters.html',
-            controller: ['$scope','$rootScope', function ($scope,$rootScope) {
+            controller: ['$scope', '$rootScope', function ($scope, $rootScope) {
                 $scope.isEditMode = false;
                 $scope.Clusters = [];
                 $scope.progress = false;
-                $scope.AddIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/report_icon_add.png";
-                $scope.closeBtnUrl = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/popup_close_new.png";
-                $scope.RemoveIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/report_minus_button.png";
+                $scope.AddIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/report_icon_add.png";
+                $scope.closeBtnUrl = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/popup_close_new.png";
+                $scope.RemoveIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/report_minus_button.png";
                 $scope.TFMessages = TFMessages;
                 $scope.loadingImagePath = FormIoAppConfig.ProgressImageUrl;
                 $scope.SelectedCompetency = null;
@@ -97446,9 +98192,9 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                 $scope.Trainings = [];
                 //$scope.BasePath = FormIoAppConfig.TalentFirstConst.BaseAppPath + '/TalentFirstV3/';
 
-                if (!angular.isUndefined($scope.submissiondata)){
+                if (!angular.isUndefined($scope.submissiondata)) {
                     $scope.isEditMode = $scope.submissiondata.isEditMode ? true : false;
-                    
+
                     if (!angular.isUndefined($scope.submissiondata.isPDFExport)) {
                         $scope.isPDFExport = $scope.submissiondata.isPDFExport;
                     }
@@ -97456,24 +98202,24 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                     //Disable or hide the control when rep viewable control in a rep initiated report is viewed by manager.
                     $scope.ComponentDisabledView = sharedDataService.GetComponentDisabledView($scope);
                 }
-       
-                if(!angular.isUndefined($scope.submissiondata) && $scope.submissiondata.isSubmitted){
-                 $scope.readOnly=true;
+
+                if (!angular.isUndefined($scope.submissiondata) && $scope.submissiondata.isSubmitted) {
+                    $scope.readOnly = true;
                 }
 
                 $scope.getCompetenciesByClusters = function () {
-            
+
                     if ($scope.isEditMode) {
 
                         var elem = document.createElement('textarea');
 
-                        $scope.progress=true;
+                        $scope.progress = true;
                         var cdrReportId = FormIoAppConfig.ParseQueryString(window.location.href).cdrReportId;
                         formioFactory.getCompetenciesByClusters(
                          {
                              EmpReportId: angular.isUndefined(cdrReportId) ? null : cdrReportId
-                         },function (response) {
-                             $scope.progress=false;
+                         }, function (response) {
+                             $scope.progress = false;
                              $scope.Clusters = response.data.Clusters;
 
                              if ($scope.Clusters != undefined && $scope.Clusters.length > 0) {
@@ -97482,12 +98228,12 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
 
                                  _.each($scope.Clusters, function (cluster) {
 
-                                    elem.innerHTML = cluster.Name;
-                                    cluster.Name = elem.value;
+                                     elem.innerHTML = cluster.Name;
+                                     cluster.Name = elem.value;
 
                                      _.each(cluster.Competencies, function (competency) {
 
-                                          //Decoding any special character which was inserted while encoding
+                                         //Decoding any special character which was inserted while encoding
                                          elem.innerHTML = competency.Name;
 
                                          competency.Name = elem.value;
@@ -97501,21 +98247,21 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                                  // edit case : show selected competencies
                                  var t = null;
                                  _.map($scope.Clusters, function (cluster) {
-                                      t =_.filter(cluster.Competencies, function (competency) {
+                                     t = _.filter(cluster.Competencies, function (competency) {
                                          return competency.IsSelected;
                                      });//find selected competency per cluster
-                                      if (!angular.isUndefined(t) && t != null && t.length > 0) {
-                                          _.each(t, function (comp) {
-                                         // find selected level for above filtered competency
-                                              var selectedLevel = _.find(comp.Levels, { IsSelected: true });
-                                              var SelectedSF = _.find(comp.SuccessFactors, { IsSelected: true });
-                                              //var SelectedSFLevel = _.find(SelectedSF.SuccessFactorLevels, { IsSelected: true });
-                                              comp.SelectedLevel = selectedLevel;
-                                              comp.SelectedSuccessFactor = SelectedSF;
-                                              //comp.SelectedSFactorLevel = SelectedSFLevel;
-                                         // finally push this to array used to populate selected competencies
-                                              $scope.SelectedCompetencies.push(comp);                                              
-                                          });
+                                     if (!angular.isUndefined(t) && t != null && t.length > 0) {
+                                         _.each(t, function (comp) {
+                                             // find selected level for above filtered competency
+                                             var selectedLevel = _.find(comp.Levels, { IsSelected: true });
+                                             var SelectedSF = _.find(comp.SuccessFactors, { IsSelected: true });
+                                             //var SelectedSFLevel = _.find(SelectedSF.SuccessFactorLevels, { IsSelected: true });
+                                             comp.SelectedLevel = selectedLevel;
+                                             comp.SelectedSuccessFactor = SelectedSF;
+                                             //comp.SelectedSFactorLevel = SelectedSFLevel;
+                                             // finally push this to array used to populate selected competencies
+                                             $scope.SelectedCompetencies.push(comp);
+                                         });
                                      }
                                      // $scope.SelectedCompetencies = _.flatten($scope.SelectedCompetencies); // this is an example of diff b/w lodash filter and find. filter returns array while find searches for first item only. we do  not need to flatten the array here.
                                  });
@@ -97525,8 +98271,8 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                                  //});
                              }
                              $scope.FetchResources($scope.SelectedCompetencies);
-                         },function(error){
-                             $scope.progress=false;
+                         }, function (error) {
+                             $scope.progress = false;
                              console.log(error);
                          });
                     }
@@ -97536,25 +98282,24 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                     if (SelectedCompetency != null) {
                         if (!_.some($scope.SelectedCompetencies, { Id: SelectedCompetency.Id })) { //do not allow duplicate
                             var filtered = _.filter($scope.SelectedCompetencies, { ClusterId: SelectedCompetency.ClusterId });
-                            if (!angular.isUndefined(filtered ) && (filtered.length >= $scope.component.CompetenciesAllowed)) {
-                                showErrorToast("Maximum " + $scope.component.CompetenciesAllowed + " Competencies can be added per Cluster.");                                
+                            if (!angular.isUndefined(filtered) && (filtered.length >= $scope.component.CompetenciesAllowed)) {
+                                showErrorToast("Maximum " + $scope.component.CompetenciesAllowed + " Competencies can be added per Cluster.");
                             }
-                            else
-                                {
+                            else {
                                 $scope.SelectedCompetencies.push(SelectedCompetency);
                                 //$scope.SelectedCompetency = null;
                             }
                             $scope.FetchResources($scope.SelectedCompetencies);
                             //_.remove($scope.Clusters, { Id: $scope.SelectedCompetency.Id });
                         }
-                   
+
                     }
                 }
 
                 $scope.RemoveCompetency = function (comp) {
                     _.remove($scope.SelectedCompetencies, { Id: comp.Id });
-                    _.remove($scope.Trainings, {CompetencyDimensionId: comp.Id});
-               
+                    _.remove($scope.Trainings, { CompetencyDimensionId: comp.Id });
+
                     //$scope.FetchResources();
                     //  $scope.productsList.push(metric);
                 }
@@ -97574,8 +98319,7 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                     if (!angular.isUndefined(competencies) && competencies != null) {
                         var com = angular.copy(competencies);
                         _.each(com, function (c) {
-                            if ($scope.component.ShowSuccessFactor)
-                            {
+                            if ($scope.component.ShowSuccessFactor) {
                                 c.SelectedSuccessFactor.SuccessFactorLevels = [];
                                 //c.SelectedSuccessFactor.SuccessFactorLevels.push(c.SelectedSuccessFactorLevel);
                             }
@@ -97585,80 +98329,100 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                                 Levels: [c.SelectedLevel],
                                 SuccessFactors: [c.SelectedSuccessFactor],
                                 CompetencyTrainings: c.CompetencyTrainings,
-                                CustomValue:c.CustomValue
+                                CustomValue: c.CustomValue
                             });
-                       
+
                         });
 
                         return requestCompetencies;
                     }
                     return null;
-                }                               
+                }
 
-                $scope.getCompetenciesByClusters();                
+                $scope.getCompetenciesByClusters();
 
                 $scope.getTrainingsByCompetencies = function (SelectedCompetency) {
-            
+
                     if ($scope.isEditMode) {
-                        $scope.progress=true;
+                        if (!formioConstants.IsRequestFromNativeIPad) {
+                            $scope.progress = true;
+                        }
                         var cdrReportId = FormIoAppConfig.ParseQueryString(window.location.href).cdrReportId;
                         //var reportName = FormIoAppConfig.ParseQueryString(window.location.href).ReportName;
                         formioFactory.getTrainingsByCompetencies(
                          {
                              EmpReportId: angular.isUndefined(cdrReportId) ? null : cdrReportId,
                              CompetencyIds: _.map(SelectedCompetency, 'Id')
-                         },function (response) {
-                             $scope.progress=false;
-                             $scope.Trainings = response.data.Trainings;
+                         }, function (response) {
 
-                             if ($scope.Trainings != undefined && $scope.Trainings.length > 0) {
-                                 // edit case : show selected competencies
+                             if (formioConstants.IsRequestFromNativeIPad) {
+                                 $scope.Trainings = response.data.Trainings;
                              }
-                         },function(error){
-                             $scope.progress=false;
+                             else {
+                                 $scope.progress = false;
+                                 $scope.Trainings = response.data.Trainings;
+                             }
+
+                         }, function (error) {
+                             if (!formioConstants.IsRequestFromNativeIPad) {
+                                 $scope.progress = false;
+                             }
                              console.log(error);
                          });
                     }
                 }
 
                 $scope.OpenAssignToPopup = function (training) {
-                    var title = 'Training Content Assignment';
-                
-                    var url = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/popups/CoachModulePopUpPage.aspx?value=assigncdrtraining&ContentId="
-                        + training.ContentId + '&CompDimId=' + training.CompetencyDimensionId + '&catappid=' + training.API_Identity + '&source=dynamicreport';
 
-                    var isIPad = window.navigator.userAgent.match(/iPad/i) != null;
-                        
-                    if (isIPad) {
-                        showIpadPopUP(url, title)
+                    if (formioConstants.IsRequestFromNativeIPad) {
+
+                        window.webkit.messageHandlers.OpenAssignTraining.postMessage(training);
                     }
                     else {
-                        var width = '600px';
-                        var height = '320px';
-                        var iHeight = '300px';
-                        ShowCoachingReportPop(url, title, height, width, iHeight);
+
+                        var title = 'Training Content Assignment';
+
+                        var url = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/popups/CoachModulePopUpPage.aspx?value=assigncdrtraining&ContentId="
+                            + training.ContentId + '&CompDimId=' + training.CompetencyDimensionId + '&catappid=' + training.API_Identity + '&source=dynamicreport';
+
+                        var isIPad = window.navigator.userAgent.match(/iPad/i) != null;
+
+                        if (isIPad) {
+                            showIpadPopUP(url, title)
+                        }
+                        else {
+                            var width = '600px';
+                            var height = '320px';
+                            var iHeight = '300px';
+                            ShowCoachingReportPop(url, title, height, width, iHeight);
+                        }
                     }
                 }
 
                 $scope.OpenLocationPopup = function (training) {
-                    var title = 'Training Content Review';
-                    var url = FormIoAppConfig.TalentFirstConst.BaseAppPath + '/TalentFirstV3/TrainingLeftPanel/TrainingLocationPopup.aspx?type=coach&ContentId=' + training.ContentId + '&TypeId=' + training.TypeId;
+                    if(formioConstants.IsRequestFromNativeIPad){
+                    
+                        window.webkit.messageHandlers.previewTraining.postMessage(training);
+                    } else {
 
-                    //var isIPad = window.navigator.userAgent.match(/iPad/i) != null;
-
-                    //if (isIPad) {
-                    //    showIpadPopUP(url, title)
-                    //}
-                    //else {
-                    var width = '600px';
-                    var height = '380px';
-                    var iHeight = '360px';
-                    ShowCoachingReportPop(url, title, height, width, iHeight);
-                    //}
-                    return false;
+                        var title = 'Training Content Review';
+                        var url = FormIoAppConfig.TalentFirstConst.BaseAppPath + '/TalentFirstV3/TrainingLeftPanel/TrainingLocationPopup.aspx?type=coach&ContentId=' + training.ContentId + '&TypeId=' + training.TypeId;
+                        var width = '600px';
+                        var height = '380px';
+                        var iHeight = '360px';
+                        ShowCoachingReportPop(url, title, height, width, iHeight);
+                          return false;
+                    }
+                  
                 }
 
                 $scope.ShowCompetencyModels = function (clusterid) {
+                    if(formioConstants.IsRequestFromNativeIPad){
+                    
+
+                        window.webkit.messageHandlers.showCompetencyModel.postMessage(clusterid);
+
+                    } else {
                     var title = 'Competency Model';
                     var url = FormIoAppConfig.TalentFirstConst.BaseAppPath + '/TalentFirstV3/Coach/ShowCompenetcyDesignView.aspx?bcsclass=y&case=model&Cntrl=n&CalledFrom=ReviewDashBoard&RepEmpID=' + FormIoAppConfig.SelRepId + '&MemberOrgId=' + FormIoAppConfig.MemberOrgId + '&ClusterId=' + clusterid;
                     var isIPad = window.navigator.userAgent.match(/iPad/i) != null;
@@ -97672,35 +98436,55 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                         ShowCoachingReportPop(url, title, height, width, iHeight);
                     }
                     return false;
+                    }
+                  
                 }
 
-                $scope.ShowCompetencyViewModels = function (pdfFile) {
+                $scope.ShowCompetencyViewModels = function (pdfFile, clusterid) {
+                    if(formioConstants.IsRequestFromNativeIPad){
+                        window.webkit.messageHandlers.showCompetencyModel.postMessage(clusterid);
+
+                    } else{
                     var title = 'Competency Model';
                     var isIPad = window.navigator.userAgent.match(/iPad/i) != null;
                     ShowPDFWindow(FormIoAppConfig.DocumentUrl, pdfFile)
                     return false;
-            }
+                    }
+                }
 
                 console.log(FormIoAppConfig.TalentFirstConst.BaseAppPath);
-                            
+
                 //============== events subscriptions =========================
 
                 // when data is saved from ReviewReportViewer page, it raises an event, which will be captured here as we need to save product metrics mapping for report
                 $scope.$on(FormIoAppConfig.PublishedEvents.ReportDataSaved, function (event, args) {
                     if (args.EmpReportId != undefined && $scope.SelectedCompetencies.length > 0) {
-                        sharedDataService.SaveReportCallbacks.push(function () {
-                            var deferred = $q.defer();
-                            formioFactory.saveCompetenciesByClusters(
-                            {
-                                EmpReportId: args.EmpReportId,
-                                Competencies: $scope.FormRequest($scope.SelectedCompetencies)
-                            }, function (response) {
-                                deferred.resolve(response);
-                            }, function (error) {
-                                deferred.reject(error);
+                        var request = {
+                            EmpReportId: args.EmpReportId,
+                            Competencies: $scope.FormRequest($scope.SelectedCompetencies)
+                        };
+
+                        if (formioConstants.IsRequestFromNativeIPad) {
+                            sharedDataService.SaveReportRequestsForIpad.push({
+                                Key: $scope.component.type,
+                                Value: request
                             });
-                               return deferred.promise;
-                        });
+                        }
+                        else
+                        {
+                            sharedDataService.SaveReportCallbacks.push(function () {
+                                var deferred = $q.defer();
+                                formioFactory.saveCompetenciesByClusters(
+                                request
+                                , function (response) {
+                                    deferred.resolve(response);
+                                }, function (error) {
+                                    deferred.reject(error);
+                                });
+                                return deferred.promise;
+                            });
+                        }
+                      
                     }
 
                 });
@@ -97711,8 +98495,7 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                         var training = _.find($scope.Trainings, { ContentId: t.ContentId });
                         var traniningCompetency = _.find($scope.SelectedCompetencies, { Id: t.CompetencyDimensionId });
 
-                        if (angular.isUndefined(traniningCompetency.CompetencyTrainings) || traniningCompetency.CompetencyTrainings == null)
-                        {
+                        if (angular.isUndefined(traniningCompetency.CompetencyTrainings) || traniningCompetency.CompetencyTrainings == null) {
                             traniningCompetency.CompetencyTrainings = [];
                         }
 
@@ -97723,17 +98506,17 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                         }
                     }
                 });
-            
+
 
                 //============== events subscriptions =========================
             }],
-            link:function ($scope, $elem, $attr) {
-            
+            link: function ($scope, $elem, $attr) {
+
                 $timeout(function () { // timeout is required for setSlimScrollBar else it does not work
-                   // $elem.find("#compcluster").setSlimScrollBar();
+                    // $elem.find("#compcluster").setSlimScrollBar();
                 }, 1000);
 
-    
+
             }
         }
 
@@ -97761,8 +98544,8 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                 $scope.isEditMode = false;
                 $scope.Clusters = [];
                 $scope.progress = false;
-                $scope.DeleteIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/Delete.png";
-                $scope.closeBtnUrl = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/popup_close_new.png";
+                $scope.DeleteIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/Delete.png";
+                $scope.closeBtnUrl = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/popup_close_new.png";
                 $scope.DomainName = location.hostname;
                 $scope.TFMessages = TFMessages;
                 $scope.loadingImagePath = FormIoAppConfig.ProgressImageUrl;
@@ -97780,65 +98563,71 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                     if (!angular.isUndefined($scope.submissiondata.isPDFExport)) {
                         $scope.isPDFExport = $scope.submissiondata.isPDFExport;
                     }
-
+                    
                     //Disable or hide the control when rep viewable control in a rep initiated report is viewed by manager.
                     $scope.ComponentDisabledView = sharedDataService.GetComponentDisabledView($scope);
                 }
+
+                $scope.HandleResponse = function (response) {
+                    var elem = document.createElement('textarea');
+                    $scope.progress = false;
+                    $scope.Clusters = response.data.Clusters;
+
+                    if ($scope.Clusters != undefined && $scope.Clusters.length > 0) {
+
+                        _.each($scope.Clusters, function (cluster) {
+
+                            elem.innerHTML = cluster.Name;
+                            cluster.Name = elem.value;
+
+                            _.each(cluster.Competencies, function (competency) {
+                                //Decoding any special character which was inserted while encoding
+                                elem.innerHTML = competency.Name;
+
+                                competency.Name = elem.value;
+
+                                //Append Competency Name with Cluster Name.
+                                competency.Name = competency.Name + " (" + TFMessages.Cluster_Name + " - " + cluster.Name + ")";
+                                $scope.SelectedCompetencies.push(competency);
+                            });
+
+                        });
+                    }
+                }
+              
 
                 $scope.getCompetenciesByClusters = function () {
 
                     if ($scope.isEditMode) {
 
-                        var elem = document.createElement('textarea');
-
                         $scope.progress = true;
                         var cdrReportId = FormIoAppConfig.ParseQueryString(window.location.href).cdrReportId;
-                        formioFactory.getCompetenciesByClusters(
-                         {
-                             EmpReportId: angular.isUndefined(cdrReportId) ? null : cdrReportId
-                         }, function (response) {
-                             $scope.progress = false;
-                             $scope.Clusters = response.data.Clusters;
 
-                             if ($scope.Clusters != undefined && $scope.Clusters.length > 0) {
+                        if (formioConstants.IsRequestFromNativeIPad) {
 
-                                 _.each($scope.Clusters, function (cluster) {
-
-                                     elem.innerHTML = cluster.Name;
-                                     cluster.Name = elem.value;
-
-                                     _.each(cluster.Competencies, function (competency) {
-                                         //Decoding any special character which was inserted while encoding
-                                         elem.innerHTML = competency.Name;
-
-                                         competency.Name = elem.value;
-
-                                         //Append Competency Name with Cluster Name.
-                                         competency.Name = competency.Name + " (" + TFMessages.Cluster_Name + " - " + cluster.Name + ")";
-                                         $scope.SelectedCompetencies.push(competency);
-                                     });
-
-                                 });
-
-                                 // edit case : show selected competencies
-                                 //var t = null;
-                                 //_.map($scope.Clusters, function (cluster) {
-                                 //    t = _.filter(cluster.Competencies, function (competency) {
-                                 //        return true;
-                                 //    });
-                                 //    if (!angular.isUndefined(t) && t != null && t.length > 0) {
-                                 //        _.each(t, function (comp) {
-
-                                 //            // finally push this to array used to populate selected competencies
-                                 //            $scope.SelectedCompetencies.push(comp);
-                                 //        });
-                                 //    }
-                                 //});
-                             }
-                         }, function (error) {
-                             $scope.progress = false;
-                             console.log(error);
-                         });
+                            formioFactory.getCompetenciesByClusters2(
+                              {
+                                  EmpReportId: angular.isUndefined(cdrReportId) ? null : cdrReportId
+                              }, function (response) {
+                                  $scope.HandleResponse(response);
+                              }, function (error) {
+                                  $scope.progress = false;
+                                  console.log(error);
+                              });
+                        }
+                        else
+                        {
+                               formioFactory.getCompetenciesByClusters(
+                               {
+                                   EmpReportId: angular.isUndefined(cdrReportId) ? null : cdrReportId
+                               }, function (response) {
+                                   $scope.HandleResponse(response);
+                               }, function (error) {
+                                   $scope.progress = false;
+                                   console.log(error);
+                               });
+                        }
+                      
                     }
                 }
 
@@ -98034,21 +98823,35 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                 // when data is saved from ReviewReportViewer page, it raises an event, which will be captured here as we need to save product metrics mapping for report
                 $scope.$on(FormIoAppConfig.PublishedEvents.ReportDataSaved, function (event, args) {
                     if (args.EmpReportId != undefined && $scope.AddedCompetencyActionItem.length > 0) {
-                        sharedDataService.SaveReportCallbacks.push(function () {
-                            var deferred = $q.defer();
 
-                            formioFactory.saveCompetencyActionItems(
-                            {
-                                EmpReportId: args.EmpReportId,
-                                DomainName: $scope.DomainName,
-                                CompetencyActionItems: $scope.FormRequest($scope.AddedCompetencyActionItem)
-                            }, function (response) {
-                                deferred.resolve(response);
-                            }, function (error) {
-                                 deferred.resolve(error);
+                        var request = {
+                            EmpReportId: args.EmpReportId,
+                            DomainName: $scope.DomainName,
+                            CompetencyActionItems: $scope.FormRequest($scope.AddedCompetencyActionItem)
+                        };
+
+                        if (formioConstants.IsRequestFromNativeIPad) {
+
+                            sharedDataService.SaveReportRequestsForIpad.push({
+                                Key: $scope.component.type,
+                                Value: request
                             });
-                            return deferred.promise;
-                        });
+
+                        }
+                        else {
+
+                            sharedDataService.SaveReportCallbacks.push(function () {
+                                var deferred = $q.defer();
+
+                                formioFactory.saveCompetencyActionItems(
+                                 request, function (response) {
+                                     deferred.resolve(response);
+                                 }, function (error) {
+                                     deferred.resolve(error);
+                                 });
+                                return deferred.promise;
+                            });
+                        }
                     }
 
                     $scope.TmpReportId = args.EmpReportId;
@@ -98067,7 +98870,7 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
 
             link: function ($scope, $elem, $attr) {
                 setTimeout(function () {
-                    $("#divActionItem").setSlimScrollBar();
+                  $("#divActionItem").setSlimScrollBar();
                 }, 100);
             }
         }
@@ -98118,16 +98921,10 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                         if (!$scope.submissiondata.IsComplianceNeeded) {
                             $scope.SendEmail = true;
                             $timeout(function () {
-                                var elem = $("div[data-attr-iscompliancepanel='true']:first");
-                                //var complianceText = $scope.submissiondata.ComplianceText;
 
-                                //if (complianceText.trim() != '') {
-                                var jqHtml = elem;
-                                jqHtml.find('p.help-block').remove();
-
-                                var compiledHTML = $(jqHtml).html();
+                                var compiledHTML = $("#form-group-" +$scope.component.key).html();
                                 if (angular.isUndefined(compiledHTML)) {
-                                    compiledHTML = "";
+                                        compiledHTML = "";
                                 }
 
                                 $scope.SendEmail = false;
@@ -98161,13 +98958,66 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                 });
 
                 //============== events subscriptions =========================
-
-
             }]
 
         }
     }]);
 })();
+(function () {
+    angular.module("formioApp").directive('tfConfigureCustomFields', ['FormIoAppConfig', 'formioFactory', 'sharedDataService', function (FormIoAppConfig, formioFactory, sharedDataService) {
+
+        return {
+            restrict: 'AE',
+            scope: {
+                ngModel: '=?',
+                submissiondata: '=',
+                component: '='
+            },
+            replace: true,
+            templateUrl: FormIoAppConfig.TalentFirstConst.BaseFormIoDirectivesPath + 'js/directives/formio/templates/tfConfigureCustomFields.html',
+            controller: ['$scope', '$rootScope', function ($scope, $rootScope) {
+
+                $scope.TFMessages = TFMessages;
+
+                if (!angular.isUndefined($scope.submissiondata)) {
+              
+
+                    //Disable or hide the control when rep viewable control in a rep initiated report is viewed by manager.
+                    $scope.ComponentDisabledView = sharedDataService.GetComponentDisabledView($scope);
+                }
+
+                //Fill Master CustomField drop down in design mode (InitiateReviewReport) only
+                if (!$scope.isEditMode) {
+                    $scope.GetCustomFields = function () {
+                        $scope.customFieldList = [];
+                        // When Custom Field values are not exist in ReportCustomFields
+                        if (angular.isUndefined(sharedDataService.ReportCustomFields) || sharedDataService.ReportCustomFields.length === 0) {
+                            var cdrReportId = FormIoAppConfig.ParseQueryString(window.location.href).cdrReportId;
+                            formioFactory.getCustomFields(
+                                {
+                                    EmpReportId: angular.isUndefined(cdrReportId) ? null : cdrReportId
+                                },
+                                 function (response) {
+                                     $scope.customFieldList = response.data.CustomFields; // get all custom fields
+                                     sharedDataService.ReportCustomFields = angular.copy($scope.customFieldList);
+                                 }, function (error) {
+                                     console.log(error);
+                                 });
+                        }
+                        else {
+                            $scope.customFieldList = angular.copy(sharedDataService.ReportCustomFields);
+                        }
+
+                    }
+
+                    $scope.GetCustomFields();
+                }
+
+
+            }]
+        }
+    }]);
+}());
 (function(){
     angular.module("formioApp").directive('tfConfigureSessionLength', ['FormIoAppConfig', 'formioFactory','sharedDataService', function (FormIoAppConfig, formioFactory, sharedDataService) {
 
@@ -98284,6 +99134,89 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
             }
     }]);
 }());
+(function () {
+    angular.module("formioApp").directive('tfCustomFields', ['FormIoAppConfig', 'sharedDataService', 'formioFactory', function (FormIoAppConfig, sharedDataService, formioFactory) {
+
+        return {
+            restrict: 'E',
+            scope: {
+                submissiondata: '=',
+                component: '='
+            },
+            transclude: true,
+            replace: true,
+            templateUrl: FormIoAppConfig.TalentFirstConst.BaseFormIoDirectivesPath + 'js/directives/formio/templates/tfCustomFields.html',
+            controller: ['$scope', '$rootScope', function ($scope, $rootScope) {
+
+                $scope.isEditMode = false;
+                $scope.TFMessages = TFMessages;
+                $scope.isUserEditable = false;
+
+
+                if (!angular.isUndefined($scope.submissiondata)) {
+                    $scope.isEditMode = $scope.submissiondata.isEditMode ? true : false;
+
+                    if (!angular.isUndefined($scope.submissiondata) && $scope.submissiondata.isSubmitted) {
+                        $scope.readOnly = true;
+                    }
+
+                    //Disable or hide the control when rep viewable control in a rep initiated report is viewed by manager.
+                    $scope.ComponentDisabledView = $scope.submissiondata.isRepInitiated && !$scope.submissiondata.RepDisabledView;
+
+                }
+
+                //Get CustomField actual value in Edit Mode (ReviewReportViewer) only
+                if ($scope.isEditMode) {
+                    $scope.GetCustomFieldValue = function () {
+                        var cdrReportId = FormIoAppConfig.ParseQueryString(window.location.href).cdrReportId;
+                        if (
+                             cdrReportId == 0
+                             && !angular.isUndefined($scope.component.selectedCustomField)
+                             && !angular.isUndefined($scope.component.selectedCustomField.CustomFieldID)) {
+
+                            formioFactory.getCustomFieldValue(
+                                {
+                                    EmpReportId: angular.isUndefined(cdrReportId) ? null : cdrReportId,
+                                    CustomFieldId: $scope.component.selectedCustomField.CustomFieldID
+                                },
+                                 function (response) {
+                                     $scope.submissiondata[$scope.component.key] = response.data.CustomField.CustomFieldValue;
+
+                                 }, function (error) {
+                                     console.log(error);
+                                 });
+                        }
+                    }
+
+
+                    $scope.GetCustomFieldValue();
+
+                    var isMgr = FormIoAppConfig.ParseQueryString(window.location.href).IsMgr;
+
+                    $scope.IsUserEditable = function () {
+                        if (!angular.isUndefined($scope.component.editableCustomFields) && !angular.isUndefined(isMgr)) {
+                            if ($scope.component.editableCustomFields == '1' && isMgr == 'T') {
+                                $scope.isUserEditable = true;
+                            }
+                            else if ($scope.component.editableCustomFields == '2' && isMgr != 'T') {
+                                $scope.isUserEditable = true;
+                            }
+                            else if ($scope.component.editableCustomFields == '3') {
+                                $scope.isUserEditable = true;
+                            }
+                            else {
+                                $scope.isUserEditable = false;
+                            }
+                        }
+                    }
+
+                    $scope.IsUserEditable();
+                }
+            }]
+
+        }
+    }]);
+})();
 /// <reference path="../../../Scripts/formio/ckeditor.js" />
 /// <reference path="../../../Scripts/formio/ckeditor.js" />
 (function () {
@@ -98342,7 +99275,7 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                         //timeout is required
                         $scope.editorOptions = FormIoAppConfig.CKEditorConfig;
 
-                        FormIoAppConfig.CKEditorConfig = ($scope.submissiondata.isSubmitted || $scope.component.disabled) ?
+                        FormIoAppConfig.CKEditorConfig = ((!angular.isUndefined($scope.submissiondata) && $scope.submissiondata.isSubmitted) || $scope.component.disabled) ?
                                                               angular.extend(FormIoAppConfig.CKEditorConfig, { customConfig: FormIoAppConfig.TalentFirstConst.BaseFormIoCKPath + "ckeditor/ckeditor_config.js" })
                                                             : angular.extend(FormIoAppConfig.CKEditorConfig, { customConfig: FormIoAppConfig.TalentFirstConst.BaseFormIoCKPath + "ckeditor/ckeditor_config_Write.js" });
 
@@ -98457,23 +99390,40 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                 // idea is to save ckeditor data in separate table to minimize the size of report data json
                 $scope.$on(FormIoAppConfig.PublishedEvents.ReportDataSaved, function (event, args) {
                     if (args.EmpReportId != undefined && $scope.ckData != null) {
-                        sharedDataService.SaveReportCallbacks.push(function () {
-                            var deferred = $q.defer();
-                            formioFactory.saveEditor(
-                            {
-                                EmpReportId: args.EmpReportId,
-                                Editors: [{
-                                    CKEditorId: $scope.UNIQ_ID,
-                                    CKEditorContent: $scope.ckData
-                                }]
-                            }, function (response) {
-                                deferred.resolve(response);
-                            }, function (error) {
-                               // console.log(error);
-                                deferred.reject(error);
+                        var request = {
+                            EmpReportId: args.EmpReportId,
+                            ControlType: $scope.component.type,
+                            Editors: [{
+                                CKEditorId: $scope.UNIQ_ID,
+                                CKEditorContent: $scope.ckData,
+                                EmpReportId: "", //IPAd Offline
+                                CreatedDate: "",
+                                UpdatedDate: "",
+                                Status: "A"
+                            }]
+                        };
+
+                        if (formioConstants.IsRequestFromNativeIPad) {
+
+                            sharedDataService.SaveReportRequestsForIpad.push({
+                                Key: $scope.component.type,
+                                Value: request
                             });
-                            return deferred.promise;
-                        });
+
+                        }
+                        else {
+                            sharedDataService.SaveReportCallbacks.push(function () {
+                                var deferred = $q.defer();
+                                formioFactory.saveEditor(
+                                request, function (response) {
+                                    deferred.resolve(response);
+                                }, function (error) {
+                                    // console.log(error);
+                                    deferred.reject(error);
+                                });
+                                return deferred.promise;
+                            });
+                        }
 
                     }
 
@@ -98592,6 +99542,79 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
 })();
 
 
+(function () {
+    angular.module("formioApp").directive('tfFileUploader', ['FormIoAppConfig', '$window', 'Upload', 'formioFactory', '$base64', function (FormIoAppConfig, $window, $Upload, $formioFactory, $base64) {
+
+        return {
+            restrict: 'E',
+            scope: {
+                submissiondata: '=',
+                component: '='
+            },
+            transclude: true,
+            replace: true,
+            templateUrl: FormIoAppConfig.TalentFirstConst.BaseFormIoDirectivesPath + 'js/directives/formio/templates/tfFileUploader.html',
+            controller: ['$scope', '$rootScope', '$window', function ($scope, $rootScope, $window) {
+                $scope.uploading = false;
+                $scope.deleting= false;
+                $scope.isEditMode = false;
+                $scope.DeleteIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/Delete.png";
+                $scope.data = $scope.submissiondata;
+                if (!angular.isUndefined($scope.submissiondata)) {
+                    $scope.isEditMode = $scope.submissiondata.isEditMode ? true : false;
+                }
+
+                $scope.UploadFile = function (files) {
+                    $scope.uploading = true;
+                    $Upload.upload({
+                        url: FormIoAppConfig.FormioApiUrl + '/filesupload',
+                        data: { file: files }
+                    })
+                   .then(function (response) {
+                       var data = response.data;
+                       $scope.component.UploadedFileInfo = {
+                           name: data.name,
+                           key:data.key,
+                           url: data.url
+                       };
+                       //console.log(response);
+                       $scope.uploading = false;
+                   }, function (err) {
+                       //console.log("Error status: " + err.status);
+                       $scope.uploading = false;
+                   });
+                }
+
+                $scope.DeleteFile = function (fileKey) {
+                    $scope.deleting = true;
+                    var fileinfo = $scope.component.UploadedFileInfo;
+                    if (fileinfo != null) {
+                        $formioFactory.deleteFile($base64.encode(fileinfo.key), function (result) {
+                            $scope.ResetUploadedList();
+                            $scope.deleting = false;
+                        }, function (error) {
+                            //console.log(error);
+                            $scope.deleting = false;
+                        })
+                    }
+                   
+                }
+
+                $scope.ResetUploadedList = function () {
+                    $scope.component.UploadedFileInfo = null;
+                }
+
+                $scope.OpenFile = function (fileinfo) {
+                    $formioFactory.getFile($base64.encode(fileinfo.key), function (result) {
+                        $window.open(result.data, "_blank");
+                    }, function (error) {
+                        console.log(error);
+                    });
+                };
+            }]
+        }
+    }]);
+})();
 (function(){
     angular.module("formioApp").directive('tfFromDate',['FormIoAppConfig', function (FormIoAppConfig) {
 
@@ -98739,7 +99762,7 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
         replace: true,
         templateUrl: FormIoAppConfig.TalentFirstConst.BaseFormIoDirectivesPath + 'js/directives/formio/templates/tffromtodate.html',
         controller: ['$scope','$rootScope', function ($scope,$rootScope) {
-            $scope.refreshImageUrl = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/refresh.png";
+            $scope.refreshImageUrl = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/refresh.png";
             $scope.selectedfromdate = '';
             $scope.selectedtodate = '';
             $scope.isEditMode = false;
@@ -98945,11 +99968,17 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
         replace: true,
         templateUrl: FormIoAppConfig.TalentFirstConst.BaseFormIoDirectivesPath + 'js/directives/formio/templates/tfgoals.html',
         controller: ['$scope','$rootScope', function ($scope,$rootScope) {
-            $scope.refreshImageUrl = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/refresh.png";
+            $scope.refreshImageUrl = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/refresh.png";
             $scope.isEditMode = false;
             $scope.progress = false;
+            $scope.showGoalDetails = false;
             $scope.loadingImagePath = FormIoAppConfig.ProgressImageUrl;
-            
+            $scope.TFMessages = TFMessages;
+            $scope.selectedGoal = {};
+            $scope.optionsGoalWeight = [];
+            $scope.SelectedStatus = '';
+            $scope.SelectedDuration = '';
+
             if (!angular.isUndefined($scope.submissiondata)){
                 $scope.isEditMode = $scope.submissiondata.isEditMode ? true : false;
 
@@ -98979,7 +100008,9 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                       "StartDate": startDate,
                       "EndDate": endDate
                   }, function (response) {
-                      $scope.Goals = response.data;
+                      $scope.Goals = response.data.ListOfGoals;
+                      $scope.Statuses = response.data.ListOfStatuses;
+                      $scope.GoalDuration = response.data.ListOfGoalDuration;
                       $scope.progress = false;
                   }, function (error) {
                       console.log(error);
@@ -99012,6 +100043,127 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                 return false;
               
             }
+
+            $scope.CancelClick = function () {
+                $scope.selectedGoal = null;
+                $scope.SelectedStatus = null;
+                $scope.SelectedDuration = null;
+                $scope.defaultDueDate = null;
+            }
+
+            $scope.ShowGoalsDetails = function (goal) {
+                $scope.selectedGoal = goal;
+                $scope.defaultDueDate = moment($scope.selectedGoal.DueDate).format("MM-DD-YYYY");
+                $scope.selectedGoal.DueDate = new Date(moment($scope.defaultDueDate, "MM-DD-YYYY"));
+                $scope.SelectedStatus = $scope.selectedGoal;
+                $scope.SelectedDuration = $scope.selectedGoal;
+            }
+
+            while ($scope.optionsGoalWeight.length < 100) {
+                $scope.optionsGoalWeight.push($scope.optionsGoalWeight.length + 1);
+            }
+
+            $scope.UpdateGoalDetails = function (GoalId, DueDate, StatusId, GoalWeight, GoalDurationId) {
+                if (DueDate != null && StatusId != "" && GoalWeight != null) {
+                    DueDate = moment(DueDate).format("MM-DD-YYYY");
+                    if (DueDate >= moment(new Date()).format("MM-DD-YYYY")) {
+
+                        formioFactory.updateGoalDetails(
+                        {
+                            GoalId: GoalId,
+                            DueDate: DueDate,
+                            StatusId: StatusId,
+                            GoalWeight: GoalWeight,
+                            GoalDurationId: GoalDurationId
+                        }, function (response) {
+                            $scope.loadgoals();
+                            $scope.CancelClick();
+                        }, function (error) {
+                            showErrorToast(error);
+                        });
+                    }
+                    else {
+                        showErrorToast(TFMessages.Common_Error_DueDateLessThanToday);
+                    }
+                }
+                else {
+                    showErrorToast(TFMessages.DynamicReport_Validation_RequiredFields);
+                }
+            }
+
+            /*========Date Picker confifuration Starts======*/
+
+            $scope.today = function () {
+                $scope.dt = new Date();
+            };
+            $scope.today();
+
+            $scope.clear = function () {
+                $scope.dt = null;
+            };
+
+            $scope.inlineOptions = {
+                //customClass: getDayClass,
+                minDate: new Date()
+            };
+
+            $scope.dateOptions = {
+                dateDisabled: false,
+                disableEntry: true,
+                formatYear: 'yy',
+                maxDate: new Date(2050, 5, 22),
+                minDate: new Date(),
+                startingDay: 1,
+                showWeeks: false
+            };
+
+            // Disable weekend selection
+            function disabled(data) {
+                var date = data.date,
+                  mode = data.mode;
+                return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+
+            }
+
+            $scope.toggleMin = function () {
+                $scope.inlineOptions.minDate = $scope.inlineOptions.minDate ? null : new Date();
+                $scope.dateOptions.minDate = $scope.inlineOptions.minDate;
+            };
+
+            $scope.toggleMin();
+
+            $scope.open1 = function () {
+                $scope.popup1.opened = true;
+            };
+
+            $scope.formats = ['MM-dd-yyyy'];
+            $scope.format = $scope.formats[0];
+            $scope.altInputFormats = ["MM-dd-yyyy"];
+
+
+            $scope.popup1 = {
+                opened: false
+            };
+
+            function getDayClass(data) {
+                var date = data.date,
+                  mode = data.mode;
+                if (mode === 'day') {
+                    var dayToCheck = new Date(date).setHours(0, 0, 0, 0);
+
+                    for (var i = 0; i < $scope.events.length; i++) {
+                        var currentDay = new Date($scope.events[i].date).setHours(0, 0, 0, 0);
+
+                        if (dayToCheck === currentDay) {
+                            return $scope.events[i].status;
+                        }
+                    }
+                }
+
+                return '';
+            }
+
+            /*========Date Picker confifuration Ends======*/
 
             //============== events subscriptions =========================
             $scope.$on(FormIoAppConfig.PublishedEvents.SubscribeFromToDateChange, function (event, args) {
@@ -99192,7 +100344,7 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
 
 
 (function(){
-    angular.module("formioApp").directive('tfLinkToPdf', ['FormIoAppConfig', '$window', function (FormIoAppConfig, $window) {
+    angular.module("formioApp").directive('tfLinkToPdf', ['FormIoAppConfig', '$window', 'formioFactory','$base64', function (FormIoAppConfig, $window, formioFactory, $base64) {
 
     return {
         restrict:'E',
@@ -99216,10 +100368,18 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                 }
             }
 
-            $scope.OpenPDFLink = function () {
-                if (typeof OpenAssessmentPopUp === 'function' && !angular.isUndefined($scope.component.PdfFileName)) {
-                    OpenPDFFromDynamic($scope.component.PdfFileName, $scope.component.label);
+            $scope.OpenPDFLink = function (fileinfo) {
+               if(!angular.isUndefined(fileinfo)) {
+                   formioFactory.getFile($base64.encode(fileinfo.key), function (result) {
+                       $window.open(result.data, "_blank");
+                   }, function (error) {
+                       console.log(error);
+                   })
+                   //if (typeof OpenAssessmentPopUp === 'function' && !angular.isUndefined($scope.component.PdfFileName)) {
+                   //    OpenPDFFromDynamic($scope.component.PdfFileName, $scope.component.label);
+                   //}
                 }
+              
             };
 
         }]
@@ -99388,30 +100548,68 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
             templateUrl: FormIoAppConfig.TalentFirstConst.BaseFormIoDirectivesPath + 'js/directives/formio/templates/tfPerformanceReviewJournal.html',
             controller: ['$scope', '$rootScope', '$timeout', '$sce', function ($scope, $rootScope, $timeout, $sce) {
                 $scope.progress = false;
-                $scope.DeleteIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/Delete.png";
-                $scope.CancelIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/Images/popup_close_new.png";
+                $scope.DeleteIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/Delete.png";
+                $scope.CancelIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/popup_close_new.png";
                 $scope.TFMessages = TFMessages;
                 $scope.IsManager = false;
+                $scope.show = false;
+                $scope.Model = {};
 
-                $scope.isEditMode = angular.isUndefined($scope.submissiondata) ? false : $scope.submissiondata.isEditMode;
+                if (!angular.isUndefined($scope.submissiondata)) {
+                    $scope.isEditMode = $scope.submissiondata.isEditMode ? true: false;
 
-                $scope.ckData = null;
+                    //Disable or hide the control when rep viewable control in a rep initiated report is viewed by manager.
+                    $scope.ComponentDisabledView = sharedDataService.GetComponentDisabledView($scope);
+
+                    if ($scope.submissiondata.isSubmitted) {
+                        $scope.readOnly = true;
+                    }
+                }
+
+                $scope.Model.ckData = null;
 
                 var isMgr = FormIoAppConfig.ParseQueryString(window.location.href).IsMgr;
 
                 if (!angular.isUndefined(isMgr) && isMgr == 'T') {
-                    $scope.IsManager = true;
+                    ////show this control only to the coach who provided this comment ???? confirm with rishav
+                    //if (!angular.isUndefined($scope.submissiondata)) {
+                    //    if (!angular.isUndefined($scope.submissiondata.ManagerId)) {
+                    //        var loggedInUserId = FormIoAppConfig.LoggedInEmpId;
+                    //        if ($scope.submissiondata.ManagerId === loggedInUserId) {
+                    //            $scope.IsManager = true;
+                    //        }
+                    //    }
+                    //}
+                    //else {
+                        $scope.IsManager = true;
+                    //}
                 }
 
                 $scope.trustAsHtml = function (string) {
                     return $sce.trustAsHtml(string);
                 };
 
-                if (!angular.isUndefined($scope.submissiondata) && $scope.submissiondata.isSubmitted) {
-                    $scope.readOnly = true;
-                }
+              
 
                 if ($scope.isEditMode) {
+
+                    //if (!$scope.IsManager) {
+                    //    angular.element("div[data-attr-isreviewjournalpanel]").parent("div.panel").hide();
+
+                    //    //do not show this control to coachee
+                    //    var filtered = [];
+
+                    //    FormioUtils.eachComponent($rootScope.form.components, function (component, path) {
+
+                    //        if (angular.isUndefined(component.ReviewJournalPanel)) // leave tf custom controls as we handle them individually
+                    //        {
+                    //            filtered.push(component);
+                    //        }
+
+                    //    }, true);
+
+                    //    $rootScope.form.components = angular.copy(filtered);
+                    //}
                     // in case of saved report, pick the id from reportschema and set it to ckeditor
                     $scope.UNIQ_ID = $scope.component.key;
                     if (!angular.isUndefined($scope.submissiondata) && !angular.isUndefined($scope.submissiondata.ckEditorsData)) {
@@ -99424,15 +100622,13 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                             $scope.isPDFExport = $scope.submissiondata.isPDFExport;//to hide ckeditor in case of pdf export and render content as html
                         }
 
-                        //Disable or hide the control when rep viewable control in a rep initiated report is viewed by manager.
-                        $scope.ComponentDisabledView = sharedDataService.GetComponentDisabledView($scope);
+                       
                     }
                 }
                 else {
                     //assign a uniq id to editor to save data in IPadCDRCKEditorMapping table 
                     $scope.UNIQ_ID = "editor-tfGUID-" + FormioUtils.guid().replace(/-/g, ''); // adding tfGUID is important in uniq id to avoid duplicate id generation in formBuilder.js at the time of saving report
                 }
-
                 //Comments Popup related code START
 
                 $scope.ShowCommentsHistory = function () {
@@ -99454,150 +100650,47 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
 
 
 
-                //Comments Popup related code END
-
-                if (typeof CKEDITOR != 'undefined') {
-
-                    $timeout(function () {
-                        //timeout is required
-                        $scope.editorOptions = FormIoAppConfig.CKEditorConfig;
-
-                        FormIoAppConfig.CKEditorConfig = ($scope.submissiondata.isSubmitted || $scope.component.disabled) ?
-                                                              angular.extend(FormIoAppConfig.CKEditorConfig, { customConfig: FormIoAppConfig.TalentFirstConst.BaseFormIoCKPath + "ckeditor/ckeditor_config.js" })
-                                                            : angular.extend(FormIoAppConfig.CKEditorConfig, { customConfig: FormIoAppConfig.TalentFirstConst.BaseFormIoCKPath + "ckeditor/ckeditor_config_Write.js" });
-
-                        CKEDITOR.replace(document.getElementById($scope.UNIQ_ID), FormIoAppConfig.CKEditorConfig);
-                        CKEDITOR.config.resize_enabled = false;
-
-                        var editor = CKEDITOR.instances[$scope.UNIQ_ID];
-                        var footerHandled = '0';
-                        if (editor) {
-                            adWrapper = $('.report_button_ipad');
-                            cntDiv = $('#trFooterIpad');
-                            var focused = '0'
-                            var blurred = '0'
-                            editor.on('focus', function (event) {
-                                //alert('focus f = ' + focused + ' b =  ' + blurred);
-                                if (blurred == '0' && focused == '0') {
-                                    blurred = '0';
-                                    focused = '1';
-                                    footerHandled = '0';
-                                    adWrapper.addClass('unfixed');
-                                    cntDiv.removeClass('display');
-                                    cntDiv.addClass('nodisplay');
-                                }
-                                if (blurred == '1' && focused == '0') {
-                                    blurred = '0';
-                                    focused = '1';
-                                    footerHandled = '0';
-                                    adWrapper.addClass('unfixed');
-                                    cntDiv.removeClass('display');
-                                    cntDiv.addClass('nodisplay');
-                                } else {
-                                    blurred = '0';
-                                }
-                            });
-                            editor.on('blur', function (event) {
-                                //alert('blur f = ' + focused + ' b =  ' + blurred);
-                                if (blurred == '0' && focused == '0') {
-                                    footerHandled = '0';
-                                    blurred = '1';
-                                    focused = '0';
-                                    adWrapper.removeClass('unfixed');
-                                    cntDiv.removeClass('nodisplay');
-                                    cntDiv.addClass('display');
-                                } else if (blurred == '0' && focused == '1') {
-                                    blurred = '0';
-                                    focused = '0';
-                                }
-                            });
-                            editor.on('dialogShow', function (event) {
-                                //alert('dialogShow  = ' + footerHandled);
-                                footerHandled = '0';
-                                blurred = '0';
-                                focused = '0';
-                                adWrapper.removeClass('unfixed');
-                                cntDiv.removeClass('nodisplay');
-                                cntDiv.addClass('display');
-                            });
-
-                            editor.on('dialogHide', function (event) {
-                                //alert('dialogHide  = ' + footerHandled);
-                                footerHandled = '0';
-                                blurred = '0';
-                                focused = '0';
-                                adWrapper.addClass('unfixed');
-                                cntDiv.removeClass('display');
-                                cntDiv.addClass('nodisplay');
-                            });
-
-                            editor.on('change', function (event) {
-                                //alert('change  = ' + footerHandled);
-                                if (footerHandled == '0') {
-                                    footerHandled = '1';
-                                    blurred = '0';
-                                    focused = '0';
-                                    adWrapper.addClass('unfixed');
-                                    cntDiv.removeClass('display');
-                                    cntDiv.addClass('nodisplay');
-                                }
-                            });
-
-                            editor.on('contentDom', function () {
-                                //alert('contentDom  = ' + footerHandled);
-                                var element = editor.editable();
-                                element.attachListener(element, 'click', function (evt) {
-                                    blurred = '0';
-                                    focused = '0';
-                                    adWrapper.addClass('unfixed');
-                                    cntDiv.removeClass('display');
-                                    cntDiv.addClass('nodisplay');
-                                });
-                            });
-
-                            editor.on('saveSnapshot', function (ev) {
-
-                            });
-                            editor.on('paste', function (ev) {
-                                //alert('paste  = ' + footerHandled);
-                                footerHandled = '1';
-                                blurred = '0';
-                                focused = '0';
-                                adWrapper.removeClass('unfixed');
-                                cntDiv.removeClass('nodisplay');
-                                cntDiv.addClass('display');
-                            });
-                        }
-                    }, 300);
-
-                }
-
                 //============== events subscriptions =========================    
                 // when data is saved from ReviewReportViewer page, it raises an event, which will be captured here as we need to save CKEditor data for report
                 // idea is to save ckeditor data in separate table to minimize the size of report data json
                 $scope.$on(FormIoAppConfig.PublishedEvents.ReportDataSaved, function (event, args) {
-                    if (args.EmpReportId != undefined && $scope.ckData != null) {
-                        sharedDataService.SaveReportCallbacks.push(function () {
-                            var deferred = $q.defer();
-                            formioFactory.saveEditor(
-                            {
+                    if (args.EmpReportId != undefined && $scope.Model.ckData != null) {
+                        if ($scope.Model.ckData.trim() != '') {
+                            var request = {
                                 IsNonEditorData: true,
                                 EmpReportId: args.EmpReportId,
                                 Editors: [{
                                     CKEditorId: $scope.UNIQ_ID,
-                                    CKEditorContent: $scope.ckData,
+                                    CKEditorContent: $scope.Model.ckData,
                                     ReviewType: 'REVIEW_JOURNAL'
                                 }]
-                            }, function (response) {
-                                deferred.resolve(response);
-                                $scope.$broadcast(FormIoAppConfig.PublishedEvents.EditorDataSaved); // raise the event. will be subscribed by different custom controls. Controls will add promise in array.
-                            }, function (error) {
-                                // console.log(error);
-                                deferred.reject(error);
-                            });
-                            return deferred.promise;
-                        });
+                            };
 
+                            if (formioConstants.IsRequestFromNativeIPad) {
+
+                                sharedDataService.SaveReportRequestsForIpad.push({
+                                    Key: $scope.component.type,
+                                    Value: request
+                                });
+
+                            } else {
+
+
+                                sharedDataService.SaveReportCallbacks.push(function () {
+                                    var deferred = $q.defer();
+                                    formioFactory.saveEditor(
+                                   request, function (response) {
+                                       deferred.resolve(response);
+                                       // $scope.$broadcast(FormIoAppConfig.PublishedEvents.EditorDataSaved); // raise the event. will be subscribed by different custom controls. Controls will add promise in array.
+                                   }, function (error) {
+                                       // console.log(error);
+                                       deferred.reject(error);
+                                   });
+                                    return deferred.promise;
+                                });
+
+                            }
+                        }
                     }
 
                 });
@@ -99606,29 +100699,7 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                 //============== events subscriptions =========================
 
 
-            }],
-            link: function (scope, elm, attr, ngModel, $timeout) {
-                //Ram: using ckeditor events to glue it with angularjs
-                setTimeout(function () {
-                    var ck = CKEDITOR.instances[scope.UNIQ_ID];
-
-                    ck.on('instanceReady', function () {
-                        ck.setData(scope.ckData);
-                    });
-                    function updateModel() {
-                        scope.$apply(function () {
-                            scope.ckData = ck.getData();
-                        });
-                    }
-                    ck.on('change', updateModel);
-                    ck.on('key', updateModel);
-                    ck.on('dataReady', updateModel);
-
-                    ngModel.$render = function (value) {
-                        ck.setData(scope.ckData);
-                    };
-                }, 500);
-            }
+            }]
         }
     }]);
 })();
@@ -99636,12 +100707,12 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
 
 
 (function () {
-    angular.module("formioApp").directive('tfPerformanceReviewJournalGrid', ['$timeout', '$http', 'FormIoAppConfig', 'formioFactory', '$filter', 'sharedDataService', '$q', '$window', function ($timeout, $http, FormIoAppConfig, formioFactory, $filter, sharedDataService, $q, $window) {
+    angular.module("formioApp").directive('tfPerformanceReviewJournalGrid', ['$timeout', '$http', 'FormIoAppConfig', 'formioFactory', '$filter', 'sharedDataService', '$q', '$window', '$base64', function ($timeout, $http, FormIoAppConfig, formioFactory, $filter, sharedDataService, $q, $window, $base64) {
 
         return {
             restrict: 'E',
             scope: {
-                submission: '=',
+                submissiondata: '=',
                 components: '=',
                 isviewreport: '='
             },
@@ -99650,12 +100721,24 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
             templateUrl: FormIoAppConfig.TalentFirstConst.BaseFormIoDirectivesPath + 'js/directives/formio/templates/tfPerformanceReviewJournalGrid.html',
             controller: ['$scope', '$rootScope', function ($scope, $rootScope) {
                 $scope.progress = false;
-                $scope.DeleteIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/Delete.png";
-                $scope.closeBtnUrl = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/popup_close_new.png";
+                $scope.DeleteIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/Delete.png";
+                $scope.closeBtnUrl = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/popup_close_new.png";
+                $scope.ReviewJournal = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/icon_review.png";
+                $scope.OutlookIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/icon_outlook.png";
+                $scope.LeftPanelIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/icon_leftpanel.png";
                 $scope.TFMessages = TFMessages;
                 $scope.SavedCommentsData = [];
+                $scope.show = false;
+                $scope.Encrypted = true;
+                $scope.ReviewJournalPDFAPIUri = function (item) {
+                    if (item.WasEmailMessageSaved) {
+                        return FormIoAppConfig.TalentFirstConst.BaseAppPath + "/api/getmessage/" + $base64.encode(item.CoacheeId) + "/" + $base64.encode(item.Id) + "/" + $base64.encode("true");
+                    }
+                    return "#";
+                }
+               
 
-                $scope.isEditMode = false;
+                $scope.isEditMode = angular.isUndefined($scope.submissiondata) ? false : $scope.submissiondata.isEditMode;
 
                 //if (!angular.isUndefined($scope.submission.data)) {
                 //    $scope.isEditMode = $scope.submission.data.isEditMode ? true : false;
@@ -99668,11 +100751,14 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                 //    $scope.readOnly = true;
                 //}
 
-                $scope.openReport = function (item) {
-                    var reportUrlToOpen = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/Coach/ReviewReportViewer.aspx?cdrReportId=" + item.EmpReportId
-                        + '&IsMgr=T&SelRepId=' + item.CoacheeId + '&ReportName=' + item.ReportName + '&EmpId=' + item.ManagerId + '&MemberOrgId=' + FormIoAppConfig.MemberOrgId
-                    + '&source=createsession';
-                    $scope.OpenReportPopupForPerfGeneral(reportUrlToOpen);
+                var isMgr = FormIoAppConfig.ParseQueryString(window.location.href).IsMgr;
+
+                if (!angular.isUndefined(isMgr) && isMgr == 'T') {
+                    $scope.IsManager = true;
+                }
+
+                if (!angular.isUndefined($scope.submissiondata) && $scope.submissiondata.isSubmitted) {
+                    $scope.readOnly = true;
                 }
 
                 //Get saved comments from Database
@@ -99683,6 +100769,10 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
 
                     $scope.progress = true;
                     var selRepId = FormIoAppConfig.ParseQueryString(window.location.href).SelRepId;
+
+                    var selRepId = !angular.isUndefined(FormIoAppConfig.ParseQueryString(window.location.href).SelRepId) ? FormIoAppConfig.ParseQueryString(window.location.href).SelRepId
+                        : FormIoAppConfig.ParseQueryString(window.location.href).RepId;
+
                     formioFactory.getSavedCommentsData(
                         (angular.isUndefined(selRepId) ? null : selRepId), function (response) {
                             $scope.progress = false;
@@ -99696,7 +100786,6 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
 
                                     item.Comments = elem.value;
 
-                                    item.CommentSubmitDate = moment(item.DueDate).format("MM-DD-YYYY");
                                 });
                             }
                         }, function (error) {
@@ -99704,9 +100793,43 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                             console.log(error);
                         });
                 }
+                if ($scope.isEditMode) {
 
+                    $scope.getSavedCommentsData();
+                }
 
-                $scope.getSavedCommentsData();
+                $scope.openReport = function (item) {
+                    var reportUrlToOpen = "";
+
+                    var isIPad = window.navigator.userAgent.match(/iPad/i) != null;
+
+                    if (isIPad) {
+                        if (window.navigator.userAgent.indexOf('Safari') != -1 && window.navigator.userAgent.indexOf('Chrome') == -1) {
+                            reportUrlToOpen = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/Coach/ReviewReportViewer.aspx?cdrReportId=" + item.EmpReportId
+                           + '&IsMgr=T&source=createsession&ReplaceMasterPage=True&IsPDF=Y&SelRepId=' + item.CoacheeId + '&IsPerformanceJournal=Y&ReportName=' + item.ReportName
+                           + '&MemberOrgId=' + FormIoAppConfig.MemberOrgId;
+                            $scope.progress = true;
+
+                            $scope.OpenReportPopupForPerfGeneral(reportUrlToOpen);
+                        }
+                        else {
+                            reportUrlToOpen = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/Coach/ReviewReportViewer.aspx?cdrReportId=" + item.EmpReportId
+                               + '&IsMgr=T&source=createsession&ReplaceMasterPage=True&IsPDF=Y&SelRepId=' + item.CoacheeId + '&IsPerformanceJournal=Y&ReportName=' + item.ReportName
+                               + '&MemberOrgId=' + FormIoAppConfig.MemberOrgId + "&EmpId=" + FormIoAppConfig.LoggedInEmployeeId;
+                            var title = "Performance Journal";
+                            showIpadPopUP(reportUrlToOpen, title)
+                        }
+                    }
+                    else {
+                        reportUrlToOpen = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/Coach/ReviewReportViewer.aspx?cdrReportId=" + item.EmpReportId
+                           + '&IsMgr=T&source=createsession&ReplaceMasterPage=True&IsPDF=Y&SelRepId=' + item.CoacheeId + '&IsPerformanceJournal=Y&ReportName=' + item.ReportName
+                           + '&MemberOrgId=' + FormIoAppConfig.MemberOrgId;
+                        $scope.progress = true;
+
+                        $scope.OpenReportPopupForPerfGeneral(reportUrlToOpen);
+                    }
+                }
+
 
                 $scope.DeleteReviewComment = function (item) {
 
@@ -99759,12 +100882,12 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                     //if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1) { height = 720; }
 
                     if (typeof (popupWin) != "object") {
-                        popupWin = window.open(pageURL, 'Performance General', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no,width=' + width + ',height=' + height + ',top=' + top + ',left=' + left);
+                        popupWin = window.open(pageURL, 'Performance General', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, copyhistory=no,width=' + width + ',height=' + height + ',top=' + top + ',left=' + left);
                     } else {
                         if (!popupWin.closed) {
                             popupWin.location.href = pageURL;
                         } else {
-                            popupWin = window.open(pageURL, 'Performance General', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no,width=' + width + ',height=' + height + ',top=' + top + ',left=' + left);
+                            popupWin = window.open(pageURL, 'Performance General', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, copyhistory=no,width=' + width + ',height=' + height + ',top=' + top + ',left=' + left);
                         }
 
                     }
@@ -99851,8 +100974,8 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
             replace: true,
             templateUrl: FormIoAppConfig.TalentFirstConst.BaseFormIoDirectivesPath + 'js/directives/formio/templates/tfProductMetrics.html',
             controller: ['$scope', '$rootScope', function ($scope, $rootScope) {
-                $scope.AddIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/report_icon_add.png";
-                $scope.RemoveIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/report_minus_button.png";
+                $scope.AddIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/report_icon_add.png";
+                $scope.RemoveIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/report_minus_button.png";
 
                 $scope.isEditMode = false;
                 $scope.TFMesages = TFMessages;
@@ -99873,14 +100996,16 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
 
                 $scope.SelectedProduct = null;
                 $scope.Metrics = [];
-
+                
                 $scope.productsList = [];
                 $scope.GetProductsList = function () {
                     if ($scope.isEditMode) {
                         // session list should already be available through service, filled in tfSessionLength directive. If not , fetch it again
                         if ($scope.productsList.length === 0) {
                             formioFactory.getProductMetrics({
-                                EmpReportId: FormIoAppConfig.ParseQueryString(window.location.href).cdrReportId
+                                EmpReportId: FormIoAppConfig.ParseQueryString(window.location.href).cdrReportId,
+                                IsRepInitiated: $scope.submissiondata.isRepInitiated,
+                                IsDynamicManager: FormIoAppConfig.ParseQueryString(window.location.href).IsMgr === 'T'
                             },
                                          function (response) {
                                              $scope.productsList = response.data; // get all products
@@ -99928,19 +101053,32 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                 // when data is saved from ReviewReportViewer page, it raises an event, which will be captured here as we need to save product metrics mapping for report
                 $scope.$on(FormIoAppConfig.PublishedEvents.ReportDataSaved, function (event, args) {
                     if (args.EmpReportId != undefined && $scope.Metrics.length > 0) {
+                       
+                      var request = { 
+                        EmpReportId: args.EmpReportId,
+                        Products: $scope.Metrics
+                      };
+
+                      if(formioConstants.IsRequestFromNativeIPad){
+
+                        sharedDataService.SaveReportRequestsForIpad.push({
+                          Key: $scope.component.type,
+                          Value:request
+                        });
+                         
+                      }  else {
+
                         sharedDataService.SaveReportCallbacks.push(function () {
                             var deferred = $q.defer();
                             formioFactory.saveProductMetricsMapping(
-                            {
-                                EmpReportId: args.EmpReportId,
-                                Products: $scope.Metrics
-                            }, function (response) {
+                            request, function (response) {
                                 deferred.resolve(response);
                             }, function (error) {
                                 deferred.reject(error);
                             });
                             return deferred.promise;
                         });
+                      }
                     }
 
                 });
@@ -99967,7 +101105,7 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
             replace: true,
             templateUrl: FormIoAppConfig.TalentFirstConst.BaseFormIoDirectivesPath + 'js/directives/formio/templates/tfReportFeedbacks.html',
             controller: ['$scope', '$rootScope', function ($scope, $rootScope) {
-                $scope.ReportIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/act_report.png";
+                $scope.ReportIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/act_report.png";
                 $scope.isEditMode = false;
                 $scope.progress = false;
                 $scope.TFMessages = TFMessages;
@@ -100082,6 +101220,69 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
         }
     }]);
 })();
+(function () {
+    angular.module("formioApp").directive('tfSelfAssessment', ['FormIoAppConfig', 'sharedDataService', 'formioFactory', 'sharedDataService', '$q', function (FormIoAppConfig, sharedDataService, formioFactory, sharedDataService, $q) {
+
+        return {
+            restrict: 'E',
+            scope: {
+                submissiondata: '=',
+                component: '='
+            },
+            transclude: true,
+            replace: true,
+            templateUrl: FormIoAppConfig.TalentFirstConst.BaseFormIoDirectivesPath + 'js/directives/formio/templates/tfSelfAssessment.html',
+            controller: ['$scope', '$rootScope', '$window', '$sce', function ($scope, $rootScope, $window, $sce) {
+
+                $scope.AssessmentQuestion = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/assessment_question.png";
+                $scope.AssessmentQuestionArrow = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/asses_question_arrow.png";
+                $scope.AssessmentAnswerArrow = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/asses_answer_arrowblue.png";
+                $scope.isEditMode = false;
+                $scope.TFMesages = TFMessages;
+
+                $scope.trustAsHtml = function (string) {
+                    return $sce.trustAsHtml(string);
+                };
+
+                if (!angular.isUndefined($scope.submissiondata)) {
+                    $scope.isEditMode = $scope.submissiondata.isEditMode ? true : false;
+
+                    if (!angular.isUndefined($scope.submissiondata.isPDFExport)) {
+                        $scope.isPDFExport = $scope.submissiondata.isPDFExport;
+                    }
+                    //Disable or hide the control when rep viewable control in a rep initiated report is viewed by manager.
+                    $scope.ComponentDisabledView = sharedDataService.GetComponentDisabledView($scope);
+                }
+
+                if (!angular.isUndefined($scope.submissiondata) && $scope.submissiondata.isSubmitted) {
+                    $scope.readOnly = true;
+                }
+
+
+                $scope.AssessmentData = [];
+                $scope.GetAssessmentData = function () {
+                    if ($scope.isEditMode) {
+                        // session list should already be available through service, filled in tfSessionLength directive. If not , fetch it again
+                        if (!angular.isUndefined($scope.submissiondata.PeriodReviewCycleId) && $scope.submissiondata.PeriodReviewCycleId != 0) {
+                            formioFactory.getAssessmentData($scope.submissiondata.PeriodReviewCycleId,
+                            function (response) {
+                                $scope.AssessmentData = response.data; // get all products
+
+                            }, function (error) {
+                                console.log(error);
+                            });
+                        }
+
+
+                    }
+                }
+
+                $scope.GetAssessmentData();
+
+            }]
+        }
+    }]);
+})();
 (function(){
     angular.module("formioApp").directive('tfSessionDate', ['FormIoAppConfig', 'sharedDataService', function (FormIoAppConfig, sharedDataService) {
 
@@ -100097,7 +101298,7 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
         replace: true,
         templateUrl: FormIoAppConfig.TalentFirstConst.BaseFormIoDirectivesPath + 'js/directives/formio/templates/tfSessionDate.html',
         controller: ['$scope','$rootScope', function ($scope,$rootScope) {
-            $scope.refreshImageUrl = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/refresh.png";
+            $scope.refreshImageUrl = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/refresh.png";
             //$scope.selectedSessionDate = '';
             //$scope.selectedtodate = '';
             $scope.isEditMode = false;
@@ -100280,13 +101481,15 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
               
                 if ($scope.isEditMode) {
                     var localizedArray = $scope.component.selectedSessionLengths;
-                    _.map(localizedArray, function (session) {
-                        _.each($scope.TFMessages, function (value, key) {
-                           if (session.SessionLenKey.toUpperCase() == key.toUpperCase()) {
-                                session.Details = value;
-                            }
+                    if (!angular.isUndefined(localizedArray)) {
+                        _.map(localizedArray, function (session) {
+                            _.each($scope.TFMessages, function (value, key) {
+                                if (session.SessionLenKey.toUpperCase() == key.toUpperCase()) {
+                                    session.Details = value;
+                                }
+                            });
                         });
-                    });
+                    }
 
                     return localizedArray;
                 }
@@ -100314,7 +101517,7 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
             templateUrl: FormIoAppConfig.TalentFirstConst.BaseFormIoDirectivesPath + 'js/directives/formio/templates/tfSessionSummary.html',
             controller: ['$scope', '$rootScope', '$window', function ($scope, $rootScope, $window) {
                 $scope.isEditMode = false;
-                $scope.TFMesages = TFMessages;
+                $scope.TFMessages = TFMessages;
                 $scope.Comment = '';
                 $scope.Model = null;
 
@@ -100360,19 +101563,33 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                 // idea is to save ckeditor data in separate table to minimize the size of report data json
                 $scope.$on(FormIoAppConfig.PublishedEvents.ReportDataSaved, function (event, args) {
                     if (args.EmpReportId != undefined) {
-                        sharedDataService.SaveReportCallbacks.push(function () {
-                            var deferred = $q.defer();
-                            formioFactory.saveSessionSummaryComments(
-                            {
-                                EmpReportId: args.EmpReportId,
-                                Comments: $scope.Model.SessionSummaryComment
-                            }, function (response) {
-                                deferred.resolve(response);
-                            }, function (error) {
-                                deferred.reject(error);
+
+                        var request = {
+                            EmpReportId: args.EmpReportId,
+                            Comments: $scope.Model.SessionSummaryComment
+                        };
+
+                        if (formioConstants.IsRequestFromNativeIPad) {
+
+                            sharedDataService.SaveReportRequestsForIpad.push({
+                                Key: $scope.component.type,
+                                Value: request
                             });
-                            return deferred.promise;
-                        });
+
+                        }
+                        else {
+
+                            sharedDataService.SaveReportCallbacks.push(function () {
+                                var deferred = $q.defer();
+                                formioFactory.saveSessionSummaryComments(
+                                    request, function (response) {
+                                    deferred.resolve(response);
+                                }, function (error) {
+                                    deferred.reject(error);
+                                });
+                                return deferred.promise;
+                            });
+                        }
                     }
                 });
                 //============== events subscriptions =========================
@@ -100380,9 +101597,104 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
         }
     }]);
 })();
+(function(){
+    angular.module("formioApp").directive('tfShowCoachCoacheeInfo', ['FormIoAppConfig', '$window', function (FormIoAppConfig, $window) {
+
+    return {
+        restrict:'E',
+        scope: {    
+            submissiondata: '=',
+            component: '='
+        },
+        transclude: true,
+        replace: true,
+        templateUrl: FormIoAppConfig.TalentFirstConst.BaseFormIoDirectivesPath + 'js/directives/formio/templates/tfShowCoachCoacheeInfo.html',
+        controller: ['$scope','$rootScope', '$window', function ($scope,$rootScope, $window) {
+
+            $scope.isEditMode = false;
+            
+            $scope.data = $scope.submissiondata;
+            if (!angular.isUndefined($scope.submissiondata)) {
+                $scope.isEditMode = $scope.submissiondata.isEditMode ? true : false;
+                
+                $scope.ShowCoachDepartment = false;
+                $scope.ShowCoachRegion = false;
+                $scope.ShowCoachDistrict = false;
+                $scope.ShowCoachTerritory = false;
+
+                $scope.ShowCoacheeDepartment = false;
+                $scope.ShowCoacheeRegion = false;
+                $scope.ShowCoacheeDistrict = false;
+                $scope.ShowCoacheeTerritory = false;
+
+                if (!angular.isUndefined($scope.component.CoachDepartment)) {
+                    if ($scope.component.CoachDepartment) {
+                        $scope.ShowCoachDepartment = true;
+                        $scope.CoachDepartmentLabel = $scope.component.CoachDepartmentLabel;
+                        $scope.CoachDepartment = $scope.submissiondata.coachInfo.MDepartment;
+                    }
+                }
+                if (!angular.isUndefined($scope.component.CoachRegion)) {
+                    if ($scope.component.CoachRegion) {
+                        $scope.ShowCoachRegion = true;
+                        $scope.CoachRegionLabel = $scope.component.CoachRegionLabel;
+                        $scope.CoachRegion = $scope.submissiondata.coachInfo.MRegion;
+                    }
+                }
+                if (!angular.isUndefined($scope.component.CoachDistrict)) {
+                    if ($scope.component.CoachDistrict) {
+                        $scope.ShowCoachDistrict = true;
+                        $scope.CoachDistrictLabel = $scope.component.CoachDistrictLabel;
+                        $scope.CoachDistrict = $scope.submissiondata.coachInfo.MDistrict;
+                    }
+                }
+                if (!angular.isUndefined($scope.component.CoachTerritory)) {
+                    if ($scope.component.CoachTerritory) {
+                        $scope.ShowCoachTerritory = true;
+                        $scope.CoachTerritoryLabel = $scope.component.CoachTerritoryLabel;
+                        $scope.CoachTerritory = $scope.submissiondata.coachInfo.MTerritory;
+                    }
+                }
+
+                if (!angular.isUndefined($scope.component.CoacheeDepartment)) {
+                    if ($scope.component.CoacheeDepartment) {
+                        $scope.ShowCoacheeDepartment = true;
+                        $scope.CoacheeDepartmentLabel = $scope.component.CoacheeDepartmentLabel;
+                        $scope.CoacheeDepartment = $scope.submissiondata.coacheeInfo.RDepartment;
+                    }
+                }
+                if (!angular.isUndefined($scope.component.CoacheeRegion)) {
+                    if ($scope.component.CoacheeRegion) {
+                        $scope.ShowCoacheeRegion = true;
+                        $scope.CoacheeRegionLabel = $scope.component.CoacheeRegionLabel;
+                        $scope.CoacheeRegion = $scope.submissiondata.coacheeInfo.RRegion;
+                    }
+                }
+                if (!angular.isUndefined($scope.component.CoacheeDistrict)) {
+                    if ($scope.component.CoacheeDistrict) {
+                        $scope.ShowCoacheeDistrict = true;
+                        $scope.CoacheeDistrictLabel = $scope.component.CoacheeDistrictLabel;
+                        $scope.CoacheeDistrict = $scope.submissiondata.coacheeInfo.RDistrict;
+                    }
+                }
+                if (!angular.isUndefined($scope.component.CoacheeTerritory)) {
+                    if ($scope.component.CoacheeTerritory) {
+                        $scope.ShowCoacheeTerritory = true;
+                        $scope.CoacheeTerritoryLabel = $scope.component.CoacheeTerritoryLabel;
+                        $scope.CoacheeTerritory = $scope.submissiondata.coacheeInfo.RTerritory;
+                    }
+                }
+            }
+
+        }]
+       
+
+    }
+}]);
+})();
 (function () {
 
-    angular.module("formioApp").directive('tfTasks', ['$timeout', '$http', 'FormIoAppConfig', 'formioFactory','$filter', function ($timeout, $http, FormIoAppConfig, formioFactory, $filter) {
+    angular.module("formioApp").directive('tfTasks', ['$timeout', '$http', 'FormIoAppConfig', 'formioFactory', '$filter', function ($timeout, $http, FormIoAppConfig, formioFactory, $filter) {
 
         return {
             restrict: 'E',
@@ -100394,7 +101706,7 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
             transclude: true,
             replace: true,
             templateUrl: FormIoAppConfig.TalentFirstConst.BaseFormIoDirectivesPath + 'js/directives/formio/templates/tfTasks.html',
-            controller: ['$scope','$rootScope', function ($scope,$rootScope) {
+            controller: ['$scope', '$rootScope', function ($scope, $rootScope) {
                 $scope.TalentV3BasePath = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3";
                 $scope.isEditMode = false;
                 $scope.progress = false;
@@ -100402,11 +101714,14 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                 $scope.KRATasks = [];
                 $scope.ShowFeedback = false;
                 $scope.loadingImagePath = FormIoAppConfig.ProgressImageUrl;
+                $scope.TaskByStatus = [];
+                $scope.TaskStatus = '';
+                $scope.ShowTaskByStatus = false;
 
                 if (!angular.isUndefined($scope.submissiondata)) {
                     $scope.isEditMode = $scope.submissiondata.isEditMode ? true : false;
                 }
-               
+
                 if (!angular.isUndefined($scope.submissiondata) && $scope.submissiondata.isSubmitted) {
                     $scope.readOnly = true;
                 }
@@ -100418,12 +101733,14 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                         var startDate = angular.isUndefined($scope.submissiondata.undefinedtffromtostartdate) ? new Date() : $scope.submissiondata.undefinedtffromtostartdate;
                         var endDate = angular.isUndefined($scope.submissiondata.undefinedtffromtoenddate) ? new Date() : $scope.submissiondata.undefinedtffromtoenddate;
 
+
                         formioFactory.getTasks(
                         {
                             "StartDate": startDate,
                             "EndDate": endDate
                         }, function (response) {
                             $scope.Tasks = response.data;
+                            $scope.TaskByStatus = response.data.TaskByStatus;
                             $scope.progress = false;
                         }, function (error) {
                             console.log(error);
@@ -100433,12 +101750,10 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                     }
                 }
 
-                $scope.ShowFeedbacks = function (kra, $event)
-                {
+                $scope.ShowFeedbacks = function (kra, $event) {
                     $scope.ShowFeedback = false;
                     var filteredTasksForKra = $filter('filter')($scope.Tasks.KRA, { 'Id': kra.Id });
-                    if(!angular.isUndefined(filteredTasksForKra))
-                    {
+                    if (!angular.isUndefined(filteredTasksForKra)) {
                         $scope.KRATasks = filteredTasksForKra;
                         $scope.CurrentKraElementLocation = $($event.currentTarget).position();
 
@@ -100446,7 +101761,36 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                 }
 
                 $scope.HideMe = function () {
-                      $scope.ShowFeedback = false;
+                    $scope.ShowFeedback = false;
+                }
+
+                $scope.DisplayTaskByStatus = function (taskStatus) {
+                    if (taskStatus != '') {
+                        if (taskStatus == 'Complete') {
+                            $scope.ShowTaskByStatus = false;
+                        }
+                        else {
+                            $scope.ShowTaskByStatus = true;
+                            if (taskStatus == 'Assigned') {
+                                $scope.TaskStatus = '';
+                            }
+                            else if (taskStatus == 'InProgress') {
+                                $scope.TaskStatus = 'In Progress';
+                            }
+                            else if (taskStatus == 'NotStarted') {
+                                $scope.TaskStatus = 'Not Yet Started';
+                            }
+                        }
+                    }
+
+                    $('ul li').click(function () {
+                        $(document).ready(function () {
+                            $("#TasksList li").each(function () {
+                                $(this).removeClass("selected").addClass('');
+                            });
+                        });
+                        $(this).addClass('selected');
+                    });
                 }
 
                 $scope.loadtasks();
@@ -100464,24 +101808,24 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
             link: function ($scope, $elem, $attr) {
                 $scope.$watch("Tasks", function (newValue, oldValue) {
                     $timeout(function () { // timeout is required for setSlimScrollBar else it does not work
-                       $elem.find(".taskbox_container").setSlimScrollBar();
+                        $elem.find(".taskbox_container").setSlimScrollBar();
                     }, 50);
                 });
 
                 $scope.$watch("KRATasks", function (newValue, oldValue) {
 
-                        if (newValue.length > 0 && $scope.CurrentKraElementLocation != null) {
-                            var dvKraInfo = $elem.find("#dvKraInfo");
-                            var position = $scope.CurrentKraElementLocation;
-                            dvKraInfo.css('top', (position.top + 80) + 'px');
-                            dvKraInfo.css('left', (position.left + 50) + 'px');
-                            $scope.ShowFeedback = true;
-                            $timeout(function () { // timeout is required else it does not work
-                                dvKraInfo.find(".commentscontainer").first().setSlimScrollBar();
-                            }, 50);
-                        }
-                    });
-                }
+                    if (newValue.length > 0 && $scope.CurrentKraElementLocation != null) {
+                        var dvKraInfo = $elem.find("#dvKraInfo");
+                        var position = $scope.CurrentKraElementLocation;
+                        dvKraInfo.css('top', (position.top + 80) + 'px');
+                        dvKraInfo.css('left', (position.left + 50) + 'px');
+                        $scope.ShowFeedback = true;
+                        $timeout(function () { // timeout is required else it does not work
+                            dvKraInfo.find(".commentscontainer").first().setSlimScrollBar();
+                        }, 50);
+                    }
+                });
+            }
         }
 
 
@@ -100503,7 +101847,7 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
             transclude: true,
             replace: true,
             templateUrl: FormIoAppConfig.TalentFirstConst.BaseFormIoDirectivesPath + 'js/directives/formio/templates/tfTasksTrainings.html',
-            controller: ['$scope','$rootScope', function ($scope,$rootScope) {
+            controller: ['$scope', '$rootScope', function ($scope, $rootScope) {
                 $scope.TalentV3BasePath = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3";
                 $scope.isEditMode = false;
                 $scope.progress = false;
@@ -100519,7 +101863,7 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                     //Disable or hide the control when rep viewable control in a rep initiated report is viewed by manager.
                     $scope.ComponentDisabledView = sharedDataService.GetComponentDisabledView($scope);
                 }
-               
+
                 if (!angular.isUndefined($scope.submissiondata) && $scope.submissiondata.isSubmitted) {
                     $scope.readOnly = true;
                 }
@@ -100527,20 +101871,36 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                 $scope.loadtasks = function (args) {
 
                     if ($scope.isEditMode) {
-                        var cdrReportId = FormIoAppConfig.ParseQueryString(window.location.href).cdrReportId;
-                        
-                        $scope.progress = true;
-                        formioFactory.getCDPTasks(
-                        {
-                            EmpReportId: angular.isUndefined(cdrReportId) ? null : cdrReportId,
-                            FilterIds: (!angular.isUndefined(args) && !angular.isUndefined(args.Ids))?args.Ids:null
-                        }, function (response) {
-                            $scope.Tasks = response.data.Tasks;
-                            $scope.progress = false;
-                        }, function (error) {
-                            console.log(error);
-                            $scope.progress = false;
-                        });
+
+                        if (formioConstants.IsRequestFromNativeIPad) {
+                            callbacksTrack.push({
+                                Key: "getWhatsNextTask",
+                                Value: function (response) {
+                                    $scope.Tasks = response.data.Tasks;
+                                }
+                            });
+
+                            window.webkit.messageHandlers.requestDataFromiPad.postMessage('getWhatsNextTask');
+                            //window.webkit.messageHandlers.AssignTask.postMessage("AssignTask");
+
+                        }
+                        else {
+
+                            var cdrReportId = FormIoAppConfig.ParseQueryString(window.location.href).cdrReportId;
+                            $scope.progress = true;
+                            formioFactory.getCDPTasks(
+                            {
+                                EmpReportId: angular.isUndefined(cdrReportId) ? null : cdrReportId,
+                                FilterIds: (!angular.isUndefined(args) && !angular.isUndefined(args.Ids)) ? args.Ids : null
+                            }, function (response) {
+                                $scope.Tasks = response.data.Tasks;
+                                $scope.progress = false;
+                            }, function (error) {
+                                console.log(error);
+                                $scope.progress = false;
+                            });
+                        }
+
 
                     }
                 }
@@ -100548,25 +101908,42 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                 $scope.loadtrainings = function (args) {
 
                     if ($scope.isEditMode) {
-                        var cdrReportId = FormIoAppConfig.ParseQueryString(window.location.href).cdrReportId;
 
-                        $scope.progress = true;
-                        formioFactory.getTrainings(
-                        {
-                            EmpReportId: angular.isUndefined(cdrReportId) ? null : cdrReportId,
-                            FilterIds: (!angular.isUndefined(args) && !angular.isUndefined(args.Ids)) ? args.Ids : null
-                        }, function (response) {
-                            $scope.Trainings = response.data.Tasks; // Tasks property is holding trainings as well
-                            $scope.progress = false;
-                        }, function (error) {
-                            console.log(error);
-                            $scope.progress = false;
-                        });
+                        if (formioConstants.IsRequestFromNativeIPad) {
+                            callbacksTrack.push({
+                                Key: "getWhatsNextTraining",
+                                Value: function (response) {
+                                    $scope.Trainings = response.data.Tasks;
+                                }
+                            });
+
+                            window.webkit.messageHandlers.requestDataFromiPad.postMessage('getWhatsNextTraining');
+                            //window.webkit.messageHandlers.AssignTask.postMessage("AssignTask");
+
+                        }
+                        else {
+
+                            var cdrReportId = FormIoAppConfig.ParseQueryString(window.location.href).cdrReportId;
+
+                            $scope.progress = true;
+                            formioFactory.getTrainings(
+                            {
+                                EmpReportId: angular.isUndefined(cdrReportId) ? null : cdrReportId,
+                                FilterIds: (!angular.isUndefined(args) && !angular.isUndefined(args.Ids)) ? args.Ids : null
+                            }, function (response) {
+                                $scope.Trainings = response.data.Tasks; // Tasks property is holding trainings as well
+                                $scope.progress = false;
+                            }, function (error) {
+                                console.log(error);
+                                $scope.progress = false;
+                            });
+                        }
+
 
                     }
                 }
 
-               
+
                 $scope.loadtasks();
                 $scope.loadtrainings();
 
@@ -100590,38 +101967,76 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
                     }
                 });
 
-                 $scope.$on(FormIoAppConfig.PublishedEvents.ReportDataSaved, function (event, args) {
-                     if (args.EmpReportId != undefined) {
-                         sharedDataService.SaveReportCallbacks.push(function () {
-                             var deferred = $q.defer();
-                             formioFactory.saveTaskTrainingMappingWithReport(
-                             {
-                                 EmpReportId: args.EmpReportId,
-                                 Tasks: $scope.Tasks,
-                                 Trainings: $scope.Trainings
-                             }, function (response) {
-                                 deferred.resolve(response);
-                             }, function (error) {
+                $scope.$on(FormIoAppConfig.PublishedEvents.ReportDataSaved, function (event, args) {
+                    if (args.EmpReportId != undefined) {
+                        sharedDataService.SaveReportCallbacks.push(function () {
+                            var deferred = $q.defer();
+                            formioFactory.saveTaskTrainingMappingWithReport(
+                            {
+                                EmpReportId: args.EmpReportId,
+                                Tasks: $scope.Tasks,
+                                Trainings: $scope.Trainings
+                            }, function (response) {
+                                deferred.resolve(response);
+                            }, function (error) {
                                 // console.log(error);
-                                 deferred.reject(error);
-                             });
-                             return deferred.promise;
-                         });
-                     }
-                   });
-                
+                                deferred.reject(error);
+                            });
+                            return deferred.promise;
+                        });
+                    }
+                });
+
                 //============== events subscriptions =========================
+
+                //============== IPAd subscriptions =========================
+
+                $scope.AssignTaskPopup = function () {
+                    if (formioConstants.IsRequestFromNativeIPad) {
+                        callbacksTrack.push({
+                            Key: "getAssignTaskPopup",
+                            Value: function (response) {
+                                $scope.Tasks = response.data.Tasks;
+                            }
+                        });
+
+                        window.webkit.messageHandlers.requestDataFromiPad.postMessage('getAssignTaskPopup');
+                        //window.webkit.messageHandlers.AssignTask.postMessage("AssignTask");
+
+                    }
+                    else {
+                        ShowTakLeftDialog4Rep();
+                    }
+                }
+
+                $scope.AssignTrainingPopup = function () {
+                    if (formioConstants.IsRequestFromNativeIPad) {
+                        callbacksTrack.push({
+                            Key: "getAssignTrainingPopup",
+                            Value: function (response) {
+                                $scope.Tasks = response.data.Trainings;
+                            }
+                        });
+
+                        window.webkit.messageHandlers.requestDataFromiPad.postMessage('getAssignTrainingPopup');
+
+                    }
+                    else {
+                        AssignTrainig4Report();
+                    }
+                }
+                //============== IPAd subscriptions =========================
 
             }],
             link: function ($scope, $elem, $attr) {
                 $scope.$watch("Tasks", function (newValue, oldValue) {
                     $timeout(function () { // timeout is required for setSlimScrollBar else it does not work
-                      // $elem.find(".taskbox_container").setSlimScrollBar();
+                        // $elem.find(".taskbox_container").setSlimScrollBar();
                     }, 50);
                 });
 
-               
-                }
+
+            }
         }
 
 
@@ -100642,6 +102057,9 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
             replace: true,
             templateUrl: FormIoAppConfig.TalentFirstConst.BaseFormIoDirectivesPath + 'js/directives/formio/templates/tfViewPerformanceReviewJournal.html',
             controller: ['$scope', '$rootScope', function ($scope, $rootScope) {
+                $scope.ReviewJournal = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/icon_review.png";
+                $scope.OutlookIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/icon_outlook.png";
+                $scope.LeftPanelIcon = FormIoAppConfig.TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/icon_leftpanel.png";
                 $scope.progress = false;
                 $scope.TFMessages = TFMessages;
                 $scope.IsManager = false;
@@ -100671,8 +102089,8 @@ angular.module('TalentFirstApp').factory('userFactory', ['$http', '$q','sharedDa
 angular.module('TalentFirstApp').requires = ['formioApp'];
 var formRendererCtrl = function ($scope, $http, $filter, $timeout, $filter, $rootScope, window, FormIoAppConfig, sharedDataService, userFactory, formioFactory, $q) {
 
-    $scope.blankImageUrl = TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/blank_image.png";
-    $scope.LoadingImage = TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/loading.gif";
+    $scope.blankImageUrl = TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/blank_image.png";
+    $scope.LoadingImage = TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/formio/loading.gif";
     $scope.progress = false;
     $scope.TFMessages = TFMessages;
     $scope.ReportInfo = [];
@@ -100680,12 +102098,19 @@ var formRendererCtrl = function ($scope, $http, $filter, $timeout, $filter, $roo
     $scope.ReportSchema = null;
     $scope.IsBreadcrumView = false;
     $scope.IsRequestFromOutlook = false;
-
+    $scope.snapshot_arrow = TalentFirstConst.BaseAppPath + "/TalentFirstV3/images/snapshot_arrow.png";
     $scope.FormIoAppConfig = FormIoAppConfig; // we can not directlt consume constant in angular view. first let it in controller scope
     $scope.init = function () {
 
-        $scope.ReportInfo = angular.element("input:hidden[id$='hdnReportInfo']").val().length == 0 ? {}
-                                        : angular.fromJson(angular.element("input:hidden[id$='hdnReportInfo']").val())[0];
+        if (!formioConstants.IsRequestFromNativeIPad) {
+            $scope.ReportInfo = angular.element("input:hidden[id$='hdnReportInfo']").val().length == 0 ? {}
+                                            : angular.fromJson(angular.element("input:hidden[id$='hdnReportInfo']").val())[0];
+        }
+        else
+        {
+            $scope.ReportInfo = angular.element("input:hidden[id$='hdnReportInfo']").val().length == 0 ? {}
+                                : angular.fromJson(angular.element("input:hidden[id$='hdnReportInfo']").val());//[0];
+        }
 
         $scope.ReportSchema = angular.fromJson($scope.ReportInfo.ReportSchema);
 
@@ -100694,12 +102119,15 @@ var formRendererCtrl = function ($scope, $http, $filter, $timeout, $filter, $roo
         if (!angular.isUndefined($scope.submission.data)) {
             $scope.submission.data = angular.extend($scope.submission.data, { isEditMode: true }); //required for custom directives to set their add/edit view
             $scope.submission.data.selectedSessionDate = $scope.ReportInfo.SessionDate; //Updating the value coming from DB column since JSON data does not convert and assign values.
+            $scope.submission.data.ManagerId = $scope.ReportInfo.ManagerId;
         }
         else {
             $scope.submission.data = {};
             $scope.submission.data.isEditMode = true;
         }
 
+        
+        
         $scope.submission.data.isSubmitted = $scope.ReportInfo.IsSubmitted;
         $scope.submission.data.isAcknowledged = $scope.ReportInfo.IsAcknowledged;
         $scope.submission.data.isAckButtonRequired = $scope.ReportInfo.IsAckButtonRequired;
@@ -100712,10 +102140,26 @@ var formRendererCtrl = function ($scope, $http, $filter, $timeout, $filter, $roo
         $scope.PersistingData = angular.element("input:hidden[id$='hdnKeyValuePersistingData']").val().length == 0 ? undefined
                                         : angular.fromJson(angular.element("input:hidden[id$='hdnKeyValuePersistingData']").val());
 
+        // $scope.submission.data.coachInfo = angular.element("input:hidden[id$='hdnCoachInfo']").val().length == 0 ? []
+        //                                 : angular.fromJson(angular.element("input:hidden[id$='hdnCoachInfo']").val())[0];
+
+        // $scope.submission.data.coacheeInfo = angular.element("input:hidden[id$='hdnCoacheeInfo']").val().length == 0 ? []
+        //                                 : angular.fromJson(angular.element("input:hidden[id$='hdnCoacheeInfo']").val())[0];
+
         if (angular.isUndefined($scope.submission.data.ReportConfiguration)) {
             $scope.submission.data.ReportConfiguration = {};
         }
         $scope.submission.data.ReportConfiguration = !angular.isUndefined($scope.ReportInfo.ReportConfigurationJson) ? angular.fromJson($scope.ReportInfo.ReportConfigurationJson) : null;
+
+
+        //Disabling Performance Journal Control start
+        var isPerformanceJournal = FormIoAppConfig.ParseQueryString(window.location.href).IsPerformanceJournal;
+
+        if (!angular.isUndefined(isPerformanceJournal) && isPerformanceJournal == "Y") {
+            $scope.isPerformanceJournal = true;
+        }
+
+        //Disabling Performance Journal Control end
 
         if ($scope.submission.data.isSubmitted) {
             $scope.FormReadOnly = true;
@@ -100729,6 +102173,9 @@ var formRendererCtrl = function ($scope, $http, $filter, $timeout, $filter, $roo
             components: angular.copy($scope.ReportSchema),
             display: 'form'
         };
+
+
+        $scope.HandleReviewJournalCoacheeView();
 
         var isPDFExport = FormIoAppConfig.ParseQueryString(window.location.href).IsPDF;
         if (!angular.isUndefined(isPDFExport)) {
@@ -100767,30 +102214,46 @@ var formRendererCtrl = function ($scope, $http, $filter, $timeout, $filter, $roo
         var isMgr = FormIoAppConfig.ParseQueryString(window.location.href).IsMgr;
 
         if (!angular.isUndefined(isMgr) && isMgr == 'T') {
-            //incase manager is viewing report  then we can pick coachee info from its team info
-            if (angular.isUndefined(tmpMembers) || tmpMembers == null || tmpMembers.length == 0) {
-                $scope.DefaultData = angular.fromJson(angular.element("input:hidden[id$='hdnMyTeamData']").val());
-                sharedDataService.TeamMembers = (function () {
-                    var list = $.grep($scope.DefaultData, function (n, i) {
-                        return (n.ListType === 'Team');
-                    })[0];
-                    if (list != null || list != undefined) {
-                        return list.Users;
-                    }
-                    return null;
-                })();
+            //If empreportid is present, then pick the data from reportinfo.
+            if ($scope.ReportInfo.EmpReportId != null && $scope.ReportInfo.EmpReportId != 0) {
+                $scope.ManagerDetail = {
+                    Name: $scope.ReportInfo.ManagerName,
+                    ProfileImageName: $scope.ReportInfo.ManagerProfileImageName,
+                    Designation: $scope.ReportInfo.ManagerDesignation
+                }
 
-                tmpMembers = angular.copy(sharedDataService.TeamMembers);
+                $scope.RepDetail = {
+                    Name: $scope.ReportInfo.RepName,
+                    ProfileImageName: $scope.ReportInfo.RepProfileImageName,
+                    Designation: $scope.ReportInfo.RepDesignation
+                }
             }
+            else {
+                //incase manager is viewing report  then we can pick coachee info from its team info
+                if (angular.isUndefined(tmpMembers) || tmpMembers == null || tmpMembers.length == 0) {
+                    $scope.DefaultData = angular.fromJson(angular.element("input:hidden[id$='hdnMyTeamData']").val());
+                    sharedDataService.TeamMembers = (function () {
+                        var list = $.grep($scope.DefaultData, function (n, i) {
+                            return (n.ListType === 'Team');
+                        })[0];
+                        if (list != null || list != undefined) {
+                            return list.Users;
+                        }
+                        return null;
+                    })();
 
-            if (tmpMembers.length > 0 && selRepId != undefined && selRepId != 0) {
-                $scope.RepDetail = _.find(tmpMembers, { 'EmpId': parseInt(selRepId, 0) });
-            }
-            //report header display
-            $scope.ManagerDetail = {
-                Name: FormIoAppConfig.LoggedInUserEmpName,
-                ProfileImageName: FormIoAppConfig.LoggedInUserProfileImageName,
-                Designation: FormIoAppConfig.LoggedInUserDesignation
+                    tmpMembers = angular.copy(sharedDataService.TeamMembers);
+                }
+
+                if (!angular.isUndefined(tmpMembers) && tmpMembers.length > 0 && selRepId != undefined && selRepId != 0) {
+                    $scope.RepDetail = _.find(tmpMembers, { 'EmpId': parseInt(selRepId, 0) });
+                }
+                //report header display
+                $scope.ManagerDetail = {
+                    Name: FormIoAppConfig.LoggedInUserEmpName,
+                    ProfileImageName: FormIoAppConfig.LoggedInUserProfileImageName,
+                    Designation: FormIoAppConfig.LoggedInUserDesignation
+                }
             }
         }
         else {
@@ -100852,9 +102315,15 @@ var formRendererCtrl = function ($scope, $http, $filter, $timeout, $filter, $roo
             }
         }
 
+        // setting up Rep and Manager details which is required at multiple places
+        $scope.submission.data.coacheeInfo.RepDetail = $scope.RepDetail;
+        $scope.submission.data.coachInfo.ManagerDetail = $scope.ManagerDetail;
+        $scope.submission.data.PeriodReviewCycleId = !angular.isUndefined($scope.RepDetail)? $scope.RepDetail.PeriodReviewCycleId: null;  //for self assessment control
+
+
         // $scope.RepDetail = angular.fromJson($base64.decode(window.sessionStorage.getItem("TF-RepDetail")));
         // ****** Set Coachee details in header >************************
-
+        
         // ******  <Handle Rep Initiated report controls ************************
 
         $scope.HandleRepViewAtComponentLevel();
@@ -100929,6 +102398,57 @@ var formRendererCtrl = function ($scope, $http, $filter, $timeout, $filter, $roo
         }
     }
 
+    $scope.HandleReviewJournalCoacheeView = function () {
+
+        // this is a special case where review journal comments should not be visible to coachee. Need to place here not in tfPerformanceReviewJournal directive since
+        // breadcrumb view is generated earlier than directive calls.
+        var isMgr = FormIoAppConfig.ParseQueryString(window.location.href).IsMgr == 'T';
+        var isCoachee = false;
+
+        if ($scope.ReportInfo.IsSubmitted && ($scope.ReportInfo.EmpId == FormIoAppConfig.LoggedInEmpId)) {
+            //if report is submitted then do not show journal to coachee. $scope.ReportInfo.EmpId is coacheeId when report is submitted else managerid
+            isCoachee = true;
+        }
+        if (!isMgr || isCoachee) {
+            //  angular.element("div[data-attr-isreviewjournalpanel]").parent("div.panel").hide();
+
+            //var filtered = [];
+
+            ////use deep nesting. _each cannot go in nested component tree and checks only first level panels.
+            //FormioUtils.eachComponent($rootScope.form.components, function (component, path) {
+            //    if (component.type == 'panel') {
+            //        if (angular.isUndefined(component.ReviewJournalPanel) || !component.ReviewJournalPanel) // leave tf custom controls as we handle them individually
+            //        {
+            //            filtered.push(component);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        filtered.push(component);
+            //    }
+            //}, true);
+
+            //$rootScope.form.components = angular.copy(filtered);
+            FormioUtils.eachComponent($rootScope.form.components, function (component, path) {
+                if (component.type == 'panel') {
+                    if (!angular.isUndefined(component.ReviewJournalPanel) && component.ReviewJournalPanel) // remove
+                    {
+                        _.remove($rootScope.form.components, { key: component.key });
+                    }
+                }
+            }, true);
+            FormioUtils.eachComponent($rootScope.form.components, function (component, path) {
+                if (component.type == 'panel') {
+                    if (!angular.isUndefined(component.ReviewJournalPanel) && component.ReviewJournalPanel) // remove
+                    {
+                        _.remove($rootScope.form.components, { key: component.key });
+                    }
+                }
+            }, true);
+        }
+    }
+
+
     $scope.SelectBreadcrum = function (breadcrum) {
 
         // onclick of breacrumb
@@ -100955,18 +102475,22 @@ var formRendererCtrl = function ($scope, $http, $filter, $timeout, $filter, $roo
         // handles collapse all and expand all
         $scope.IsBreadcrumView = isBreadcrumView;
         if (isBreadcrumView) {
+            $scope.HandleReviewJournalCoacheeView();
             $scope.HandleBreadcrumView();
             $("#divCDRDashBoard").addClass("reportbox_bg");
-            $("#dvcontainerMain").removeClass('report_rightpane_container_big');
+            //$("#dvcontainerMain").removeClass('report_rightpane_container_big');
         }
         else {
             $rootScope.form.components = [];
             $rootScope.form.components = angular.copy($scope.ReportSchema); // need fresh copy of reportschema
+            $scope.HandleReviewJournalCoacheeView();
             $scope.HandleRepViewAtComponentLevel(); // set component level disable property for repinitiated case
             $("#divCDRDashBoard").addClass("reportbox");
-            $("#dvcontainerMain").addClass('report_rightpane_container_big');
+            //$("#dvcontainerMain").addClass('report_rightpane_container_big');
             //SetSectionHeightsDynamicReports(); Commenting this as destroy slim bar causing problem while expanding and collapsing.
         }
+
+        $scope.SetSectionHeightsDynamicReports();
 
         //Formio.createForm(document.getElementById('formio'), {
         //    components: $rootScope.form.components
@@ -101019,6 +102543,7 @@ var formRendererCtrl = function ($scope, $http, $filter, $timeout, $filter, $roo
                 $scope.submission.data.selectedSessionDate = $scope.submission.data.selectedSessionDate;
             }
 
+            //todo save ack info in table
             var acknowRequest = {
                 ReportId: $scope.ReportInfo.ReportId,
                 ReportSchema: angular.toJson($scope.submission.data),
@@ -101027,6 +102552,10 @@ var formRendererCtrl = function ($scope, $http, $filter, $timeout, $filter, $roo
                 SessionDate: $scope.submission.data.selectedSessionDate == '' ? "" : moment(new Date($scope.submission.data.selectedSessionDate)).format("MM-DD-YYYY"),
                 SessionLength: angular.isUndefined($scope.submission.data.selectedSessionLength) ? null : $scope.submission.data.selectedSessionLength.SessionLengthId,
                 RepName: $scope.RepDetail.Name,
+                CKEditorId: $scope.UNIQ_ID,
+                CKEditorContent: $scope.ckData,
+                'isAcknowledged': 1,
+                'comments': ''
 
                 //IsRepInitiated: $scope.ReportInfo.IsRepInitiated,
                 //NotifyManager: mode === 'saveNotify',
@@ -101072,34 +102601,153 @@ var formRendererCtrl = function ($scope, $http, $filter, $timeout, $filter, $roo
         }
 
     }
+
     $scope.Save = function (mode) {
-        if (mode === 'submit') {
-            if ((angular.element($(formioForm)).scope()).formioForm.$valid) //Ram: By default form.io provides its own submit button which raises validation. This is a hack to mimic the behavior on our page as we are using custom bottom bar buttons
-            {
-                if ($scope.submission.data.ReportConfiguration != null) {
-                    if ($scope.submission.data.ReportConfiguration.HeaderConfiguration.ShowSessionLength && !angular.isUndefined($scope.submission.data.selectedSessionLength)) {
-                        $scope.saveToDB(mode);
-                    }
-                    else if (!$scope.submission.data.ReportConfiguration.HeaderConfiguration.ShowSessionLength) {
-                        $scope.saveToDB(mode);
+        var isMgr = FormIoAppConfig.ParseQueryString(window.location.href).IsMgr;
+
+        //Coach Login
+        if (isMgr == 'T') {
+            if (mode === 'submit') {
+                if ((angular.element($(formioForm)).scope()).formioForm.$valid) //Ram: By default form.io provides its own submit button which raises validation. This is a hack to mimic the behavior on our page as we are using custom bottom bar buttons
+                {
+                    if ($scope.submission.data.ReportConfiguration != null) {
+                        if ($scope.submission.data.ReportConfiguration.HeaderConfiguration.ShowSessionLength && !angular.isUndefined($scope.submission.data.selectedSessionLength)) {
+                            //$scope.saveToDB(mode);
+                            $scope.ShowConfirmationPopup(mode);
+                        }
+                        else if (!$scope.submission.data.ReportConfiguration.HeaderConfiguration.ShowSessionLength) {
+                            //$scope.saveToDB(mode);
+                            $scope.ShowConfirmationPopup(mode);
+                        }
+                        else {
+                            showErrorToast(TFMessages.DynamicReport_Validation_RequiredFields);
+                        }
                     }
                     else {
-                        showErrorToast(TFMessages.DynamicReport_Validation_RequiredFields);
+                        //$scope.saveToDB(mode);
+                        $scope.ShowConfirmationPopup(mode);
                     }
+                }
+                else {
+                    showErrorToast(TFMessages.DynamicReport_Validation_RequiredFields);
+                }
+            }
+            else if (mode == 'save') {
+                if ($scope.ReportInfo.IsRepInitiated) {
+                    $scope.ShowConfirmationPopup(mode);
                 }
                 else {
                     $scope.saveToDB(mode);
                 }
             }
-            else {
-                showErrorToast(TFMessages.DynamicReport_Validation_RequiredFields);
+            else if (mode == 'saveexit') {
+                $scope.saveToDB(mode);
             }
         }
+            //Coachee Login
         else {
-            $scope.saveToDB(mode);
+            if (mode == 'save') {
+                if ($scope.ReportInfo.IsRepInitiated) {
+                    $scope.ShowConfirmationPopup(mode);
+                }
+                else {
+                    $scope.saveToDB(mode);
+                }
+            }
         }
+
         return false;
     }
+
+    //Confirmation Popup related code START
+
+    $scope.ShowConfirmationPopup = function (mode) {
+        $scope.FinalizeClick = false;
+        $scope.Acknowledge = false;
+        $scope.CommonText = false;
+        angular.element("#bootConfirmation").modal(
+        {
+            backdrop: 'static',
+            keyboard: false
+        });
+
+        if (mode == 'save') {
+            $scope.CommonText = true;
+            angular.element("#bootConfirmation").find("#btn1").prop('value', TFMessages.Common_Save_Only);
+
+            var isMgr = FormIoAppConfig.ParseQueryString(window.location.href).IsMgr;
+
+            if (!angular.isUndefined(isMgr) && isMgr == 'T') {
+                angular.element("#bootConfirmation").find("#btn2").prop('value', TFMessages.Grow_SaveAndNotify + ' (' + $scope.RepDetail.Name.substr(0, $scope.RepDetail.Name.indexOf(' ')) + ')');
+            }
+            else {
+                angular.element("#bootConfirmation").find("#btn2").prop('value', TFMessages.Grow_SaveAndNotify + ' (' + $scope.ManagerDetail.Name.substr(0, $scope.ManagerDetail.Name.indexOf(' ')) + ')');
+            }
+        }
+        else if (mode == 'close') {
+            $scope.CommonText = true;
+            angular.element("#bootConfirmation").find("#btn1").prop('value', TFMessages.Common_Save_And_Close);
+            angular.element("#bootConfirmation").find("#btn2").prop('value', TFMessages.Common_Cancel_And_Close);
+        }
+        else if (mode == 'submit') {
+            $scope.FinalizeClick = true;
+            angular.element("#bootConfirmation").find("#btn1").prop('value', TFMessages.Common_Finalize);
+            angular.element("#bootConfirmation").find("#btn2").prop('value', TFMessages.Common_Cancel);
+        }
+        else if (mode == 'acknowledge') {
+            $scope.Acknowledge = true;
+            angular.element("#bootConfirmation").find("#btn1").prop('value', TFMessages.Common_Confirm);
+            angular.element("#bootConfirmation").find("#btn2").prop('value', TFMessages.Common_Cancel);
+        }
+    }
+
+    $scope.CloseCommentsPopup = function () {
+        angular.element("#bootConfirmation").modal('hide');
+    }
+
+    $scope.Btn1Clicked = function () {
+        if (document.getElementById('btn1').value == TFMessages.Common_Save_Only) {
+            $scope.saveToDB('save');
+            $scope.CloseCommentsPopup();
+        }
+        else if (document.getElementById('btn1').value == TFMessages.Common_Save_And_Close) {
+            $scope.saveToDB('saveexit');
+            $scope.CloseCommentsPopup();
+        }
+        else if (document.getElementById('btn1').value == TFMessages.Common_Finalize) {
+            $scope.saveToDB('submit');
+            $scope.CloseCommentsPopup();
+        }
+        else if (document.getElementById('btn1').value == TFMessages.Common_Confirm) {
+            $scope.CloseCommentsPopup();
+            $scope.RedirectBack();
+        }
+    }
+
+    $scope.Btn2Clicked = function () {
+        var isMgr = FormIoAppConfig.ParseQueryString(window.location.href).IsMgr;
+        var checkNameType;
+        if (!angular.isUndefined(isMgr) && isMgr == 'T') {
+            checkNameType = TFMessages.Grow_SaveAndNotify + ' (' + $scope.RepDetail.Name.substr(0, $scope.RepDetail.Name.indexOf(' ')) + ')';
+        }
+        else {
+            checkNameType = TFMessages.Grow_SaveAndNotify + ' (' + $scope.ManagerDetail.Name.substr(0, $scope.ManagerDetail.Name.indexOf(' ')) + ')';
+        }
+
+        if (document.getElementById('btn2').value == checkNameType) {
+            $scope.saveToDB('saveNotify');
+            $scope.CloseCommentsPopup();
+        }
+        else if (document.getElementById('btn2').value == TFMessages.Common_Cancel_And_Close) {
+            $scope.CloseCommentsPopup();
+            $scope.RedirectBack();
+        }
+        else if (document.getElementById('btn2').value == TFMessages.Common_Cancel) {
+            $scope.CloseCommentsPopup();
+        }
+    }
+
+    //Confirmation Popup related code END
 
     $scope.GetDataPersistCollection = function () {
 
@@ -101146,126 +102794,151 @@ var formRendererCtrl = function ($scope, $http, $filter, $timeout, $filter, $roo
                 NotifyManagerId: $scope.ReportInfo.EmpReportId != null && $scope.ReportInfo.EmpReportId != 0 ? (FormIoAppConfig.ParseQueryString(window.location.href).IsMgr == "T" ? $scope.ReportInfo.EmpId : $scope.ReportInfo.ManagerId) : 0,
                 IsDynamicManager: FormIoAppConfig.ParseQueryString(window.location.href).IsMgr === 'T',
                 EmailLoginId: angular.isUndefined(FormIoAppConfig.ParseQueryString(window.location.href).EmpId) ? $scope.ReportInfo.ManagerEmpId : FormIoAppConfig.ParseQueryString(window.location.href).EmpId,
-                PersistKeyValues: mode === 'submit' ? $scope.GetDataPersistCollection() : null
+                PersistKeyValues: mode === 'submit' ? $scope.GetDataPersistCollection() : null,
+                ReviewType:!angular.isUndefined(FormIoAppConfig.ParseQueryString(window.location.href).iscoachingconversation) && FormIoAppConfig.ParseQueryString(window.location.href).iscoachingconversation == 'T' ? 'coachingconversation' :'',
+                ReviewCycleId:!angular.isUndefined(FormIoAppConfig.ParseQueryString(window.location.href).cycleid) ? FormIoAppConfig.ParseQueryString(window.location.href).cycleid: 0
             }
 
-            formioFactory.saveDynamicRequest(
-                        saveRequest
-                        , function (response) {
-                            if (response.status == '200') {
-                                var result = response.data;
-                                $scope.ReportInfo.EmpReportId = result;
-                                /*
-                                Ram: We are following promise pattern here to chain the ajax calls of independent formio custom controls which are part of current opened report
-                                sharedDataService contains 2 arrays: 
-                                    >>SaveReportCallbacks - for callbacks of FormIoAppConfig.PublishedEvents.ReportDataSaved event
-                                    >>SubmitReportCallbacks - for callbacks of FormIoAppConfig.PublishedEvents.ReportSubmitted event
+            if (formioConstants.IsRequestFromNativeIPad) {
+                sharedDataService.SaveReportRequestsForIpad = [];
 
-                                */
-                                sharedDataService.SaveReportCallbacks = []; //First clear the callbacks array to avoid duplicate callbacks execution. Placement of this code is important.
-                                $scope.$broadcast(FormIoAppConfig.PublishedEvents.ReportDataSaved, { 'EmpReportId': $scope.ReportInfo.EmpReportId }); // raise the event. will be subscribed by different custom controls. Controls will add promise in array.
-                                //giving small timeout to provide enough time for subscribers to subscribe the event (*may not be required)
-                                $timeout(function () {
+                //var saveRequestJSON = JSON.stringify(saveRequest);
 
-                                    var callbacks = sharedDataService.GetSaveReportCallbacks(); // get all registered callbacks
+                sharedDataService.SaveReportRequestsForIpad.push({
+                    Key: 'EmpReportInfo',
+                    Value: saveRequest
+                });
+                //if success
+                $scope.$broadcast(FormIoAppConfig.PublishedEvents.ReportDataSaved, { 'EmpReportId': '0' }); // raise the event. will be subscribed by different custom controls. Controls will add promise in array.
 
-                                    sharedDataService.ExecutePromises(callbacks).then(function (values) { // now execute all callbacks 
-                                        // finally handle the success 
-                                        if (mode === 'save') {
-                                            showSuccessToast(TFMessages.ReportDraftSaved);
-                                            $scope.progress = false;
-                                        }
-                                        else if (mode === 'saveexit') {
-                                            showSuccessToast(TFMessages.ReportDraftSaved);
-                                            $scope.progress = false;
-                                            $timeout(function () {
+                $scope.$broadcast(FormIoAppConfig.PublishedEvents.ReportSubmitted, {
+                    EmpReportId: 0,
+                    DelegationEmailID: angular.isUndefined($scope.ReportInfo.DelegationEmailID) ? '' : $scope.ReportInfo.DelegationEmailID
+                });
 
+                $timeout(function () {
+                    window.webkit.messageHandlers.saveData.postMessage(JSON.stringify(sharedDataService.SaveReportRequestsForIpad)); // TO DO
+                }, 500);
+            }
+            else {
+
+                formioFactory.saveDynamicRequest(
+                            saveRequest
+                            , function (response) {
+                                if (response.status == '200') {
+                                    var result = response.data;
+                                    $scope.ReportInfo.EmpReportId = result;
+                                    /*
+                                    Ram: We are following promise pattern here to chain the ajax calls of independent formio custom controls which are part of current opened report
+                                    sharedDataService contains 2 arrays: 
+                                        >>SaveReportCallbacks - for callbacks of FormIoAppConfig.PublishedEvents.ReportDataSaved event
+                                        >>SubmitReportCallbacks - for callbacks of FormIoAppConfig.PublishedEvents.ReportSubmitted event
+    
+                                    */
+                                    sharedDataService.SaveReportCallbacks = []; //First clear the callbacks array to avoid duplicate callbacks execution. Placement of this code is important.
+                                    $scope.$broadcast(FormIoAppConfig.PublishedEvents.ReportDataSaved, { 'EmpReportId': $scope.ReportInfo.EmpReportId }); // raise the event. will be subscribed by different custom controls. Controls will add promise in array.
+                                    //giving small timeout to provide enough time for subscribers to subscribe the event (*may not be required)
+                                    $timeout(function () {
+
+                                        var callbacks = sharedDataService.GetSaveReportCallbacks(); // get all registered callbacks
+
+                                        sharedDataService.ExecutePromises(callbacks).then(function (values) { // now execute all callbacks 
+                                            // finally handle the success 
+                                            if (mode === 'save') {
+                                                showSuccessToast(TFMessages.ReportDraftSaved);
                                                 $scope.progress = false;
-
-                                                if (FormIoAppConfig.IsRequestFromNativeIPad) {
-                                                    window.location.href = 'http://icoachfirst/WebViewClose;'
-                                                }
-                                                else if ($scope.IsRequestFromOutlook) {
-                                                    window.close();
-                                                }
-                                                else {
-                                                    $scope.RedirectBack();
-                                                }
-                                            }, 2000);
-                                        }
-                                        else if (mode === 'saveNotify') {
-                                            showSuccessToast(TFMessages.ReportDraftNotifySaved);
-                                            $scope.progress = false;
-                                            $timeout(function () {
-
+                                            }
+                                            else if (mode === 'saveexit') {
+                                                showSuccessToast(TFMessages.ReportDraftSaved);
                                                 $scope.progress = false;
-                                                if (FormIoAppConfig.IsRequestFromNativeIPad) {
-                                                    window.location.href = 'http://icoachfirst/WebViewClose;'
-                                                }
-                                                else if ($scope.IsRequestFromOutlook) {
-                                                    window.close();
-                                                }
-                                                else {
-                                                    $scope.RedirectBack();
-                                                }
-                                            }, 2000);
-                                        }
-                                        else if (mode === 'submit') {
-                                            // handle submit callbacks similar to save described above
-                                            sharedDataService.SubmitReportCallbacks = [];
+                                                $timeout(function () {
 
-                                            $scope.$broadcast(FormIoAppConfig.PublishedEvents.ReportSubmitted, {
-                                                EmpReportId: $scope.ReportInfo.EmpReportId,
-                                                DelegationEmailID: $scope.ReportInfo.DelegationEmailID
-                                            });
+                                                    $scope.progress = false;
 
-                                            $timeout(function () {
+                                                    if (FormIoAppConfig.IsRequestFromNativeIPad) {
+                                                        window.location.href = 'http://icoachfirst/WebViewClose;'
+                                                    }
+                                                    else if ($scope.IsRequestFromOutlook) {
+                                                        window.close();
+                                                    }
+                                                    else {
+                                                        $scope.RedirectBack();
+                                                    }
+                                                }, 2000);
+                                            }
+                                            else if (mode === 'saveNotify') {
+                                                showSuccessToast(TFMessages.ReportDraftNotifySaved);
+                                                $scope.progress = false;
+                                                $timeout(function () {
 
-                                                var submitCallbacks = sharedDataService.GetSubmitReportCallbacks();
+                                                    $scope.progress = false;
+                                                    if (FormIoAppConfig.IsRequestFromNativeIPad) {
+                                                        window.location.href = 'http://icoachfirst/WebViewClose;'
+                                                    }
+                                                    else if ($scope.IsRequestFromOutlook) {
+                                                        window.close();
+                                                    }
+                                                    else {
+                                                        $scope.RedirectBack();
+                                                    }
+                                                }, 2000);
+                                            }
+                                            else if (mode === 'submit') {
+                                                // handle submit callbacks similar to save described above
+                                                sharedDataService.SubmitReportCallbacks = [];
 
-                                                sharedDataService.ExecutePromises(submitCallbacks).then(function (values) {
-                                                    showSuccessToast(TFMessages.ReportSubmittedSuccess);
-                                                    $scope.ReportInfo.IsSubmitted = true;
-                                                    $scope.FormReadOnly = true;//disable form controls as soon as form is submitted
-                                                    $timeout(function () {
-                                                        $scope.progress = false;
-                                                        if (FormIoAppConfig.IsRequestFromNativeIPad) {
-                                                            window.location.href = 'http://icoachfirst/WebViewClose;'
-                                                        }
-                                                        else if ($scope.IsRequestFromOutlook) {
-                                                            window.close();
-                                                        }
-                                                        else {
-                                                            $scope.RedirectBack();
-                                                        }
-                                                    }, 2000);
+                                                $scope.$broadcast(FormIoAppConfig.PublishedEvents.ReportSubmitted, {
+                                                    EmpReportId: $scope.ReportInfo.EmpReportId,
+                                                    DelegationEmailID: $scope.ReportInfo.DelegationEmailID
                                                 });
-                                            }, 100);
-                                        }
-                                    }).catch(function (error) {
-                                        // handles any error thrown by callbacks
-                                        $scope.progress = false;
-                                        showErrorToast(TFMessages.Common_Error_TechnicalIssueDuringSave);
-                                    });
 
-                                }, 100);
+                                                $timeout(function () {
 
-                                // $scope.init();
+                                                    var submitCallbacks = sharedDataService.GetSubmitReportCallbacks();
 
-                            }
-                            else {
-                                showErrorToast(TFMessages.Common_Error_TechnicalIssueDuringSave);
+                                                    sharedDataService.ExecutePromises(submitCallbacks).then(function (values) {
+                                                        showSuccessToast(TFMessages.ReportSubmittedSuccess);
+                                                        $scope.ReportInfo.IsSubmitted = true;
+                                                        $scope.FormReadOnly = true;//disable form controls as soon as form is submitted
+                                                        $timeout(function () {
+                                                            $scope.progress = false;
+                                                            if (FormIoAppConfig.IsRequestFromNativeIPad) {
+                                                                window.location.href = 'http://icoachfirst/WebViewClose;'
+                                                            }
+                                                            else if ($scope.IsRequestFromOutlook) {
+                                                                window.close();
+                                                            }
+                                                            else {
+                                                                $scope.RedirectBack();
+                                                            }
+                                                        }, 2000);
+                                                    });
+                                                }, 100);
+                                            }
+                                        }).catch(function (error) {
+                                            // handles any error thrown by callbacks
+                                            $scope.progress = false;
+                                            showErrorToast(TFMessages.Common_Error_TechnicalIssueDuringSave);
+                                        });
+
+                                    }, 100);
+
+                                    // $scope.init();
+
+                                }
+                                else {
+                                    showErrorToast(TFMessages.Common_Error_TechnicalIssueDuringSave);
+                                    $scope.progress = false;
+                                }
+
+                            }, function (error) {
+                                //handles save/submitreport api failure
+                                //console.log(error);
                                 $scope.progress = false;
-                            }
+                                showErrorToast(TFMessages.Common_Error_TechnicalIssueDuringSave);
+                            });
 
-                        }, function (error) {
-                            //handles save/submitreport api failure
-                            //console.log(error);
-                            $scope.progress = false;
-                            showErrorToast(TFMessages.Common_Error_TechnicalIssueDuringSave);
-                        });
-
-
+            }
 
             //$http.post(TalentFirstConst.BaseAppPath + '/TalentFirstV3/Coach/ReviewReportViewer.aspx/SaveReport',
             //   {
@@ -101310,6 +102983,18 @@ var formRendererCtrl = function ($scope, $http, $filter, $timeout, $filter, $roo
         }
     }
 
+    $scope.BtnCancelClick = function (mode) {
+        if (!FormIoAppConfig.IsManagerView && $scope.submission.data.isSubmitted && $scope.submission.data.isAckButtonRequired && !$scope.submission.data.isAcknowledged) {
+            $scope.ShowConfirmationPopup('acknowledge');
+        }
+        else if ($scope.submission.data.isSubmitted || $scope.submission.data.isAcknowledged) {
+            $scope.RedirectBack();
+        }
+        else {
+            $scope.ShowConfirmationPopup(mode);
+        }
+    }
+
     $scope.RedirectToDashboard = function () {
         window.location.href = TalentFirstConst.BaseAppPath + '/TalentFirstV3/Dashboard.aspx';
     }
@@ -101325,92 +103010,123 @@ var formRendererCtrl = function ($scope, $http, $filter, $timeout, $filter, $roo
     });
 
     //UI Changes for IPad and Server
-    
+
     $scope.SetSectionHeightsDynamicReports = function () {
-        setTimeout(function () {
+        if (!formioConstants.IsRequestFromNativeIPad) {
 
-            //$("#dvcontainerMain").css("height", window.innerHeight -170 + 'px');
-            //$("#dvcontainerMain").destroySlimScrollBar().setSlimScrollBar();
-
-            //if (!formioConstants.IsRequestFromIPadBrowser) {
-            //    $("#dvSubLeftMain").css("height", window.innerHeight - 70 + 'px');
-            //}
-            //else {
-            //    $("#dvSubLeftMain").css("height", window.innerHeight - 450 + 'px');
-            //}
-            //$("#dvSubLeftMain").destroySlimScrollBar().setSlimScrollBar();
-
-            //$(".reports_bg").css("height", window.innerHeight - 70 + 'px');
-
-            if (!$scope.submission.data.isPDFExport) {
-                if (!formioConstants.IsRequestFromIPadBrowser) {
-
-                    if ($scope.ReportInfo.AllowTopHeader) {
-                        $("#dvSubLeftMain").css("height", window.innerHeight - 250 + 'px');
-                    }
-                    else {
-                        $("#dvSubLeftMain").css("height", window.innerHeight - 100 + 'px');
-                    }
-                    $("#dvSubLeftMain").destroySlimScrollBar().setSlimScrollBar();
-                }
-                else {
-                    if (!formioConstants.IsRequestFromNativeIPad) {
-                        //Request coming from IPad safari browser
+            setTimeout(function () {
+                if (!$scope.submission.data.isPDFExport) {
+                    if (!formioConstants.IsRequestFromIPadBrowser) {
                         if ($scope.ReportInfo.AllowTopHeader) {
-                            // $("#mainDiv").addClass('dynreport_ipad_header');
+                            $("#dvSubLeftMain").css("height", window.innerHeight - 240 + 'px');
+                            $("#dvcontainerMain").css("height", window.innerHeight - 300 + 'px');
                         }
                         else {
-                            $("#mainDiv").removeClass('dynreport_ipad_header').addClass('dynreport_ipad_noheader');
+                            $("#dvSubLeftMain").css("height", window.innerHeight - 100 + 'px');
+                            $("#dvcontainerMain").css("height", window.innerHeight - 160 + 'px');
                         }
+                        $("#dvSubLeftMain").setSlimScrollBar();
+                        $("#dvcontainerMain").setSlimScrollBar();
                     }
                     else {
-                        //Request coming from IPad native app
-                        if ($scope.ReportInfo.AllowTopHeader) {
-                            $("#mainDiv").removeClass('dynreport_ipad_header').addClass('dynreport_ipad_native_header');
+                        if (!formioConstants.IsRequestFromNativeIPad) {
+                            //Request coming from IPad safari browser
+                            if ($(window).width() < 1000) {
+                                if ($scope.ReportInfo.AllowTopHeader) {
+                                    if (!$scope.IsBreadcrumView) {
+                                        $("#dvcontainerMain").css("height", window.innerHeight - 370 + 'px');
+                                    }
+                                    else {
+                                        $("#dvSubLeftMain").css("height", 100 + 'px');
+                                        $("#dvcontainerMain").css("height", window.innerHeight - 470 + 'px');
+                                    }
+                                }
+                                else {
+                                    if (!$scope.IsBreadcrumView) {
+                                        $("#dvcontainerMain").css("height", window.innerHeight - 230 + 'px');
+                                    }
+                                    else {
+                                        $("#dvSubLeftMain").css("height", 100 + 'px');
+                                        $("#dvcontainerMain").css("height", window.innerHeight - 330 + 'px');
+                                    }
+                                }
+                                $("#dvSubLeftMain").destroySlimScrollBar().setSlimScrollBar();
+                                $("#dvcontainerMain").destroySlimScrollBar().setSlimScrollBar();
+                            }
+                            else {
+                                if ($scope.ReportInfo.AllowTopHeader) {
+                                    $("#dvSubLeftMain").css("height", window.innerHeight - 310 + 'px');
+                                    $("#dvcontainerMain").css("height", window.innerHeight - 370 + 'px');
+                                }
+                                else {
+                                    $("#dvSubLeftMain").css("height", window.innerHeight - 170 + 'px');
+                                    $("#dvcontainerMain").css("height", window.innerHeight - 230 + 'px');
+                                }
+                                $("#dvSubLeftMain").destroySlimScrollBar().setSlimScrollBar();
+                                $("#dvcontainerMain").destroySlimScrollBar().setSlimScrollBar();
+                            }
                         }
                         else {
-                            $("#mainDiv").removeClass('dynreport_ipad_native_header').addClass('dynreport_native_ipad_noheader');
+                            //Request coming from IPad native app
+
+                            if ($(window).width() < 1000) {
+                                if ($scope.ReportInfo.AllowTopHeader) {
+                                    if (!$scope.IsBreadcrumView) {
+                                        $("#dvcontainerMain").css("height", window.innerHeight - 300 + 'px');
+                                    }
+                                    else {
+                                        $("#dvSubLeftMain").css("height", 100 + 'px');
+                                        $("#dvcontainerMain").css("height", window.innerHeight - 400 + 'px');
+                                    }
+                                }
+                                else {
+                                    if (!$scope.IsBreadcrumView) {
+                                        $("#dvcontainerMain").css("height", window.innerHeight - 160 + 'px');
+                                    }
+                                    else {
+                                        $("#dvSubLeftMain").css("height", 100 + 'px');
+                                        $("#dvcontainerMain").css("height", window.innerHeight - 260 + 'px');
+                                    }
+                                }
+                                $("#dvSubLeftMain").destroySlimScrollBar().setSlimScrollBar();
+                                $("#dvcontainerMain").destroySlimScrollBar().setSlimScrollBar();
+                            }
+                            else {
+                                if ($scope.ReportInfo.AllowTopHeader) {
+                                    $("#dvSubLeftMain").css("height", window.innerHeight - 240 + 'px');
+                                    $("#dvcontainerMain").css("height", window.innerHeight - 300 + 'px');
+                                }
+                                else {
+                                    $("#dvSubLeftMain").css("height", window.innerHeight - 100 + 'px');
+                                    $("#dvcontainerMain").css("height", window.innerHeight - 160 + 'px');
+                                }
+                                $("#dvSubLeftMain").destroySlimScrollBar().setSlimScrollBar();
+                                $("#dvcontainerMain").destroySlimScrollBar().setSlimScrollBar();
+                            }
                         }
 
                     }
-                }
-                //$("#dvSubLeftMain").destroySlimScrollBar().setSlimScrollBar();
-
-
-                if (!formioConstants.IsRequestFromIPadBrowser) {
-                    if ($scope.ReportInfo.AllowTopHeader) {
-                        $("#dvcontainerMain").css("height", window.innerHeight - 301 + 'px');
+                    if (!formioConstants.IsRequestFromIPadBrowser) {
+                        $("#mainDiv").css("height", window.innerHeight - 70 + 'px');
+                        $("#mainDiv").removeClass('reports_bg pdf reviewreportscroll').addClass("reports_bg pdf");
+                        $("#mainDiv").setSlimScrollBar();
                     }
-                    else {
-                        $("#dvcontainerMain").css("height", window.innerHeight - 161 + 'px');
-                    }
-                    $("#dvcontainerMain").destroySlimScrollBar().setSlimScrollBar();
                 }
                 else {
-                    //$("#dvcontainerMain").css("height", window.innerHeight - 450 + 'px');
+                    $("#mainDiv").removeClass("reviewreportscroll");
+                    $("#dvcontainerMain").removeClass('report_rightpane_container');
+                    $("#dvcontainerMain").css("padding", "15px");
+                    $("#dvcontainerMain").destroySlimScrollBar();
                 }
-                //$("#dvcontainerMain").destroySlimScrollBar().setSlimScrollBar();
-
-
-                if (!formioConstants.IsRequestFromIPadBrowser) {
-                    $("#mainDiv").css("height", window.innerHeight - 70 + 'px');
-                    $("#mainDiv").removeClass('reports_bg pdf reviewreportscroll').addClass("reports_bg pdf");
-                    $("#mainDiv").setSlimScrollBar();
-                }
-            }
-            else {
-                $("#mainDiv").removeClass("reviewreportscroll");
-                $("#dvcontainerMain").removeClass('report_rightpane_container');
-                $("#dvcontainerMain").css("padding", "15px");
-                $("#dvcontainerMain").destroySlimScrollBar();
-            }
-        }, 100);
+            }, 100);
+        }
+       
     }
 
     $(window).on("orientationchange", function (event) {
-        // $scope.SetSectionHeightsDynamicReports();
+        $scope.SetSectionHeightsDynamicReports();
 
-    });    
+    });
 }
 
 formRendererCtrl.$inject = ['$scope', '$http', '$filter', '$timeout', '$filter', '$rootScope', '$window', 'FormIoAppConfig', 'sharedDataService', 'userFactory', 'formioFactory', '$q'];

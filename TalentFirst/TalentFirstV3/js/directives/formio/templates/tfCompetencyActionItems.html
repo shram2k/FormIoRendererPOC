@@ -14,11 +14,11 @@
 
     <div ng-if="isEditMode" style="position: relative;">
         <div class="report_sections ovr_hidden" style="overflow:visible;">
-            <div class="report_heading" style="overflow:visible;">
+            <div class="report_heading" ng-show="component.label" style="overflow:visible;">
                 <label ng-if="component.label" for="{{ component.key }}" class="component-heading label_dynamic">{{ component.label }}</label>
             </div>
 
-            <div class="gray-shadowbg" style="overflow:visible;">
+            <div class="gray-shadowbg" style="overflow:visible;" ng-hide="isPDFExport">
                 <table width="100%" border="0">
                     <tr>
                         <td>
@@ -67,7 +67,7 @@
                     </tr>
                     <tr>
                         <td width="1%" valign="top">{{TFMessages.Common_Description}}:</td>
-                        <td width="99%" style="padding-left:10px;"><textarea ng-model="Model.Description" ng-disabled="submissiondata.isSubmitted || ComponentDisabledView" class="form-control"></textarea></td>
+                        <td width="99%" style="padding-left:10px;"><textarea ng-model="Model.Description" ng-disabled="submissiondata.isSubmitted || ComponentDisabledView" ng-attr-placeholder="{{TFMessages.Common_Placeholder}}" class="form-control"></textarea></td>
                     </tr>
                     <tr>
                         <td colspna="2">&nbsp;</td>
@@ -83,7 +83,7 @@
                 </table>
             </div>
 
-            <div id="divActionItem" class="dasboardreport_grid" style="height:250px; overflow:auto; padding:15px;">
+            <div id="divActionItem" class="dasboardreport_grid" style="height:250px; overflow:auto; padding:15px;" ng-if="!ComponentDisabledView || submissiondata.isSubmitted">
                 <div class="ovr_hidden table-responsive mrgbottom15">
                     <table class="table">
                         <tr>

@@ -1,0 +1,24 @@
+﻿<div>
+    
+        <div class="form-group">
+            <label for="newPhotos">Select file to upload</label>
+            <input type="file" id="newPhotos" class="uploadFile form-control" ngf-select ng-model="selectedfiles" ngf-multiple="true">
+        </div>
+        <div class="form-group" ng-show="component.UploadedFileInfo != null">
+            <ul class="list-unstyled">
+                <li>
+                    <strong>Files Name:</strong>
+                </li>
+                <li>
+                    <a href="#" ng-click="OpenFile(component.UploadedFileInfo)">{{component.UploadedFileInfo.name}} </a> <img  style="cursor:pointer;"  src="{{DeleteIcon}}" ng-disabled="deleting" ng-click="DeleteFile()" class="mrgleft10" />
+                </li>
+                 
+            </ul>
+        </div>
+
+        <div class="mrgtop30">
+            <input class="btn btn-blue" type="button" ng-click="UploadFile(selectedfiles)" ng-disabled="uploading" value="upload">
+            <!--<input class="btn btn-orange" type="button" ng-click="ResetUploadedList()" value="cancel" />-->
+        </div>
+    
+</div>

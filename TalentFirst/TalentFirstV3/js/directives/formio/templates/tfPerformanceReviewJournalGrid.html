@@ -4,9 +4,9 @@
             <table class="table">
                 <tr>
                     <th style="width: 40%">{{TFMessages.Common_ManagerCommensAndFeedbacks}}</th>
-                    <th style="width: 15%">{{TFMessages.Common_SubmissionDate}}</th>
-                    <th style="width: 15%">{{TFMessages.Common_SubmittedBy}} </th>
-                    <th ng-if="isviewreport == undefined ? false : isviewreport" style="width: 20%">{{TFMessages.Common_View_Report}}</th>
+                    <th style="width: 15%">{{TFMessages.Common_Date}}</th>
+                    <th style="width: 15%">{{TFMessages.Common_By}} </th>
+                    <th ng-if="isviewreport == undefined ? false : isviewreport" style="width: 20%;text-align:center;">{{TFMessages.Common_Association}}</th>
                     <th style="width: 10%">{{TFMessages.Common_Delete}}</th>
                 </tr>
                 <tr ng-repeat="item in SavedCommentsData">
@@ -19,8 +19,13 @@
                     <td>
                         {{item.CommentSubmittedBy}}
                     </td>
-                    <td ng-if="isviewreport == undefined ? false : isviewreport">
-                        <a href="#" ng-click="openReport(item); $event.preventDefault();">{{TFMessages.Common_View_Report}}</a>
+                    <td ng-if="isviewreport == undefined ? false : isviewreport" style="text-align:center;">
+                       
+                        <img ng-src="{{ReviewJournal}}" ng-if="!item.IsOutlook && !item.IsLeftPanel" ng-click="submissiondata.isSubmitted || openReport(item);" title="{{TFMessages.Common_View_Report}}" alt="" ng-style="{'cursor': !submissiondata.isSubmitted && !ComponentDisabledView ?'pointer':'default'};" />
+                         <a href="{{ReviewJournalPDFAPIUri(item)}}" target="{{item.WasEmailMessageSaved ? '_blank':'_self'}}"  ng-if="item.IsOutlook" ng-style="{'cursor': !submissiondata.isSubmitted && !ComponentDisabledView ?'pointer':'default'};">
+                            <img ng-src="{{OutlookIcon}}"  ng-click="submissiondata.isSubmitted" title="{{TFMessages.Performance_Journal_Outlook}}" alt=""  />
+                         </a>
+                        <img ng-src="{{LeftPanelIcon}}" ng-if="item.IsLeftPanel" ng-click="submissiondata.isSubmitted" title="{{TFMessages.Performance_Journal_Dashboard}}" alt="" ng-style="{'cursor': !submissiondata.isSubmitted && !ComponentDisabledView ?'pointer':'default'};" />
                     </td>
                     <td>
                         <img ng-src="{{DeleteIcon}}" ng-if="!ComponentDisabledView" ng-click="submissiondata.isSubmitted || DeleteReviewComment(item);" alt="" class="delete-button-style" ng-style="{'cursor': !submissiondata.isSubmitted && !ComponentDisabledView ?'pointer':'default'};" />
@@ -29,8 +34,7 @@
             </table>
         </div>
         <div ng-if="SavedCommentsData.length == 0" class="txt_center border" style="background-color:#d8dcdd; padding:10px;">
-            No Performance review to show.
+            {{TFMessages.Common_NoDataToDisplay}}
         </div>
     </div>
-
 </div>

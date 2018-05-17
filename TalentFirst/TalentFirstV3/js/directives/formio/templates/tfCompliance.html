@@ -3,9 +3,9 @@
     <div  class="">
         <label ng-if="component.label" style="margin-top:10px;" for="{{ component.key }}" class="component-heading">{{ component.label }}</label>
          <div class="mrgtop10">
-            <textarea class="form-control"  rows="5" ng-if="!isPDFExport && !SendEmail && component.CommentBox" ng-disabled="submissiondata.isSubmitted || ComponentDisabledView" ng-model="submissiondata['ComplianceText']"></textarea>
+            <textarea class="form-control"  rows="5" ng-if="!isPDFExport && !SendEmail && component.CommentBox" ng-attr-placeholder="{{TFMessages.Common_Placeholder}}" ng-disabled="submissiondata.isSubmitted || ComponentDisabledView" ng-model="submissiondata.ComplianceText[component.key]"></textarea>
             <div ng-if="(isPDFExport || SendEmail) &&  component.CommentBox" class="border" >
-                <span ng-bind-html="submissiondata['ComplianceText']"></span>
+                <span ng-bind-html="submissiondata.ComplianceText[component.key]"></span>
             </div>
         </div>
     </div>

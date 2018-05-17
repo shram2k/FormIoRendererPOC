@@ -1,0 +1,10 @@
+﻿
+    <div class="form-group ovr_hidden" >
+        <label>{{TFMessages.Select_Custom_Field}}:<span class="txt_red">*</span></label>
+        <select class="form-control" ng-required="true" name="customField"
+                ng-model="component.selectedCustomField"
+                ng-options="item as item.CustomFieldName for item in customFieldList | orderBy:'CustomFieldName' track by item.CustomFieldID"
+                ng-disabled="submissiondata.isSubmitted || ComponentDisabledView">
+        </select>
+    </div>
+

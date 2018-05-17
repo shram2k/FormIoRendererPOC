@@ -1,0 +1,32 @@
+﻿<div>
+    <div class="txt-orange txt16 ovr-hidden mrgbottom10" role="group" id="{{ component.key }}">
+        <label ng-if="component.label" style="float:left; margin-top:5px;" for="{{ component.key }}" class="component-heading">
+            {{ component.label }}
+        </label>
+    </div>
+    <div ng-if="!isEditMode">
+        <input type="text" class="form-control" ng-disabled="true" />
+        <!--<img ng-src="{{$root.PATHS.SpecialComponentsImageUrl}}competency_action_item_big.png" class="img-responsive" alt="" />-->        
+    </div>
+
+
+    <div ng-if="isEditMode">
+      
+        <div ng-if="isUserEditable" class="ovr-hidden">
+            <input type="text" class="form-control" ng-model="submissiondata[component.key]" ng-disabled="submissiondata.isSubmitted || ComponentDisabledView" />
+        </div>
+        <div ng-if="!isUserEditable" class="ovr-hidden">
+            <label>{{submissiondata[component.key]}}</label>
+        </div>       
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+

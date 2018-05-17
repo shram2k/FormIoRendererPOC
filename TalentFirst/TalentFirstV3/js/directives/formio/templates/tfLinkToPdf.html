@@ -1,10 +1,10 @@
 ﻿<div style="width:100%">
-    <label ng-if="component.label" for="{{ component.key }}" class="component-heading label_dynamic"><u>{{ component.label }}</u></label>
     <div ng-show="!isEditMode" style="text-align:right;">
-        
+        <label ng-if="component.label" for="{{ component.key }}" class="component-heading label_dynamic"><u>{{ component.label }}</u></label>
     </div>
     <div style="text-align:right;" ng-show="isEditMode">
-        <a href="#" ng-if="!isPDFExport" ng-click="OpenPDFLink(); $event.stopPropagation();">{{component.label}}</a>
+        <a href="#" ng-if="!isPDFExport" ng-click="OpenPDFLink(component.UploadedFileInfo); $event.stopPropagation();">{{component.label}}</a>
         <label ng-if="isPDFExport" class="customLabel">{{component.label}}</label>
+     
     </div>
 </div>

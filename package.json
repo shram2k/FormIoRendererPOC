@@ -1,0 +1,15 @@
+{
+    "requires": true,
+    "lockfileVersion": 1,
+    "dependencies": {
+        "angular": {
+            "integrity": "sha512-3LboCLjrOuC7dWh953O0+dI3dJ7PexYRSCIrfqoN5qoHyja/wak3eWoxPKb2Sl2qwiPbrUV5KJXwgpUQ48McBQ==",
+            "resolved": "https://registry.npmjs.org/angular/-/angular-1.7.0.tgz",
+            "version": "1.7.0"
+        },
+        "angular-base64": "^2.0.5",
+        "express": "^4.16.3",
+        "socket.io": "^2.1.0",
+        "ws": "^5.1.1"
+    }
+}

@@ -1,0 +1,52 @@
+﻿<div>
+    <label ng-if="component.label" for="{{ component.key }}" class="component-heading label_dynamic">{{ component.label }}</label>
+    <div ng-if="!isEditMode">
+        <div class="btn-group" role="group" id="{{ component.key }}">
+            <img ng-src="{{$root.PATHS.SpecialComponentsImageUrl}}selfassessment_big.png" class="img-responsive" alt="" />
+        </div>
+    </div>
+    <div ng-if="isEditMode" style="position: relative;">
+
+        <div class="selfassessment_box" ng-repeat="assessment in AssessmentData">
+            <div class="selfassessment_box_heading">
+                <img src="{{assessment.Question.Image}}" alt="" align="right" />
+                <span ng-bind-html="assessment.Question.Question  | to_trusted"></span>
+            </div>
+            <div class="selfassessment_box_container">
+                <div class="selfassessment_box_user">
+                    <img src="{{submissiondata.coacheeInfo.RepDetail.ProfileImageName}}" alt="" style="width:75px; height:75px;" />
+                </div>
+                <div class="selfassessment_box_answer">
+                    <div class="mod_radiobtn imagelist" ng-repeat="answer in assessment.Answers" ng-if="answer.AnswerType == 'Radio Button'">
+                        <input type="radio" name="r2RB" readonly="readonly" ng-checked="answer.IsOpted" /><label ng-bind-html="answer.Answer | to_trusted"></label><br />
+                    </div>
+                    <div class="mod_checkbox imagelist" ng-repeat="answer in assessment.Answers" ng-if="answer.AnswerType == 'Checkbox'">
+                        <input type="checkbox" name="r2CB" readonly="readonly" ng-checked="answer.IsOpted" /><label ng-bind-html="answer.Answer  | to_trusted"></label><br />
+                    </div>
+                    <div class="mod_radiobtn imagelist" ng-repeat="answer in assessment.Answers" ng-if="answer.AnswerType == 'Image (Radio Button)'">
+                        <input type="radio" name="r2RBIMG" readonly="readonly" ng-checked="answer.IsOpted" /><label><img src="{{answer.Answer}}" alt='' width='75' height='75' border='0' align="left" /></label><br />
+                    </div>
+                    <div class="mod_checkbox imagelist" ng-repeat="answer in assessment.Answers" ng-if="answer.AnswerType == 'Image (Check Box)'">
+                        <input type="checkbox" name="r2CBIMG" readonly="readonly" ng-checked="answer.IsOpted" /><label><img src="{{answer.Answer}}" alt='' width='75' height='75' border='0' align="left" /></label><br />
+                    </div>
+                    <div class="mod_checkbox imagelist" ng-if="answer.AnswerType == 'Textbox'">
+                        {{answer.Answer}}<br />
+                    </div>
+                    <div class="imagelist" ng-repeat="answer in assessment.Answers"
+                         ng-if="assessment.Question.QuestionType != 'Radio Button'
+                                && answer.AnswerType != 'Checkbox'
+                                && answer.AnswerType != 'Image (Radio Button)'
+                                && answer.AnswerType != 'Image (Check Box)'">
+                        <span ng-bind-html="answer.Answer  | to_trusted" ng-style="{'font-weight': answer.AnswerType != 'Priority' && answer.IsOpted?'bold':'normal'}"></span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div ng-show="AssessmentData.length == 0">
+            {{TFMessages.Common_NoRecordText}}
+        </div>
+
+    </div>
+</div>

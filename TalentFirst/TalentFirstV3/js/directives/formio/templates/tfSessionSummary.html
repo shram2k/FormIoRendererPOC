@@ -1,7 +1,7 @@
 ﻿<div>
     <label ng-if="component.label" for="{{ component.key }}" class="component-heading label_dynamic">{{ component.label }}</label>
     <div ng-show="isEditMode">
-        <textarea ng-if="!isPDFExport" class="form-control mrgtop10" ng-model="Model.SessionSummaryComment" ng-disabled="ComponentDisabledView || submissiondata.isSubmitted"></textarea>
+        <textarea ng-if="!isPDFExport" class="form-control mrgtop10" ng-model="Model.SessionSummaryComment" ng-attr-placeholder="{{TFMessages.Common_Placeholder}}" ng-disabled="ComponentDisabledView || submissiondata.isSubmitted"></textarea>
         <div ng-if="isPDFExport" class="border">
             <span>{{Model.SessionSummaryComment}}</span>
         </div>

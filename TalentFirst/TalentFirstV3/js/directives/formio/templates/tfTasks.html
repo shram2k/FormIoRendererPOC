@@ -10,39 +10,52 @@
         <div ng-show="progress" class="loading_bg_absolute">
             <div class="loading_container"><img ng-src="{{loadingImagePath}}" alt="" /></div>
         </div>
-        <div class="taskbox">
+
+
+        <div class="taskbox mrgtop10">
             <div class="taskbox_top ovr-hidden">
-                <ul>
+                <ul id="TasksList">
                     <li>
-                        <span class="value assigned">{{Tasks.AssignedTasks}}</span>
-                        <span>Assigned</span>
+                        <a href="#" ng-click="DisplayTaskByStatus('Assigned')">
+                            <span class="value assigned">{{Tasks.AssignedTasks}}</span>
+                            <span>Assigned</span>
+                        </a>
                     </li>
 
-                    <li><img ng-src="{{TalentV3BasePath}}/images/reviewcycle_line.png" alt=""></li>
+                    <li><img ng-src="{{TalentV3BasePath}}/images/formio/reviewcycle_line.png" alt=""></li>
 
                     <li class="selected">
-                        <span class="value complete">{{Tasks.CompletedTasks}}</span>
-                        <span>Complete</span>
+                        <a href="#" ng-click="DisplayTaskByStatus('Complete')">
+                            <span class="value complete">{{Tasks.CompletedTasks}}</span>
+                            <span>Complete</span>
+                        </a>
                     </li>
 
-                    <li><img ng-src="{{TalentV3BasePath}}/images/reviewcycle_line.png" alt=""></li>
+                    <li><img ng-src="{{TalentV3BasePath}}/images/formio/reviewcycle_line.png" alt=""></li>
 
                     <li>
-                        <span class="value inprogress">{{Tasks.InProgressTasks}}</span>
-                        <span>In Progress</span>
+                        <a href="#" ng-click="DisplayTaskByStatus('InProgress')">
+                            <span class="value inprogress">
+                                {{Tasks.InProgressTasks}}
+                            </span>
+                            <span>In Progress</span>
+                        </a>
                     </li>
 
-                    <li><img ng-src="{{TalentV3BasePath}}/images/reviewcycle_line.png" alt=""></li>
+                    <li><img ng-src="{{TalentV3BasePath}}/images/formio/reviewcycle_line.png" alt=""></li>
 
                     <li>
-                        <span class="value notstarted">{{Tasks.NotYetStartedTasks}}</span>
-                        <span>Not Yet Started</span>
+                        <a href="#" ng-click="DisplayTaskByStatus('NotStarted')">
+                            <span class="value notstarted">{{Tasks.NotYetStartedTasks}}</span>
+                            <span>Not Yet Started</span>
+                        </a>
                     </li>
                 </ul>
             </div>
 
-            <div id="tfTasks" class="taskbox_container tfTasks_height" > <!--style="height:265px; overflow:auto;"-->
-                <div ng-repeat="kra in Tasks.KRA" class="SummaryReview_taskcomplete">
+            <div id="tfTasks" class="taskbox_container tfTasks_height">
+                <!--style="height:265px; overflow:auto;"-->
+                <div ng-repeat="kra in Tasks.KRA" ng-show="!ShowTaskByStatus" class="SummaryReview_taskcomplete">
                     <div class="txt_blue txt16">{{kra.Title}}</div>
                     <div class="ovr_hidden">
                         <div class="floatleft  performance_factors">
@@ -50,25 +63,51 @@
                         </div>
                         <div class="floatleft mrgleft10 mrgtop10">
                             <a href="#">
-                                <img src="{{TalentV3BasePath}}/images/user_comments.png"
-                                ng-click="ShowFeedbacks(kra, $event)" ng-mouseover="ShowFeedbacks(kra, $event)" alt="">
+                                <img src="{{TalentV3BasePath}}/images/formio/user_comments.png"
+                                     ng-click="ShowFeedbacks(kra, $event)" ng-mouseover="ShowFeedbacks(kra, $event)" alt="">
                             </a>
                         </div>
                     </div>
                 </div>
+
+                <div id="TaskByStatus" ng-show="ShowTaskByStatus && TaskByStatus.length > 0" class="dasboardreport_grid">
+                    <div class="ovr_hidden table-responsive mrgbottom15">
+                        <table id="table" class="table">
+                            <tr>
+                                <th style="width: 40%">{{TFMessages.Common_Task}}</th>
+                                <th style="width: 20%">{{TFMessages.Common_AssignedBy}}</th>
+                                <th style="width: 15%">{{TFMessages.Common_DueDate}} </th>
+                                <!--<th class="mod_checkbox"><input type="checkbox" ng-model="ShowCompleted" style="cursor:pointer;" /><label><b>{{TFMessages.Act_ShowCompleted}}</b></label></th>-->
+                            </tr>
+                            <tr ng-repeat="task in TaskByStatus| filter:{'TaskStatus': TaskStatus}">
+                                <td>{{task.TaskName}} </td>
+                                <td>
+                                    {{task.AssignedBy}}
+                                </td>
+                                <td>{{task.DueDate}}</td>
+                                <!--<td>
+                                    <img ng-src="{{EditIcon}}" ng-show="!ComponentDisabledView" ng-click="submissiondata.isSubmitted || OpenCDPTaskPopup(cdp)" alt="" class="edit-button-style" ng-style="{'cursor': !submissiondata.isSubmitted ?'pointer':'default'};" />
+                                    <img ng-src="{{CompletedIcon}}" style="float:left; margin-left:10px; width:16px; height:16px;" class="img-responsive" ng-show="cdp.IsComplete" alt="" />
+                                </td>-->
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </div>
 
         <div ng-show="ShowFeedback" id="dvKraInfo" style="position: absolute; z-index: 1000; top: 425px; left: 242px;">
 
-            <div style="float: left; margin-top: 19px;"><img src="{{TalentV3BasePath}}/images/task_popup_arrow.png" alt="" /></div>
+            <div style="float: left; margin-top: 19px;"><img src="{{TalentV3BasePath}}/images/formio/task_popup_arrow.png" alt="" /></div>
 
             <div style="float: left; background-color: #63747c; border-radius: 4px; overflow: hidden">
                 <div class="sub_heading_black" style="margin: 10px 10px 0 10px; color: #FFFFFF;">
                     Feedback Received ({{KRATasks.length}})<a href="#" class="feedback_close" ng-click="HideMe()">X</a>
                 </div>
 
-                <div id="tfTasksComment" class="commentscontainer tfTasksComment_height" > <!--style="width: 250px; height: 165px; overflow: auto;"-->
+                <div id="tfTasksComment" class="commentscontainer tfTasksComment_height">
+                    <!--style="width: 250px; height: 165px; overflow: auto;"-->
                     <div ng-repeat="task in KRATasks" class="PeerFeedback_box">
                         <div class="ovr_hidden">
                             <div class="floatleft"><img ng-src="{{task.ObserverProfileImageName}}" alt="" class="user" /></div>
@@ -91,6 +130,8 @@
             </div>
 
         </div>
+
+
 
     </div>
 </div>

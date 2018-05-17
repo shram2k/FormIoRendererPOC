@@ -1,30 +1,112 @@
+
 <div>
     <label ng-if="component.label" for="{{ component.key }}" class="component-heading label_dynamic">{{ component.label }}</label>
-    <div ng-if="!isEditMode">
+    <div ng-show="!isEditMode">
         <div class="btn-group" role="group" id="{{ component.key }}">            
             <img ng-src="{{$root.PATHS.SpecialComponentsImageUrl}}goals_big.png" class="img-responsive" alt="" />
         </div>
     </div>
-    <div ng-if="isEditMode" style="position: relative;">
+    <div ng-show="isEditMode" style="position: relative;">
         <div ng-show="progress" class="loading_bg_absolute">
             <div class="loading_container"><img ng-src="{{loadingImagePath}}" alt="" /></div>
         </div>
 
         <!--<div ng-show="progress" class="loading_progress"><div class="progressbar_image"><img ng-src="{{loadingImagePath}}" alt="" class="mrgbottom10" /></div></div>-->
-        <div id="tfgoals" class="owl-carousel tfgoals_height" > <!--style="min-height:100px;"-->
+        <div id="tfgoals" class="owl-carousel tfgoals_height"> <!--style="min-height:100px;"-->
 
-            <div ng-repeat="goal in Goals" class="my-goals ">
-                <div ng-click="showGoalDetailPopup($event.currentTarget, goal)" ng-style="{'cursor': !submissiondata.isSubmitted && !ComponentDisabledView ?'pointer':'default'};">
-                    <span id="spChart" class="chart" data-percent="{{goal.AvgPercentComplete}}" style="">
-                        <span class="percent"></span>
-                    </span>
-                    <div class="chart-name">
-                        {{goal.ItemName}}
+            <div ng-repeat="goal in Goals" ng-class="my-goals" style="width:190px;">
+                <div ng-click="ShowGoalsDetails(goal);" ng-style="{'cursor': !submissiondata.isSubmitted && !ComponentDisabledView ?'pointer':'default'};">
+                <!--<div >-->
+                    <div ng-class="goal.ItemId == selectedGoal.ItemId ? 'user-goals-selected':'user-goals'">
+                        <span id="spChart" class="chart" data-percent="{{goal.AvgPercentComplete}}" style="">
+                            <span class="percent"></span>
+                        </span>
+                        <div class="chart-name">
+                            {{goal.ItemName}}
+                        </div>
+                    </div>
+                    <div ng-class="goal.ItemId == selectedGoal.ItemId ? 'display user-goals-arrow':'nodisplay user-goals-arrow'">
+                        <img src="../images/formio/user_goalsbox_arrow.png" alt="" style="width:33px; height:17px; display:inline-block" /></div>
+                </div>                
+            </div>
+        
+        </div>
+
+        <div ng-class="selectedGoal.ItemId != null ? 'user_goalsbox':'nodisplay'">
+            <div class="mrgbottom10" style="display:inline-block; width:100%;">
+                <div class="user_goalsbox_left">
+                    <div class="txt20 txt_blue">{{TFMessages.Common_Action}}</div>
+                    <div style="line-height:25px; min-height:60px;">{{selectedGoal.ItemDesc}}</div>
+
+                    <div class="txt20 txt_blue mrgtop20">{{TFMessages.Common_Impact}}</div>
+                    <div style="line-height:25px; min-height:60px;">{{selectedGoal.Impact}}</div>
+                </div>
+                <div class="user_goalsbox_right">
+                    <div class="user_goalsbox_rightcontainer">
+                        <div><i>{{TFMessages.Common_DueDate}}</i></div>
+                        <div class="value txt_orange">
+                            <!--{{selectedGoal.DueDate}}-->
+                            <div class="floatleft rbulider_cal">
+                                <p class="input-group" style="margin:0px; width:130px;">
+                                    <input type="text" id="tfSessionDate" readonly="readonly" class="form-control goalcal"
+                                           style="width:80px;" ng-disabled="submissiondata.isSubmitted || ComponentDisabledView"
+                                           uib-datepicker-popup="{{format}}" ng-model="selectedGoal.DueDate" show-button-bar="false"
+                                           is-open="popup1.opened" datepicker-options="dateOptions" close-text="Close"
+                                           alt-input-formats="altInputFormats" ng-value="defaultDueDate" />
+                                    <span class="input-group-btn" style="padding-right:10px;">
+                                        <button type="button" class="btn btn-default goalcal_btn" ng-click="open1()"
+                                                ng-disabled="submissiondata.isSubmitted || ComponentDisabledView">
+                                            <i class="glyphicon glyphicon-calendar"></i>
+                                        </button>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="user_goalsbox_rightcontainer">
+                        <div><i>{{TFMessages.Common_Status}}</i></div>
+                            <div class="value txt_orange display">
+                                <select ng-disabled="submissiondata.isSubmitted || ComponentDisabledView" class="form-control dropdown_goals" style="max-width:120px;"
+                                        ng-model="SelectedStatus"
+                                        ng-options="item.Status for item in Statuses track by item.statusid"></select>
+                            </div>
+                    </div>
+
+                    <div class="user_goalsbox_rightcontainer">
+                        <div><i>{{TFMessages.Common_GoalWeight}}</i></div>
+                        <div class="value txt_orange">
+                            <select ng-disabled="submissiondata.isSubmitted || ComponentDisabledView" class="form-control dropdown_goals" style="max-width:70px;"
+                                ng-model="selectedGoal.GoalWeight"
+                                ng-options="item as item for item in optionsGoalWeight"></select>
+                        </div>
+                    </div>
+
+                    <div class="user_goalsbox_rightcontainer">
+                        <div><i>{{TFMessages.Act_Type}}</i></div>
+                        <div class="value txt_orange">
+                            <select ng-disabled="submissiondata.isSubmitted || ComponentDisabledView" class="form-control dropdown_goals" style="max-width:100px;"
+                                    ng-model="SelectedDuration"
+                                    ng-options="item.GoalDurationType for item in GoalDuration track by item.GoalDurationId"></select>
+                        </div>
                     </div>
                 </div>
-
             </div>
 
+            <div class="clear">
+                <div class="floatleft mrgtop5">{{TFMessages.Comman_AssociatedTasks}} (<a href="#" ng-click="showGoalDetailPopup($event.currentTarget, selectedGoal)"><span class="txt_orange">{{selectedGoal.NoOfTasks}}</span></a>)
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{TFMessages.Comman_MileStones}} (<a href="#" ng-click="showGoalDetailPopup($event.currentTarget, selectedGoal)"><span class="txt_orange">{{selectedGoal.NoOfMileStones}}</span></a>)
+                </div>
+                <div class="floatright">
+                    <a href="#" class="mrgright10" ng-click="showGoalDetailPopup($event.currentTarget, selectedGoal)" ng-style="{'cursor': !submissiondata.isSubmitted && !ComponentDisabledView ?'pointer':'default'};">
+                        <img src="../images/formio/icon_edit.png" alt="" /></a>
+                    <a href="#" class="mrgright10" ng-hide="submissiondata.isSubmitted || ComponentDisabledView"
+                       ng-click="UpdateGoalDetails(selectedGoal.ItemId,selectedGoal.DueDate,SelectedStatus.statusid,selectedGoal.GoalWeight,SelectedDuration.GoalDurationId);"><img src="../images/formio/icon_save.png" alt="" /></a>
+                    <a href="#" ng-hide="submissiondata.isSubmitted || ComponentDisabledView" ng-click="CancelClick();"><img src="../images/formio/icon_cancel.png" alt="" /></a>
+                </div>
+            </div>
         </div>
+
+        
     </div>
 </div>

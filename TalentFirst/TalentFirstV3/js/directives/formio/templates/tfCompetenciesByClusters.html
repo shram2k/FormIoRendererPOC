@@ -22,7 +22,7 @@
                 </div>
                 <div class="floatright" ng-show="cluster.ShowPdf === true" style="font-size:small;margin-top:10px;">
 
-                    <a href="#" ng-if="!isPDFExport" ng-click="ShowCompetencyViewModels(cluster.PdfFileDynamicName)">{{cluster.ViewModelTitle}}</a>
+                    <a href="#" ng-if="!isPDFExport" ng-click="ShowCompetencyViewModels(cluster.PdfFileDynamicName, cluster.Id)">{{cluster.ViewModelTitle}}</a>
                     <span ng-if="isPDFExport">{{cluster.ViewModelTitle}}</span>
                 </div>
             </div>
@@ -67,7 +67,8 @@
                         </div>
 
                         <div class="mrgtop10">
-                            <textarea ng-if="!isPDFExport" ng-model="competency.Comment" class="form-control" ng-attr-placeholder="{{component.FillerText == undefined ? TFMessages.Common_Placeholder : component.FillerText }}"  ng-disabled="submissiondata.isSubmitted || ComponentDisabledView"></textarea>
+                            <textarea ng-if="!isPDFExport" ng-model="competency.Comment" class="form-control" ng-attr-placeholder="{{component.FillerText == undefined ? TFMessages.Common_Placeholder : component.FillerText }}"  
+                                      ng-disabled="submissiondata.isSubmitted || ComponentDisabledView" rows="10"></textarea>
 
                             <div ng-if="isPDFExport" class="border">
                                 <span ng-bind-html="competency.Comment"></span>
@@ -114,9 +115,9 @@
 
                         <div class="ovr_hidden">
                             <div class="resource_box_image">
-                                <img ng-src="{{training.TitleImageName ? training.TitleImageName : '../images/no_image.png'}}" alt="" style="width:100px; height:120px" />
+                                <img ng-src="{{training.TitleImageName ? training.TitleImageName : '../images/formio/no_image.png'}}" alt="" style="width:100px; height:120px" />
                                 <div class="resource_box_preview">
-                                    <span id="spn1" ng-click="OpenLocationPopup(training)"><img ng-src="../images/preview.png" alt="" /></span>
+                                    <span id="spn1" ng-click="OpenLocationPopup(training)"><img ng-src="../images/formio/preview.png" alt="" /></span>
                                 </div>
                             </div>
                             <div class="resource_box_text ovr_hidden">

@@ -1,17 +1,31 @@
 ﻿
 <div>
-    <label ng-if="component.label" for="{{ component.key }}" class="component-heading label_dynamic">{{ component.label }}</label>
+    <div class="ovr_hidden">
+        <div class="floatleft"><label ng-if="component.label" for="{{ component.key }}" class="component-heading label_dynamic">{{ component.label }}</label></div>
+
+        <div class="floatright ovr_hidden">
+            <div class="floatleft"><img ng-src="{{OutlookIcon}}" alt="" style="width:15px; height:15px;" /></div>
+            <div class="floatleft txt12 mrgtop5 mrgleft5"><i>{{TFMessages.Common_Outlook}}</i></div>
+
+            <div class="floatleft mrgleft10"><img ng-src="{{LeftPanelIcon}}" alt="" style="width:15px; height:15px;" /></div>
+            <div class="floatleft txt12 mrgtop5 mrgleft5"><i>{{TFMessages.Common_Dashboard}}</i></div>
+
+            <div class="floatleft mrgleft10"><img ng-src="{{ReviewJournal}}" alt="" style="width:15px; height:15px;" /></div>
+            <div class="floatleft txt12 mrgtop5 mrgleft5"><i>{{TFMessages.Act_Type_Report}}</i></div>
+
+        </div>
+    </div>
+
+
     <div ng-if="!isEditMode">
-        <!--<div class="btn-group" role="group" id="{{ component.key }}">
-            <img ng-src="{{$root.PATHS.SpecialComponentsImageUrl}}ckeditor.png" class="img-responsive" alt="" />
-        </div>-->
+        <div class="btn-group" role="group" id="{{ component.key }}">
+            <img ng-src="{{$root.PATHS.SpecialComponentsImageUrl}}view_review_journal.png" class="img-responsive" alt="" />
+        </div>
     </div>
-    
+
     <div ng-if="isEditMode && IsManager" class="view_performance_review">
-        <tf-performance-review-journal-grid submission="submission" components="form.components" isviewreport="true"></tf-performance-review-journal-grid>
+        <tf-performance-review-journal-grid submissiondata="submissiondata" component="component" isviewreport="true"></tf-performance-review-journal-grid>
     </div>
-    <div ng-if="isEditMode && !IsManager" class="txt_center border" style="background-color:#d8dcdd; padding:10px;">
-        You are not entitled to view this section.
-    </div>
+  
 </div>
 

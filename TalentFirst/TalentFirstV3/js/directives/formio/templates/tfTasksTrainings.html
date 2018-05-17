@@ -12,12 +12,12 @@
         <div class="ovr-hidden report_whatnext" ng-if="!submissiondata.isSubmitted && !ComponentDisabledView" style="position: relative;">
             <div style="position: absolute; top: 0; left: 0; width: 300px; height: 80px; display: none;"></div>
             <ul>
-                <li onclick="javascript:ShowTakLeftDialog4Rep();">
+                <li ng-click="AssignTaskPopup()">
                     <span class="assign_task"></span>
                     <br />
                     {{TFMessages.LeftPanel_MyTeam_AssignTask}}
                 </li>
-                <li onclick="javascript:AssignTrainig4Report();">
+                  <li ng-click="AssignTrainingPopup()">
                     <span class="assign_training"></span>
                     <br />
                     {{TFMessages.LeftPanel_MyTeam_AssignTraining}}

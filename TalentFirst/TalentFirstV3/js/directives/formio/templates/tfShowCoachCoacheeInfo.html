@@ -1,0 +1,30 @@
+﻿
+
+
+<div>
+    <div ng-show="!isEditMode">
+        {{component.label}}
+    </div>
+
+    <div ng-show="isEditMode">
+
+        <div ng-show="{{ShowCoachDepartment}}" class="mrgbottom20" style="padding-bottom:5px; border-bottom: 1px solid #e5e5e5"><span class="txt_orange txt16">{{CoachDepartmentLabel}}:</span> {{CoachDepartment}}</div>
+
+        <div ng-show="{{ShowCoachRegion}}" class="mrgbottom20" style="padding-bottom:5px; border-bottom: 1px solid #e5e5e5"><span class="txt_orange txt16">{{CoachRegionLabel}}:</span> {{CoachRegion}}</div>
+
+        <div ng-show="{{ShowCoachDistrict}}" class="mrgbottom20" style="padding-bottom:5px; border-bottom: 1px solid #e5e5e5"><span class="txt_orange txt16">{{CoachDistrictLabel}}:</span> {{CoachDistrict}}</div>
+
+        <div ng-show="{{ShowCoachTerritory}}" class="mrgbottom20" style="padding-bottom:5px; border-bottom: 1px solid #e5e5e5"><span class="txt_orange txt16">{{CoachTerritoryLabel}}:</span> {{CoachTerritory}}</div>
+
+
+
+        <div ng-show="{{ShowCoacheeDepartment}}" class="mrgbottom20" style="padding-bottom:5px; border-bottom: 1px solid #e5e5e5"><span class="txt_orange txt16">{{CoacheeDepartmentLabel}}:</span> {{CoacheeDepartment}}</div>
+
+        <div ng-show="{{ShowCoacheeRegion}}" class="mrgbottom20" style="padding-bottom:5px; border-bottom: 1px solid #e5e5e5"><span class="txt_orange txt16">{{CoacheeRegionLabel}}:</span> {{CoacheeRegion}}</div>
+
+        <div ng-show="{{ShowCoacheeDistrict}}" class="mrgbottom20" style="padding-bottom:5px; border-bottom: 1px solid #e5e5e5"><span class="txt_orange txt16">{{CoacheeDistrictLabel}}:</span> {{CoacheeDistrict}}</div>
+
+        <div ng-show="{{ShowCoacheeTerritory}}" class="mrgbottom20" style="padding-bottom:5px; border-bottom: 1px solid #e5e5e5"><span class="txt_orange txt16">{{CoacheeTerritoryLabel}}:</span> {{CoacheeTerritory}}</div>
+
+    </div>
+</div>

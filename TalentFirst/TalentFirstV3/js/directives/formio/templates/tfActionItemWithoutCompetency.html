@@ -14,15 +14,15 @@
         </div>
     </div>
 
-    <div ng-if="isEditMode" style="position: relative;">
+    <div ng-if="isEditMode" style="position: relative;" >
 
 
         <div class="report_sections ovr_hidden" style="overflow:visible;">
-            <div class="report_heading" style="overflow:visible;">
+            <div class="report_heading" ng-show="component.label" style="overflow:visible;">
                 <label ng-if="component.label" for="{{ component.key }}" class="component-heading label_dynamic">{{ component.label }}</label>
             </div>
 
-            <div class="gray-shadowbg" style="overflow:visible;">
+            <div class="gray-shadowbg" style="overflow:visible;" ng-hide="isPDFExport">
                 <table width="100%" border="0">
                     <!--<tr>
                         <td>
@@ -40,7 +40,7 @@
                         <td colspna="2">&nbsp;</td>
                     </tr>-->
                     <tr>
-                        <td>{{TFMessages.Common_Title}}: <span class="txt_red">*</span></td>
+                        <td width="9%" >{{TFMessages.Common_Action}}: <span class="txt_red">*</span></td>
                         <td style="padding-left:10px;">
                             <div class="floatleft"><input type="text" ng-model="Model.SelectedName" ng-disabled="submissiondata.isSubmitted || ComponentDisabledView" class="form-control" style="width:280px;" /></div>
 
@@ -70,8 +70,8 @@
                         <td colspna="2">&nbsp;</td>
                     </tr>
                     <tr>
-                        <td width="1%" valign="top">{{TFMessages.Common_Description}}:</td>
-                        <td width="99%" style="padding-left:10px;"><textarea ng-model="Model.Description" ng-disabled="submissiondata.isSubmitted || ComponentDisabledView" class="form-control"></textarea></td>
+                        <td valign="top">{{TFMessages.Common_SupportNeeded}}:</td>
+                        <td  style="padding-left:10px;"><textarea ng-model="Model.Description" ng-attr-placeholder="{{TFMessages.Common_Placeholder}}" ng-disabled="submissiondata.isSubmitted || ComponentDisabledView" class="form-control"></textarea></td>
                     </tr>
                     <tr>
                         <td colspna="2">&nbsp;</td>
